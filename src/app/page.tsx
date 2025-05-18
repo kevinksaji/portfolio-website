@@ -6,16 +6,15 @@ import SearchBar from "@/components/SearchBar";
 
 export default function Home() {
   return (
-    <main className="h-screen w-full flex items-center justify-center">
-      <div className="flex flex-col items-center justify-center text-center space-y-50 max-w-3xl w-full mx-auto">
-        <div className="flex flex-col items-center justify-center text-center space-y-20 max-w-3xl w-full mx-auto">
+    <main className="h-screen w-full flex flex-col items-center px-4 py-6 justify-center overflow-hidden">
+      <div className="flex flex-col items-center justify-center text-center gap-16 max-w-3xl w-full mx-auto">
+        <div className="flex flex-col items-center justify-center text-center gap-4">
         <ProfileImage />
         <GreetingText />
       </div>
-        <div className="flex flex-col items-center justify-center text-center space-y-10 max-w-3xl w-full mx-auto">
         <NavigationButtons />
         <SearchBar />
-      </div>
+
       </div>
     </main>
   );
