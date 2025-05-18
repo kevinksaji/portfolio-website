@@ -9,12 +9,11 @@ export default function Home() {
     <main className="h-screen w-full flex flex-col items-center px-4 py-6 justify-center overflow-hidden">
       <div className="flex flex-col items-center justify-center text-center gap-16 max-w-3xl w-full mx-auto">
         <div className="flex flex-col items-center justify-center text-center gap-4">
-        <ProfileImage />
-        <GreetingText />
-      </div>
-        <NavigationButtons />
-        <SearchBar />
-
+          <ProfileImage />
+          <GreetingText />
+        </div>
+          <NavigationButtons />
+          <SearchBar />
       </div>
     </main>
   );
