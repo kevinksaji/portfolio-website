@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import {LayoutGroup} from "framer-motion";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -25,9 +26,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
+
+
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+      <LayoutGroup id="root">
         {children}
+      </LayoutGroup>
       </body>
     </html>
   );
