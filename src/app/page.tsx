@@ -1,5 +1,4 @@
 import ProfileImage from "@/components/ProfileImage";
-import Image from "next/image";
 import NavigationButtons from "@/components/NavigationButtons";
 import GreetingText from "@/components/GreetingText";
 import SearchBar from "@/components/SearchBar";
