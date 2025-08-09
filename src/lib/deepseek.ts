@@ -9,6 +9,9 @@ export async function deepSeekChatComplete(
   messages: { role: "user" | "assistant"; content: string }[]
 ): Promise<string> {
   const apiKey = process.env.DEEPSEEK_API_KEY;
+  if (!apiKey) {
+    throw new Error("DeepSeek API key is missing. Please set the DEEPSEEK_API_KEY environment variable.");
+  }
 
   // Get all resume context for every query
   let resumeContext = "";
