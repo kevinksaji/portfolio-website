@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button" // adjust import if the path differs
+import { Button } from "@/components/ui/button"
 
 export default function Navbar() {
   const pathname = usePathname()

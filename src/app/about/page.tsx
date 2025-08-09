@@ -1,11 +1,14 @@
+// the about page component that displays the about me section
+
 "use client"
+
 import { motion } from "framer-motion"
 
 const containerVariants = { // for animating each section of the page
   hidden: {},
   show: { transition: { staggerChildren: 0.3 } },
 }
-const itemVariants = { 
+const itemVariants = { // for animating each item in the section
   hidden: { opacity: 0, y: 10 },
   show: { opacity: 1, y: 0, transition: { ease: "easeOut" as const, duration: 0.3 } },
 }
@@ -45,7 +48,7 @@ function Slide({
       <motion.section
           className={`flex h-screen snap-start flex-col items-center justify-center
                   px-6 py-10 md:flex-row ${reverse ? "md:flex-row-reverse" : ""}`}
-          variants={containerVariants}
+          variants={containerVariants} // for animating the section
           initial="hidden"
           whileInView="show"
           viewport={{ amount: 0.6 }}
@@ -55,11 +58,11 @@ function Slide({
             alt={imgAlt}
             className="mb-8 h-72 w-72 rounded-2xl object-cover shadow-xl
                    md:mb-0 md:mr-12 md:h-80 md:w-80"
-            variants={itemVariants}
+            variants={itemVariants} // for animating the image
         />
         <motion.div
             className="max-w-xl space-y-4 text-center md:text-left"
-            variants={itemVariants}
+            variants={itemVariants} // for animating the text
         >
           <h2 className="text-4xl font-bold">{title}</h2>
           <p className="text-lg text-gray-700">{description}</p>

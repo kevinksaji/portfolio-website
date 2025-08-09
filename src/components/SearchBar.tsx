@@ -4,12 +4,12 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import { Input } from "./ui/input";
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
-import { Button } from "./ui/button";
 
+// socials array of objects with href, label, and src for links tagged to social media icons
 const socials = [
-  {href: "https://www.linkedin.com/feed/", label: "LinkedIn", src: "linkedin.png"},
+  {href: "https://www.linkedin.com/in/kevin-saji/", label: "LinkedIn", src: "linkedin.png"},
   {href: "https://github.com/kevinksaji?tab=repositories/", label: "GitHub", src: "github.png"},
-  {href: "https://www.instagram.com/", label: "Instagram", src: "instagram.png"},
+  {href: "https://www.instagram.com/kevinksaji/", label: "Instagram", src: "instagram.png"},
   {href: "https://telegram.org/", label: "Telegram", src: "telegram.png"},
 ];
 
@@ -23,25 +23,35 @@ export default function SearchBar() {
     router.push(`/chat?q=${encodeURIComponent(query.trim())}`);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && query.trim()) {
+      onSearch();
+    }
+  };
+
   return (
     <div className="flex flex-col items-center w-full space-y-6">
       {/* Search Container */}
-      <div className="flex items-center space-x-2 w-full">
+      <div className="relative w-full">
         <Input
             type="text"
-            className="px-3 py-2 w-full"
-            placeholder="Search..."
+            className="px-6 py-6 w-full border-black text-black placeholder:text-gray-500 focus:border-black focus:ring-black transition-colors pr-16"
+            placeholder="Ask me anything..."
             value={query}
-            onChange={(e) => setQuery(e.target.value)} // updates the query state on input change
-            onKeyDown={(e) => e.key === "Enter" && onSearch()} // allows search on either search button click or enter key press
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={handleKeyDown}
         />
-        <Button className="px-3 py-2" onClick={onSearch}>
+        <button 
+          className="absolute right-2 top-1/2 transform -translate-y-1/2 p-3 text-black hover:text-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          onClick={onSearch} 
+          disabled={!query.trim()}
+        >
           {/* Search Icon */}
           <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
-              strokeWidth={1.5}
+              strokeWidth={2}
               stroke="currentColor"
               className="w-6 h-6"
           >
@@ -51,7 +61,7 @@ export default function SearchBar() {
                 d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
             />
           </svg>
-        </Button>
+        </button>
       </div>
 
       {/* Social Icons */}

@@ -1,4 +1,4 @@
-import { SimpleIcon, siSupabase, siPython, siC, siVuedotjs, siJavascript, siAngular, siAmazonwebservices, siSpringboot, siGithub, siFlask, siVercel, siHeroku, siTelegram, siMysql, siPostgresql, siNotion, siSpring, siMamp, siWinamp} from 'simple-icons';
+import { SimpleIcon, siSupabase, siPython, siC, siVuedotjs, siJavascript, siAngular, siAmazonwebservices, siSpringboot, siGithub, siFlask, siVercel, siHeroku, siTelegram, siMysql, siPostgresql, siNotion, siSpring, siMamp} from 'simple-icons';
 
 export type TechTool = {
   name: string;

@@ -1,16 +1,3 @@
-import { siPython } from "simple-icons";
-import { siAmazonwebservices } from "simple-icons";
-import { siSupabase } from "simple-icons";
-import { siReact} from "simple-icons";
-import { siFlask } from "simple-icons";
-import { siAngular } from "simple-icons";
-import { siSpringboot } from "simple-icons";
-import { siNodedotjs } from "simple-icons";
-import { siC } from "simple-icons";
-import { siVuedotjs } from "simple-icons";
-import { siNotion } from "simple-icons";
-import { siPostgresql } from "simple-icons";
-import { siMysql } from "simple-icons";
 import { techTools } from "./techIcons";
 
 
