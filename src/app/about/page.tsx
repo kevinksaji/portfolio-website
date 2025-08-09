@@ -20,7 +20,7 @@ const Heading = () => (
         className="
   fixed left-1/2 top-16 sm:top-20 md:top-24
   -translate-x-1/2 z-50
-  text-4xl md:text-5xl font-bold text-gray-900
+  text-4xl md:text-5xl font-bold text-foreground
 "
         transition={{ type: "spring", stiffness: 120, damping: 14 }}
     >
@@ -56,16 +56,18 @@ function Slide({
         <motion.img
             src={imgSrc}
             alt={imgAlt}
-            className="mb-8 h-72 w-72 rounded-2xl object-cover shadow-xl
-                   md:mb-0 md:mr-12 md:h-80 md:w-80"
+            className={`mb-8 h-72 w-72 rounded-2xl object-cover shadow-xl
+                   md:mb-0 md:h-80 md:w-80 ${
+                     reverse ? "md:ml-12" : "md:mr-12"
+                   }`}
             variants={itemVariants} // for animating the image
         />
         <motion.div
             className="max-w-xl space-y-4 text-center md:text-left"
             variants={itemVariants} // for animating the text
         >
-          <h2 className="text-4xl font-bold">{title}</h2>
-          <p className="text-lg text-gray-700">{description}</p>
+          <h2 className="text-4xl font-bold text-foreground">{title}</h2>
+          <p className="text-lg text-muted-foreground">{description}</p>
         </motion.div>
       </motion.section>
   )
@@ -79,7 +81,7 @@ export default function About() {
       imgSrc: "/kevin-big.jpeg",
       imgAlt: "Portrait of Kevin",
       title: "Hello, I'm Kevin 👋",
-      description: "I am a third-year Computer Science student at SMU specialising in AI and product development.",
+      description: "I am a Computer Science student at SMU specialising in AI and product development.",
       reverse: false
     },
     {
@@ -93,7 +95,7 @@ export default function About() {
 
   return (
       <main
-          className="h-screen snap-y snap-mandatory overflow-y-scroll bg-white/50"
+          className="h-screen snap-y snap-mandatory overflow-y-scroll bg-background/50"
           style={{ scrollbarWidth: "none" }}
       >
         {/* Chrome / Edge scrollbar hide */}

@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
+import ThemeToggle from "./ThemeToggle"
 
 export default function Navbar() {
   const pathname = usePathname()
@@ -18,7 +19,8 @@ export default function Navbar() {
     <header
       className="
         fixed top-0 left-0 z-[100] flex h-14 w-full
-        items-center justify-between bg-white/80 backdrop-blur
+        items-center justify-between bg-background/80 backdrop-blur
+        text-foreground
         px-6 shadow-sm
       "
     >
@@ -27,26 +29,33 @@ export default function Navbar() {
         KS
       </Link>
 
-      {/* right-hand button changes depending on route */}
-      {isHome ? (
-        <Link
-          href="/kevinksaji_resume.pdf"          /* ⬅ replace with your real file */
-          download
-
-        >
-          <Button size="sm" variant="outline" className="
-      border-black text-black         /* normal state */
-      hover:bg-black hover:text-white /* hover state  */
-    "
+      {/* right side - theme toggle and navigation */}
+      <div className="flex items-center space-x-4">
+        {/* theme toggle */}
+        <ThemeToggle />
+        
+        {/* right-hand button changes depending on route */}
+        {isHome ? (
+          <Link
+            href="/kevinksaji_resume.pdf"
+            download
           >
-            Download Résumé
+            <Button size="sm" variant="outline" className="
+              border-border text-foreground
+              hover:bg-foreground hover:text-background
+            ">
+              Download Résumé
+            </Button>
+          </Link>
+        ) : (
+          <Button size="sm" variant="outline" onClick={onBack} className="
+            border-border text-foreground
+            hover:bg-foreground hover:text-background
+          ">
+            ← Back
           </Button>
-        </Link>
-      ) : (
-        <Button size="sm" variant="outline" onClick={onBack}>
-          ← Back
-        </Button>
-      )}
+        )}
+      </div>
     </header>
   )
 }

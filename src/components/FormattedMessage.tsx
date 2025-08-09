@@ -50,15 +50,15 @@ export default function FormattedMessage({ content }: FormattedMessageProps) {
         const displayLines = shouldTruncate ? codeLines.slice(0, 10) : codeLines;
         
         elements.push(
-          <div key={`code-${codeBlockIndex}`} className="bg-gray-900 text-gray-100 rounded-lg p-3 my-2 overflow-x-auto border border-gray-700">
+          <div key={`code-${codeBlockIndex}`} className="bg-card text-foreground rounded-lg p-3 my-2 overflow-x-auto border border-border">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-xs text-gray-300 uppercase font-mono">
+              <span className="text-xs text-gray-300 dark:text-gray-400 uppercase font-mono">
                 {language || 'text'}
               </span>
               {codeLines.length > 10 && (
                 <button 
                   onClick={() => toggleCodeBlock(codeBlockIndex)}
-                  className="text-xs text-gray-300 hover:text-white px-2 py-1 rounded hover:bg-gray-700 transition-colors"
+                  className="text-xs text-gray-300 dark:text-gray-400 hover:text-white dark:hover:text-gray-200 px-2 py-1 rounded hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors"
                 >
                   {isExpanded ? 'Show Less' : 'Show More'}
                 </button>
@@ -72,7 +72,7 @@ export default function FormattedMessage({ content }: FormattedMessageProps) {
                   </div>
                 ))}
                 {shouldTruncate && (
-                  <div className="text-gray-400 italic">
+                  <div className="text-gray-400 dark:text-gray-500 italic">
                     ... and {codeLines.length - 10} more lines
                   </div>
                 )}
@@ -125,7 +125,7 @@ export default function FormattedMessage({ content }: FormattedMessageProps) {
             partIndex % 2 === 0 ? (
               <span key={partIndex}>{part}</span>
             ) : (
-              <code key={partIndex} className="bg-gray-100 text-gray-800 px-1.5 py-0.5 rounded text-sm font-mono border border-gray-200">
+              <code key={partIndex} className="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-1.5 py-0.5 rounded text-sm font-mono border border-gray-200 dark:border-gray-600">
                 {part}
               </code>
             )

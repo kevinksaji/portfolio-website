@@ -13,7 +13,7 @@ const Heading = () => (
     className="
       fixed left-1/2 top-16 sm:top-20 md:top-24
       -translate-x-1/2 z-50
-      text-4xl md:text-5xl font-bold text-gray-900
+      text-4xl md:text-5xl font-bold text-foreground
     "
     transition={{ type: "spring", stiffness: 120, damping: 14 }}
   >
@@ -27,7 +27,7 @@ const Heading = () => (
 export default function ExperiencePage() {
   return (
     <main
-      className="h-screen snap-y snap-mandatory overflow-y-scroll bg-white/50"
+      className="h-screen snap-y snap-mandatory overflow-y-scroll bg-background/50"
       style={{ scrollbarWidth: "none" }}
     >
       {/* Hide scrollbar in Chromium browsers */}
