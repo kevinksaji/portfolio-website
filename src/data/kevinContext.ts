@@ -29,7 +29,7 @@ export const kevinContext = {
     ],
     
     education: {
-        degree: "Bachelor of Science in Information Systems",
+        degree: "Bachelor of Science (Computer Science)",
         institution: "Singapore Management University (SMU)",
         period: "Graduated"
     },
