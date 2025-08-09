@@ -33,7 +33,7 @@ export default function ChatInput({ onSendAction, disabled = false, placeholder 
                         onChange={(e) => setText(e.target.value)}
                         placeholder={placeholder}
                         disabled={disabled}
-                        className="flex-1 text-base border-0 rounded-xl px-4 py-3 focus:ring-0 focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-0 transition-all bg-background dark:bg-background text-foreground dark:text-background placeholder:text-muted-foreground dark:placeholder:text-muted-foreground shadow-none ring-0"
+                        className="flex-1 text-base border-0 rounded-xl px-4 py-3 focus:ring-0 focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-0 transition-all bg-background dark:bg-background text-foreground dark:text-foreground placeholder:text-muted-foreground dark:placeholder:text-muted-foreground shadow-none ring-0"
                     />
                     <Button
                         type="submit"
