@@ -10,8 +10,8 @@ export const kevinContext = {
     professionalExperience: [
         {
             company: "Accenture",
-            position: "Software Engineer",
-            period: "2023-Present",
+            position: "Software Engineering Intern",
+            period: "2025-Present",
             description: "Full-stack development, cloud technologies, scalable applications"
         },
         {
