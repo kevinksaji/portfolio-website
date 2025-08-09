@@ -24,9 +24,6 @@ export default function ChatWindow({
     const messages = conversation?.messages ?? [];
 
     // Debug logging
-    console.log("ChatWindow messages:", messages);
-    console.log("initialLoading:", initialLoading);
-    console.log("conversation:", conversation);
 
     const sendMessage = async (text: string) => {
         if (!text.trim()) return;
