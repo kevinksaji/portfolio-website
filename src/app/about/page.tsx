@@ -56,8 +56,10 @@ function Slide({
         <motion.img
             src={imgSrc}
             alt={imgAlt}
-            className="mb-8 h-72 w-72 rounded-2xl object-cover shadow-xl
-                   md:mb-0 md:mr-12 md:h-80 md:w-80"
+            className={`mb-8 h-72 w-72 rounded-2xl object-cover shadow-xl
+                   md:mb-0 md:h-80 md:w-80 ${
+                     reverse ? "md:ml-12" : "md:mr-12"
+                   }`}
             variants={itemVariants} // for animating the image
         />
         <motion.div
@@ -79,7 +81,7 @@ export default function About() {
       imgSrc: "/kevin-big.jpeg",
       imgAlt: "Portrait of Kevin",
       title: "Hello, I'm Kevin 👋",
-      description: "I am a third-year Computer Science student at SMU specialising in AI and product development.",
+      description: "I am a Computer Science student at SMU specialising in AI and product development.",
       reverse: false
     },
     {
