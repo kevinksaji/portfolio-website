@@ -3,7 +3,7 @@ export default function ProfileImage() {
     <img
       src="kevin-big.jpeg"
       alt="Kevin Saji"
-      className="w-64 h-64 rounded-full border-2 border-gray-300 shadow-md"
+      className="w-64 h-64 rounded-full border-2 border-border shadow-md"
     />
   );
 }

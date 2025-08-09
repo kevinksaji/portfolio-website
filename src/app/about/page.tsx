@@ -20,7 +20,7 @@ const Heading = () => (
         className="
   fixed left-1/2 top-16 sm:top-20 md:top-24
   -translate-x-1/2 z-50
-  text-4xl md:text-5xl font-bold text-gray-900
+  text-4xl md:text-5xl font-bold text-foreground
 "
         transition={{ type: "spring", stiffness: 120, damping: 14 }}
     >
@@ -64,8 +64,8 @@ function Slide({
             className="max-w-xl space-y-4 text-center md:text-left"
             variants={itemVariants} // for animating the text
         >
-          <h2 className="text-4xl font-bold">{title}</h2>
-          <p className="text-lg text-gray-700">{description}</p>
+          <h2 className="text-4xl font-bold text-foreground">{title}</h2>
+          <p className="text-lg text-muted-foreground">{description}</p>
         </motion.div>
       </motion.section>
   )
@@ -93,7 +93,7 @@ export default function About() {
 
   return (
       <main
-          className="h-screen snap-y snap-mandatory overflow-y-scroll bg-white/50"
+          className="h-screen snap-y snap-mandatory overflow-y-scroll bg-background/50"
           style={{ scrollbarWidth: "none" }}
       >
         {/* Chrome / Edge scrollbar hide */}

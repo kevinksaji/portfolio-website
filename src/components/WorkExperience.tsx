@@ -65,18 +65,18 @@ export default function WorkExperience({
         className="max-w-xl text-center md:text-left space-y-3"
         variants={itemVariants}
       >
-        <motion.h2 className="text-3xl font-bold" variants={itemVariants}>
+        <motion.h2 className="text-3xl font-bold text-foreground" variants={itemVariants}>
           {role}
         </motion.h2>
-        <motion.h3 className="text-xl font-semibold" variants={itemVariants}>
+        <motion.h3 className="text-xl font-semibold text-foreground" variants={itemVariants}>
           {company}
         </motion.h3>
-        <motion.p className="text-sm text-gray-500" variants={itemVariants}>
+        <motion.p className="text-sm text-muted-foreground" variants={itemVariants}>
           {location} • {startDate} – {endDate}
         </motion.p>
 
         <motion.ul
-          className="list-disc list-inside text-gray-70 text-sm space-y-1"
+          className="list-disc list-inside text-muted-foreground text-sm space-y-1"
           variants={containerVariants}
         >
           {description.map((item, i) => (

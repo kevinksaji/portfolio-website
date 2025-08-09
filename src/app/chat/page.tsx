@@ -85,8 +85,8 @@ function ChatPageContent() {
     const activeConv = conversations.find((conv) => conv.id === activeId) ?? null;
 
     return (
-        <main className="h-screen w-full overflow-hidden bg-gray-50">
-            <div className="flex h-full w-full overflow-hidden pt-14">
+        <main className="h-screen w-full flex flex-col bg-background pt-14">
+            <div className="flex h-full w-full overflow-hidden">
                 <div className="w-full h-full">
                     <ChatWindow
                         conversation={activeConv}
