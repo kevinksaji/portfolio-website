@@ -1,21 +1,19 @@
 "use client"
-
 import { motion } from "framer-motion"
 
-/* ---------- variants copied from Experience ---------- */
-const containerVariants = {
+const containerVariants = { // for animating each section of the page
   hidden: {},
   show: { transition: { staggerChildren: 0.3 } },
 }
-const itemVariants = {
+const itemVariants = { 
   hidden: { opacity: 0, y: 10 },
-  show: { opacity: 1, y: 0, transition: { ease: "easeOut", duration: 0.3 } },
+  show: { opacity: 1, y: 0, transition: { ease: "easeOut" as const, duration: 0.3 } },
 }
 
-/* ---------- heading that morphs from button ---------- */
+// heading component that morphs from the button on click of the About button from homnepage
 const Heading = () => (
     <motion.h1
-        layoutId="about-title"                               /* 👈 same ID */
+        layoutId="about-title"
         className="
   fixed left-1/2 top-16 sm:top-20 md:top-24
   -translate-x-1/2 z-50
@@ -27,7 +25,7 @@ const Heading = () => (
     </motion.h1>
 )
 
-/* ---------- reusable full-screen slide --------------- */
+// reusable full-screen slide component
 type SlideProps = {
   imgSrc: string
   imgAlt: string
@@ -71,6 +69,25 @@ function Slide({
 }
 
 export default function About() {
+  
+  // define slides data
+  const slides = [
+    {
+      imgSrc: "/kevin-big.jpeg",
+      imgAlt: "Portrait of Kevin",
+      title: "Hello, I'm Kevin 👋",
+      description: "I am a third-year Computer Science student at SMU specialising in AI and product development.",
+      reverse: false
+    },
+    {
+      imgSrc: "/kevin-floorball.jpg",
+      imgAlt: "Kevin playing hockey",
+      title: "Off the screen 🏑",
+      description: "Outside of coding I love staying active – you'll often find me playing hockey or trying new sports with friends.",
+      reverse: true
+    }
+  ]
+
   return (
       <main
           className="h-screen snap-y snap-mandatory overflow-y-scroll bg-white/50"
@@ -86,22 +103,17 @@ export default function About() {
         {/* morphing heading */}
         <Heading />
 
-        {/* slide #1 */}
-        <Slide
-            imgSrc="/kevin-big.jpeg"
-            imgAlt="Portrait of Kevin"
-            title="Hello, I’m Kevin 👋"
-            description="I am a third-year Computer Science student at SMU specialising in AI and product development."
-        />
-
-        {/* slide #2 */}
-        <Slide
-            imgSrc="/kevin-floorball.jpg"
-            imgAlt="Kevin playing hockey"
-            title="Off the screen 🏑"
-            description="Outside of coding I love staying active – you’ll often find me playing hockey or trying new sports with friends."
-            reverse
-        />
+        {/* render slides dynamically */}
+        {slides.map((slide, index) => (
+          <Slide
+            key={index}
+            imgSrc={slide.imgSrc}
+            imgAlt={slide.imgAlt}
+            title={slide.title}
+            description={slide.description}
+            reverse={slide.reverse}
+          />
+        ))}
       </main>
   )
 }
