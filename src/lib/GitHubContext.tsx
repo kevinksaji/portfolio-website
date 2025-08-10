@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 
 interface GitHubStats {
   totalCommits: number;
@@ -13,6 +13,25 @@ interface ContributionDay {
   date: string;
 }
 
+interface GitHubRepo {
+  name: string;
+  fork: boolean;
+  permissions?: {
+    push?: boolean;
+    admin?: boolean;
+    maintain?: boolean;
+  };
+}
+
+interface GitHubOrg {
+  login: string;
+  type?: string;
+}
+
+interface GitHubUser {
+  followers: number;
+}
+
 interface GitHubContextType {
   stats: GitHubStats;
   contributions: ContributionDay[];
@@ -20,6 +39,24 @@ interface GitHubContextType {
   error: string | null;
   rateLimitInfo: string | null;
   refreshData: () => void;
+}
+
+interface GraphQLResponse {
+  data?: {
+    user?: {
+      contributionsCollection?: {
+        contributionCalendar?: {
+          totalContributions: number;
+          weeks: Array<{
+            contributionDays: ContributionDay[];
+          }>;
+        };
+      };
+    };
+  };
+  errors?: Array<{
+    message: string;
+  }>;
 }
 
 const GitHubContext = createContext<GitHubContextType | undefined>(undefined);
@@ -39,7 +76,7 @@ export function GitHubProvider({ children }: { children: ReactNode }) {
   const [rateLimitInfo, setRateLimitInfo] = useState<string | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  const fetchGitHubStats = async (showLoading = true) => {
+  const fetchGitHubStats = useCallback(async (showLoading = true) => {
     try {
       // Check cache first and show immediately if available
       try {
@@ -94,7 +131,7 @@ export function GitHubProvider({ children }: { children: ReactNode }) {
       // Fetch user data
       const userResponse = await fetch('https://api.github.com/users/kevinksaji', { headers });
       if (!userResponse.ok) throw new Error('Failed to fetch user data');
-      const userData = await userResponse.json();
+      const userData: GitHubUser = await userResponse.json();
       
       // Check rate limit headers
       const remaining = userResponse.headers.get('x-ratelimit-remaining');
@@ -114,18 +151,18 @@ export function GitHubProvider({ children }: { children: ReactNode }) {
       // Fetch personal repositories
       const personalReposResponse = await fetch('https://api.github.com/users/kevinksaji/repos?per_page=100', { headers });
       if (!personalReposResponse.ok) throw new Error('Failed to fetch personal repos');
-      const personalRepos = await personalReposResponse.json();
+      const personalRepos: GitHubRepo[] = await personalReposResponse.json();
       
       // Fetch organization memberships (public endpoint - only shows public orgs)
-      let orgs: any[] = [];
+      let orgs: GitHubOrg[] = [];
       
       // Try public endpoint first
       const publicOrgsResponse = await fetch('https://api.github.com/users/kevinksaji/orgs', { headers });
       if (publicOrgsResponse.ok) {
-        const publicOrgs = await publicOrgsResponse.json();
+        const publicOrgs: GitHubOrg[] = await publicOrgsResponse.json();
         console.log(`\n🏢 Public organizations found: ${publicOrgs.length}`);
         if (publicOrgs.length > 0) {
-          publicOrgs.forEach((org: any) => console.log(`  - ${org.login} (${org.type || 'unknown type'})`));
+          publicOrgs.forEach((org: GitHubOrg) => console.log(`  - ${org.login} (${org.type || 'unknown type'})`));
         }
         orgs = publicOrgs;
       }
@@ -135,10 +172,10 @@ export function GitHubProvider({ children }: { children: ReactNode }) {
         try {
           const authOrgsResponse = await fetch('https://api.github.com/user/orgs', { headers });
           if (authOrgsResponse.ok) {
-            const authOrgs = await authOrgsResponse.json();
+            const authOrgs: GitHubOrg[] = await authOrgsResponse.json();
             console.log(`\n🔐 Authenticated organizations found: ${authOrgs.length}`);
             if (authOrgs.length > 0) {
-              authOrgs.forEach((org: any) => console.log(`  - ${org.login} (${org.type || 'unknown type'})`));
+              authOrgs.forEach((org: GitHubOrg) => console.log(`  - ${org.login} (${org.type || 'unknown type'})`));
             }
             
             // Merge and deduplicate orgs
@@ -166,10 +203,10 @@ export function GitHubProvider({ children }: { children: ReactNode }) {
       
       // Count commits from personal repos (parallel approach)
       console.log(`\n--- Processing personal repos: ${personalRepos.length} repos found ---`);
-      const nonForkedRepos = personalRepos.filter((repo: any) => !repo.fork);
+      const nonForkedRepos = personalRepos.filter((repo: GitHubRepo) => !repo.fork);
       
       if (nonForkedRepos.length > 0) {
-        const personalRepoPromises = nonForkedRepos.map(async (repo: any) => {
+        const personalRepoPromises = nonForkedRepos.map(async (repo: GitHubRepo) => {
           try {
             const commitsResponse = await fetch(`https://api.github.com/repos/kevinksaji/${repo.name}/commits?per_page=1`, { headers });
             if (commitsResponse.ok) {
@@ -213,11 +250,11 @@ export function GitHubProvider({ children }: { children: ReactNode }) {
               console.log(`❌ Failed to fetch repos for org ${org.login}: ${orgReposResponse.status}`);
               return { commits: 0, repos: 0 };
             }
-            const orgRepos = await orgReposResponse.json();
+            const orgRepos: GitHubRepo[] = await orgReposResponse.json();
             console.log(`📁 Found ${orgRepos.length} repos in ${org.login}`);
             
             // Filter repos where user has access
-            const accessibleRepos = orgRepos.filter((repo: any) => 
+            const accessibleRepos = orgRepos.filter((repo: GitHubRepo) => 
               repo.permissions && (repo.permissions.push || repo.permissions.admin || repo.permissions.maintain)
             );
             console.log(`🔑 User has access to ${accessibleRepos.length} repos in ${org.login}`);
@@ -227,7 +264,7 @@ export function GitHubProvider({ children }: { children: ReactNode }) {
             }
             
             // Fetch commit counts for all accessible repos in parallel
-            const repoPromises = accessibleRepos.map(async (repo: any) => {
+            const repoPromises = accessibleRepos.map(async (repo: GitHubRepo) => {
               try {
                 const commitsResponse = await fetch(`https://api.github.com/repos/${org.login}/${repo.name}/commits?per_page=1`, { headers });
                 if (commitsResponse.ok) {
@@ -269,25 +306,25 @@ export function GitHubProvider({ children }: { children: ReactNode }) {
         
         const orgResults = await Promise.all(orgPromises);
         const totalOrgCommits = orgResults.reduce((sum, result) => sum + result.commits, 0);
-        const totalOrgRepos = orgResults.reduce((sum, result) => sum + result.repos, 0);
-        
-        totalCommits += totalOrgCommits;
-        totalRepos += totalOrgRepos;
-      }
-      
-      console.log(`\n📊 FINAL SUMMARY:`);
-      console.log(`✅ Total commits: ${totalCommits.toLocaleString()}`);
-      console.log(`✅ Total repos: ${totalRepos}`);
-      console.log(`✅ Personal repos processed: ${personalRepos.filter((r: any) => !r.fork).length}`);
-      console.log(`✅ Organizations processed: ${orgs.length}`);
-      
-      const newStats = {
-        totalCommits,
-        publicRepos: totalRepos,
-        followers: userData.followers
-      };
-      
-      setStats(newStats);
+                const totalOrgRepos = orgResults.reduce((sum, result) => sum + result.repos, 0);
+                
+                totalCommits += totalOrgCommits;
+                totalRepos += totalOrgRepos;
+              }
+              
+              console.log(`\n📊 FINAL SUMMARY:`);
+              console.log(`✅ Total commits: ${totalCommits.toLocaleString()}`);
+              console.log(`✅ Total repos: ${totalRepos}`);
+              console.log(`✅ Personal repos processed: ${personalRepos.filter((r: GitHubRepo) => !r.fork).length}`);
+              console.log(`✅ Organizations processed: ${orgs.length}`);
+              
+              const newStats = {
+                totalCommits,
+                publicRepos: totalRepos,
+                followers: userData.followers
+              };
+              
+              setStats(newStats);
       
       // Fetch contributions using GraphQL
       if (token) {
@@ -320,7 +357,7 @@ export function GitHubProvider({ children }: { children: ReactNode }) {
           });
           
           if (contributionsResponse.ok) {
-            const data = await contributionsResponse.json();
+            const data: GraphQLResponse = await contributionsResponse.json();
             console.log('GraphQL Response:', data);
             
             if (data.errors) {
@@ -331,7 +368,7 @@ export function GitHubProvider({ children }: { children: ReactNode }) {
             if (data.data?.user?.contributionsCollection?.contributionCalendar?.weeks) {
               const allContributions: ContributionDay[] = [];
               
-              data.data.user.contributionsCollection.contributionCalendar.weeks.forEach((week: any) => {
+              data.data.user.contributionsCollection.contributionCalendar.weeks.forEach((week) => {
                 week.contributionDays.forEach((day: ContributionDay) => {
                   allContributions.push(day);
                 });
@@ -374,14 +411,14 @@ export function GitHubProvider({ children }: { children: ReactNode }) {
       
       setLoading(false);
     }
-  };
+  }, [contributions.length]); // Added contributions.length to dependency array
 
   useEffect(() => {
     if (!isInitialized) {
       fetchGitHubStats(true);
       setIsInitialized(true);
     }
-  }, [isInitialized]);
+  }, [isInitialized, fetchGitHubStats]); // Added fetchGitHubStats to dependency array
 
   const refreshData = () => {
     fetchGitHubStats(true);

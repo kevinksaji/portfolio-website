@@ -10,7 +10,6 @@ type WorkExperienceProps = {
   startDate: string;
   endDate: string;
   description: string[];
-  logo: string;
   tools: TechTool[];
 };
 
@@ -21,7 +20,6 @@ export default function WorkExperience({
   startDate,
   endDate,
   description,
-  logo,
   tools,
 }: WorkExperienceProps) {
   const [currentTechIndex, setCurrentTechIndex] = useState(0);

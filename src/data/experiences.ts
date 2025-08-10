@@ -13,7 +13,6 @@ const experiences = [
       "Insight into the complete software development lifecycle, from design to deployment",
       "Exposure to industry-standard tools and methodologies for software development and deployment"
     ],
-    logo: "/accenture.png",
     tools: [techTools.github, techTools.spring, techTools.aws, techTools.springboot, techTools.angular, techTools.python],
   },
   {
@@ -26,7 +25,6 @@ const experiences = [
       "Designed and developed a Telegram Mini App for anonymous direct messaging utilising Python, Vue.js and Supabase",
       "Developed the app for the SMU Confess platform for anonymous interactions between over 2000+ students",
     ],
-    logo: "/truly community.jpeg",
     tools: [techTools.vue, techTools.python, techTools.supabase, techTools.flask, techTools.vercel, techTools.heroku, techTools.telegram, techTools.notion],
   },
   {
@@ -39,7 +37,6 @@ const experiences = [
       "Course covered concepts in data management, database modeling, and logical design, progressing to advanced SQL operations",
       "Mentored 45 students and managed class administration and software set up, offering academic guidance to those in need",
     ],
-    logo: "/smu.jpg",
     tools: [techTools.mysql, techTools.mamp],
   },
 ];
