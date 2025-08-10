@@ -6,7 +6,7 @@ import GreetingText from "@/components/GreetingText";
 import ChatInput from "@/components/ChatInput";
 import LeetCodeStats from "@/components/LeetCodeStats";
 import GitHubStats from "@/components/GitHubStats";
-import VisitorsCount from "@/components/VisitorsCount";
+import ProjectsDeployed from "@/components/ProjectsDeployed";
 
 export default function Home() {
   const router = useRouter();
@@ -22,10 +22,10 @@ export default function Home() {
     <main className="h-screen w-full flex flex-col items-center px-4 py-6 justify-center overflow-hidden bg-background">
       <div className="flex flex-col items-center justify-center text-center gap-16 w-full max-w-4xl mx-auto">
         <div className="flex justify-center w-full gap-6">
-          <div className="flex flex-col gap-6">
-            <LeetCodeStats />
-            <VisitorsCount />
-          </div>
+                          <div className="flex flex-col gap-6">
+                  <LeetCodeStats />
+                  <ProjectsDeployed />
+                </div>
           <GitHubStats />
         </div>
         <div className="flex flex-col items-center justify-center text-center gap-4">

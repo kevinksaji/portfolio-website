@@ -326,11 +326,11 @@ export default function GitHubStats() {
   }, [])
 
   const getContributionColor = (count: number) => {
-    if (count === 0) return 'bg-gray-200 dark:bg-gray-700'
-    if (count <= 3) return 'bg-emerald-200 dark:bg-emerald-800'
-    if (count <= 6) return 'bg-emerald-400 dark:bg-emerald-600'
-    if (count <= 9) return 'bg-emerald-600 dark:bg-emerald-400'
-    return 'bg-emerald-800 dark:bg-emerald-200'
+    if (count === 0) return 'bg-gray-300 dark:bg-gray-600'
+    if (count <= 3) return 'bg-emerald-200'
+    if (count <= 6) return 'bg-emerald-400'
+    if (count <= 9) return 'bg-emerald-600'
+    return 'bg-emerald-800'
   }
 
   if (loading) {
@@ -426,11 +426,11 @@ export default function GitHubStats() {
               <div className="flex justify-center items-center gap-3 text-xs text-muted-foreground">
                 <span>Less</span>
                 <div className="flex gap-1">
-                  <div className="w-1.5 h-1.5 rounded-sm bg-gray-200 dark:bg-gray-700"></div>
-                  <div className="w-1.5 h-1.5 rounded-sm bg-emerald-200 dark:bg-emerald-800"></div>
-                  <div className="w-1.5 h-1.5 rounded-sm bg-emerald-400 dark:bg-emerald-600"></div>
-                  <div className="w-1.5 h-1.5 rounded-sm bg-emerald-600 dark:bg-emerald-400"></div>
-                  <div className="w-1.5 h-1.5 rounded-sm bg-emerald-800 dark:bg-emerald-200"></div>
+                  <div className="w-1.5 h-1.5 rounded-sm bg-gray-300 dark:bg-gray-600"></div>
+                  <div className="w-1.5 h-1.5 rounded-sm bg-emerald-200"></div>
+                  <div className="w-1.5 h-1.5 rounded-sm bg-emerald-400"></div>
+                  <div className="w-1.5 h-1.5 rounded-sm bg-emerald-600"></div>
+                  <div className="w-1.5 h-1.5 rounded-sm bg-emerald-800"></div>
                 </div>
                 <span>More</span>
               </div>
