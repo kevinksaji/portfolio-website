@@ -62,8 +62,8 @@ export const resumeData: ResumeSection[] = [
     },
     {
     name: "LANGUAGES",
-    content: "English (Fluent), Malayalam (Native), Mandarin (Basic)",
-    keywords: ["English", "Malayalam", "Mandarin", "Languages"]
+    content: "English (Fluent), Malayalam (Native), Hindi (Intermediate)",
+    keywords: ["English", "Malayalam", "Hindi", "Languages"]
     },
     {
     name: "INTERESTS",

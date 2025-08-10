@@ -9,7 +9,7 @@ export async function POST(req: Request) {
     try {
         const {messages} = await req.json();
 
-        // Call DeepSeek helper
+        // call DeepSeek helper
         const answer = await deepSeekChatComplete(messages);
 
         return NextResponse.json({answer});
