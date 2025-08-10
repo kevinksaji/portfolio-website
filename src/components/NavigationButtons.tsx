@@ -21,7 +21,7 @@ export default function NavigationButtons() {
             className="
               my-2 w-full px-6 py-6
               border-border text-foreground
-              hover:bg-foreground hover:text-background
+              hover:bg-foreground hover:text-white
               transition-all duration-300
             "
           >

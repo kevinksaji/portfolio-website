@@ -42,7 +42,7 @@ export default function Navbar() {
           >
             <Button size="sm" variant="outline" className="
               border-border text-foreground
-              hover:bg-foreground hover:text-background
+              hover:bg-foreground hover:text-white
             ">
               Download Résumé
             </Button>
@@ -50,7 +50,7 @@ export default function Navbar() {
         ) : (
           <Button size="sm" variant="outline" onClick={onBack} className="
             border-border text-foreground
-            hover:bg-foreground hover:text-background
+            hover:bg-foreground hover:text-white
           ">
             ← Back
           </Button>
