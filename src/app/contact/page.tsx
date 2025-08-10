@@ -5,7 +5,8 @@ import {
   FaGithub, 
   FaLinkedin, 
   FaInstagram, 
-  FaTelegram 
+  FaTelegram,
+  FaWhatsapp
 } from "react-icons/fa";
 
 const socials = [
@@ -13,13 +14,14 @@ const socials = [
   {href: "https://github.com/kevinksaji?tab=repositories/", label: "GitHub", icon: FaGithub},
   {href: "https://www.instagram.com/kevinksaji/", label: "Instagram", icon: FaInstagram},
   {href: "https://telegram.org/", label: "Telegram", icon: FaTelegram},
+  {href: "https://wa.me/6590879293", label: "Whatsapp", icon: FaWhatsapp},
 ];
 
 const containerVariants = {
   hidden: {},
   show: {
     transition: {
-      staggerChildren: 0.2,
+      staggerChildren: 0,
     },
   },
 };
@@ -76,13 +78,12 @@ export default function Contact() {
                 rel="noopener noreferrer"
                 aria-label={social.label}
                 className="group flex flex-col items-center space-y-3 p-6 rounded-xl bg-card border border-border hover:border-ring hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
-                variants={itemVariants}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center group-hover:bg-foreground transition-colors duration-300">
+                <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center dark:group-hover:bg-foreground transition-colors duration-300">
                   <social.icon 
-                    className="w-8 h-8 text-muted-foreground group-hover:text-background transition-colors duration-300"
+                    className="w-8 h-8 text-muted-foreground group-hover:text-black dark:group-hover:text-black transition-colors duration-300"
                   />
                 </div>
                 <span className="text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors duration-300">
