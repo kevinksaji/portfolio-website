@@ -20,6 +20,43 @@ export const useThemeColors = () => {
     setTheme(initialDarkMode);
   }, []);
 
+  // Listen for theme changes from other components
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const savedTheme = localStorage.getItem("theme");
+      const newDarkMode = savedTheme === "dark";
+      setIsDark(newDarkMode);
+      setTheme(newDarkMode);
+    };
+
+    const handleClassChange = () => {
+      const isDarkMode = document.documentElement.classList.contains('dark');
+      setIsDark(isDarkMode);
+    };
+
+    // Listen for localStorage changes
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Listen for class changes on the document
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+          handleClassChange();
+        }
+      });
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class']
+    });
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      observer.disconnect();
+    };
+  }, []);
+
   // Function to toggle theme
   const toggleTheme = () => {
     const newDarkMode = !isDark;
@@ -32,6 +69,7 @@ export const useThemeColors = () => {
       root.classList.remove('dark');
     }
     
+    localStorage.setItem("theme", newDarkMode ? "dark" : "light");
     applyThemeColors(newDarkMode);
   };
 
@@ -46,6 +84,7 @@ export const useThemeColors = () => {
       root.classList.remove('dark');
     }
     
+    localStorage.setItem("theme", darkMode ? "dark" : "light");
     applyThemeColors(darkMode);
   };
 

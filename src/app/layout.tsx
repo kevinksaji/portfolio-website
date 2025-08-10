@@ -3,6 +3,7 @@ import { Analytics } from "@vercel/analytics/next"
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/NavBar";
+import { GitHubProvider } from "@/lib/GitHubContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,7 +31,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white dark:bg-black text-black dark:text-white transition-colors duration-300`}
       >
         <Navbar/>
-        {children}
+        <GitHubProvider>
+          {children}
+        </GitHubProvider>
         <Analytics />
       </body>
     </html>
