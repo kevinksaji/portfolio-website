@@ -28,7 +28,7 @@ export default function Home() {
     };
   }, []);
 
-  const handleSearch = (text: string) => {
+  const handleSearch = async (text: string) => {
     if (text.trim()) {
       // Redirect to chat page with the search query
       router.push(`/chat?q=${encodeURIComponent(text.trim())}`);
