@@ -96,6 +96,9 @@
     @apply bg-background text-foreground;
     font-family: 'Inter', system-ui, sans-serif;
     transition: background-color 0.3s ease, color 0.3s ease;
+    /* Ensure body doesn't have default margins that could interfere */
+    margin: 0;
+    padding: 0;
   }
   
   /* Ensure all elements inherit smooth transitions */
@@ -104,6 +107,12 @@
   }
   
   /* Removed problematic global hover rules that were forcing color changes */
+  
+  /* Ensure proper spacing for fixed navbar */
+  main {
+    /* Account for fixed navbar height */
+    padding-top: calc(3.5rem + 1rem); /* h-14 (56px) + additional spacing */
+  }
 }
 
 /* Custom utilities */
@@ -142,5 +151,44 @@
   
   .grid-cols-26 {
     grid-template-columns: repeat(26, minmax(0, 1fr));
+  }
+
+  /* Height-based responsive utilities */
+  .h-screen-dynamic {
+    min-height: 100vh;
+    min-height: 100dvh; /* Dynamic viewport height for mobile */
+  }
+  
+  .h-screen-fallback {
+    min-height: 100vh;
+    min-height: -webkit-fill-available; /* iOS Safari fallback */
+  }
+  
+  /* Viewport height utilities that account for fixed navbar */
+  .h-screen-navbar {
+    min-height: calc(100vh - 3.5rem); /* 100vh - navbar height (h-14) */
+    min-height: calc(100dvh - 3.5rem); /* Dynamic viewport height - navbar height */
+  }
+  
+  .pt-navbar {
+    padding-top: 3.5rem; /* h-14 navbar height */
+  }
+  
+  .pt-navbar-safe {
+    padding-top: calc(3.5rem + 1rem); /* navbar height + safe spacing */
+  }
+  
+  /* Responsive spacing based on viewport height */
+  .space-y-dynamic {
+    --dynamic-spacing: clamp(1rem, 4vh, 2rem);
+    gap: var(--dynamic-spacing);
+  }
+  
+  .mb-dynamic {
+    margin-bottom: clamp(1rem, 3vh, 1.5rem);
+  }
+  
+  .mt-dynamic {
+    margin-top: clamp(1rem, 3vh, 1.5rem);
   }
 }

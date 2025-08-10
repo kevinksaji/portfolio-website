@@ -66,12 +66,12 @@ export default function TechStack() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="bg-card border border-border rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300"
+      className="bg-card border border-border rounded-xl p-3 sm:p-4 md:p-6 shadow-lg hover:shadow-xl transition-all duration-300"
     >
       <div className="text-center">
-        <h3 className="text-lg font-semibold text-foreground mb-4">Tech Stack</h3>
+        <h3 className="text-sm sm:text-base md:text-lg font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">Tech Stack</h3>
         
-        <div className="flex flex-col items-center justify-center min-h-[120px]">
+        <div className="flex flex-col items-center justify-center min-h-[80px] sm:min-h-[100px] md:min-h-[120px]">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentIndex}
@@ -93,7 +93,7 @@ export default function TechStack() {
                   ease: "easeOut",
                   delay: 0.1
                 }}
-                className={`text-6xl mb-3 ${currentTech.color}`}
+                className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-2 sm:mb-3 ${currentTech.color}`}
               >
                 <currentTech.icon />
               </motion.div>
@@ -106,7 +106,7 @@ export default function TechStack() {
                   duration: 0.4,
                   delay: 0.2
                 }}
-                className="text-sm text-muted-foreground"
+                className="text-xs sm:text-sm text-muted-foreground"
               >
                 {currentTech.name}
               </motion.div>

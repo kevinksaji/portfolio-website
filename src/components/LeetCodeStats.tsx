@@ -49,20 +49,20 @@ export default function LeetCodeStats() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="bg-card border border-border rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300"
+      className="bg-card border border-border rounded-xl p-3 sm:p-4 md:p-6 shadow-lg hover:shadow-xl transition-all duration-300"
     >
       <div className="text-center">
-        <h3 className="text-lg font-semibold text-foreground mb-4">
+        <h3 className="text-sm sm:text-base md:text-lg font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">
           LeetCode
         </h3>
         
-        <div className="space-y-4">
-          <div className="flex items-start justify-center gap-8">
+        <div className="space-y-2 sm:space-y-3 md:space-y-4">
+          <div className="flex items-start justify-center gap-4 sm:gap-6 md:gap-8">
             <div className="text-center">
-              <div className="text-3xl font-bold text-foreground">
+              <div className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground">
                 {stats.totalSolved}
               </div>
-              <div className="text-sm text-muted-foreground">
+              <div className="text-xs sm:text-sm text-muted-foreground">
                 Solved
               </div>
             </div>
@@ -75,12 +75,12 @@ export default function LeetCodeStats() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.5 }}
-                  className="w-16"
+                  className="w-12 sm:w-14 md:w-16"
                 >
-                  <div className={`text-3xl font-bold ${getDifficultyColor(getDifficultyLabel(currentDifficulty))}`}>
+                  <div className={`text-xl sm:text-2xl md:text-3xl font-bold ${getDifficultyColor(getDifficultyLabel(currentDifficulty))}`}>
                     {stats[currentDifficulty as keyof LeetCodeStats]}
                   </div>
-                  <div className="text-sm text-muted-foreground">
+                  <div className="text-xs sm:text-sm text-muted-foreground">
                     {getDifficultyLabel(currentDifficulty)}
                   </div>
                 </motion.div>
