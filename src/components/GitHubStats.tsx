@@ -9,12 +9,6 @@ interface GitHubStats {
   followers: number
 }
 
-interface CachedStats {
-  stats: GitHubStats
-  timestamp: number
-  rateLimitReset: number
-}
-
 interface ContributionDay {
   contributionCount: number
   date: string
@@ -24,14 +18,19 @@ interface ContributionWeek {
   contributionDays: ContributionDay[]
 }
 
-interface ContributionData {
-  user: {
-    contributionsCollection: {
-      contributionCalendar: {
-        totalContributions: number
-        weeks: ContributionWeek[]
-      }
-    }
+interface GitHubOrg {
+  login: string
+  type?: string
+}
+
+interface GitHubRepo {
+  name: string
+  fork: boolean
+  private: boolean
+  permissions?: {
+    push?: boolean
+    admin?: boolean
+    maintain?: boolean
   }
 }
 
@@ -91,7 +90,7 @@ export default function GitHubStats() {
         const personalRepos = await personalReposResponse.json()
         
         // Fetch organization memberships (public endpoint - only shows public orgs)
-        let orgs: any[] = []
+        let orgs: GitHubOrg[] = []
         
         // Try public endpoint first
         const publicOrgsResponse = await fetch('https://api.github.com/users/kevinksaji/orgs', { headers })
@@ -99,7 +98,7 @@ export default function GitHubStats() {
           const publicOrgs = await publicOrgsResponse.json()
           console.log(`\n🏢 Public organizations found: ${publicOrgs.length}`)
           if (publicOrgs.length > 0) {
-            publicOrgs.forEach((org: any) => console.log(`  - ${org.login} (${org.type || 'unknown type'})`))
+            publicOrgs.forEach((org: GitHubOrg) => console.log(`  - ${org.login} (${org.type || 'unknown type'})`))
           }
           orgs = publicOrgs
         }
@@ -112,7 +111,7 @@ export default function GitHubStats() {
               const authOrgs = await authOrgsResponse.json()
               console.log(`\n🔐 Authenticated organizations found: ${authOrgs.length}`)
               if (authOrgs.length > 0) {
-                authOrgs.forEach((org: any) => console.log(`  - ${org.login} (${org.type || 'unknown type'})`))
+                authOrgs.forEach((org: GitHubOrg) => console.log(`  - ${org.login} (${org.type || 'unknown type'})`))
               }
               
               // Merge and deduplicate orgs
@@ -191,7 +190,7 @@ export default function GitHubStats() {
             console.log(`📁 Found ${orgRepos.length} repos in ${org.login}`)
             
             // Filter repos where user has access
-            const accessibleRepos = orgRepos.filter((repo: any) => 
+            const accessibleRepos = orgRepos.filter((repo: GitHubRepo) => 
               repo.permissions && (repo.permissions.push || repo.permissions.admin || repo.permissions.maintain)
             )
             console.log(`🔑 User has access to ${accessibleRepos.length} repos in ${org.login}`)
@@ -236,7 +235,7 @@ export default function GitHubStats() {
         console.log(`\n📊 FINAL SUMMARY:`)
         console.log(`✅ Total commits: ${totalCommits.toLocaleString()}`)
         console.log(`✅ Total repos: ${totalRepos}`)
-        console.log(`✅ Personal repos processed: ${personalRepos.filter((r: any) => !r.fork).length}`)
+        console.log(`✅ Personal repos processed: ${personalRepos.filter((r: GitHubRepo) => !r.fork).length}`)
         console.log(`✅ Organizations processed: ${orgs.length}`)
         
         const newStats = {
@@ -289,8 +288,8 @@ export default function GitHubStats() {
               if (data.data?.user?.contributionsCollection?.contributionCalendar?.weeks) {
                 const allContributions: ContributionDay[] = []
                 
-                data.data.user.contributionsCollection.contributionCalendar.weeks.forEach((week: any) => {
-                  week.contributionDays.forEach((day: any) => {
+                data.data.user.contributionsCollection.contributionCalendar.weeks.forEach((week: ContributionWeek) => {
+                  week.contributionDays.forEach((day: ContributionDay) => {
                     allContributions.push(day)
                   })
                 })

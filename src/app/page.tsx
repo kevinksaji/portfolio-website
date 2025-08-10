@@ -1,7 +1,6 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import ProfileImage from "@/components/ProfileImage";
 import NavigationButtons from "@/components/NavigationButtons";
 import GreetingText from "@/components/GreetingText";
 import ChatInput from "@/components/ChatInput";

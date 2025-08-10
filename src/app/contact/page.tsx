@@ -70,7 +70,7 @@ export default function Contact() {
           variants={itemVariants}
         >
           <div className="grid grid-cols-2 gap-8">
-            {socials.map((social, index) => (
+            {socials.map((social) => (
               <motion.a
                 key={social.href}
                 href={social.href}

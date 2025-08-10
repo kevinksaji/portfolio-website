@@ -11,12 +11,12 @@ interface LeetCodeStats {
 }
 
 export default function LeetCodeStats() {
-  const [stats, setStats] = useState<LeetCodeStats>({
+  const stats: LeetCodeStats = {
     totalSolved: 168,
     easy: 93,
     medium: 73,
     hard: 2
-  })
+  }
   const [currentDifficulty, setCurrentDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy')
 
   useEffect(() => {
@@ -78,7 +78,7 @@ export default function LeetCodeStats() {
                   className="w-16"
                 >
                   <div className={`text-3xl font-bold ${getDifficultyColor(getDifficultyLabel(currentDifficulty))}`}>
-                    {stats[currentDifficulty]}
+                    {stats[currentDifficulty as keyof LeetCodeStats]}
                   </div>
                   <div className="text-sm text-muted-foreground">
                     {getDifficultyLabel(currentDifficulty)}
