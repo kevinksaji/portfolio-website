@@ -13,16 +13,17 @@ const links = [
 
 export default function NavigationButtons() {
   return (
-    <div className="grid w-full grid-cols-2 gap-4">
+    <div className="grid w-full grid-cols-2 gap-2 sm:gap-3 md:gap-4">
       {links.map((link) => (
         <Link key={link.href} href={link.href}>
           <Button
             variant="outline"
             className="
-              my-2 w-full px-6 py-6
+              my-1 sm:my-1.5 md:my-2 w-full px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-6
               border-border text-foreground
               hover:bg-foreground hover:text-white
               transition-all duration-300
+              text-sm sm:text-base
             "
           >
             {link.label === "About" ? (

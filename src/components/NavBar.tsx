@@ -19,9 +19,9 @@ export default function Navbar() {
     <header
       className="
         fixed top-0 left-0 z-[100] flex h-14 w-full
-        items-center justify-between bg-background/80 backdrop-blur
-        text-foreground
-        px-6
+        items-center justify-between bg-background/95 backdrop-blur-md
+        text-foreground border-b border-border/20
+        px-6 shadow-sm
       "
     >
       {/* initials (always visible) */}
