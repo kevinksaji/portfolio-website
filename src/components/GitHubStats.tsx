@@ -23,9 +23,9 @@ export default function GitHubStats() {
         className="bg-card border border-border rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300"
       >
         <div className="text-center">
-          <h3 className="text-lg font-semibold text-foreground mb-4">GitHub</h3>
+          <h3 className="text-lg font-semibold text-foreground mb-6">GitHub</h3>
           
-          <div className="space-y-4">
+          <div className="space-y-6">
             {/* Stats section skeleton - matches exact layout */}
             <div className="flex items-start justify-center gap-6">
               <div className="text-center">
@@ -40,9 +40,9 @@ export default function GitHubStats() {
             </div>
             
             {/* Contribution graph section skeleton - matches exact layout */}
-            <div className="border-t border-border pt-4">
-              <div className="text-center mb-3">
-                <div className="h-4 bg-muted rounded animate-pulse w-32 mx-auto mb-2"></div>
+            <div className="border-t border-border pt-6">
+              <div className="text-center mb-4">
+                <div className="h-4 bg-muted rounded animate-pulse w-32 mx-auto mb-3"></div>
                 <div className="flex justify-center">
                   <div className="grid grid-cols-53 gap-0.5">
                     {Array.from({ length: 365 }).map((_, i) => (
@@ -80,7 +80,7 @@ export default function GitHubStats() {
         className="bg-card border border-border rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300"
       >
         <div className="text-center">
-          <h3 className="text-lg font-semibold text-foreground mb-4">GitHub</h3>
+          <h3 className="text-lg font-semibold text-foreground mb-6">GitHub</h3>
           <div className="text-red-500 text-sm">{error}</div>
         </div>
       </motion.div>
@@ -95,15 +95,15 @@ export default function GitHubStats() {
       className="bg-card border border-border rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300"
     >
       <div className="text-center">
-        <h3 className="text-lg font-semibold text-foreground mb-4">GitHub</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-6">GitHub</h3>
         
         {rateLimitInfo && (
-          <div className="text-xs text-muted-foreground mb-3 bg-muted px-2 py-1 rounded">
+          <div className="text-xs text-muted-foreground mb-4 bg-muted px-2 py-1 rounded">
             {rateLimitInfo}
           </div>
         )}
         
-        <div className="space-y-4">
+        <div className="space-y-6">
           <div className="flex items-start justify-center gap-6">
             <div className="text-center">
               <div className="text-3xl font-bold text-foreground">
@@ -126,9 +126,9 @@ export default function GitHubStats() {
           
           {/* Real GitHub Contribution Graph */}
           {contributions.length > 0 && (
-            <div className="border-t border-border pt-4">
-              <div className="text-center mb-3">
-                <div className="text-sm text-muted-foreground mb-2">Contribution Graph</div>
+            <div className="border-t border-border pt-6">
+              <div className="text-center mb-4">
+                <div className="text-sm text-muted-foreground mb-3">Contribution Graph</div>
                 <div className="flex justify-center">
                   <div className="grid grid-cols-53 gap-0.5">
                     {contributions.map((day, i) => (
