@@ -1,6 +1,6 @@
 "use client";
 
-import {useEffect, useState, Suspense} from "react";
+import {useEffect, useState, Suspense, useRef} from "react";
 import {useSearchParams} from "next/navigation";
 import ChatWindow, {ChatMessageType} from "@/components/ChatWindow";
 
@@ -11,6 +11,7 @@ import ChatWindow, {ChatMessageType} from "@/components/ChatWindow";
 function ChatPageContent() {
     const searchParams = useSearchParams();
     const startQuery = searchParams.get("q");
+    const hasInitialized = useRef(false);
 
     const [messages, setMessages] = useState<ChatMessageType[]>([]);
     const [loading, setLoading] = useState(false);
@@ -48,40 +49,37 @@ function ChatPageContent() {
     };
 
     /**
-     * Processes initial message from URL query parameter.
-     * Initiates conversation when user visits /chat?q=message
-     */
-    const sendInitialMessage = async (message: string) => {
-        const userMessage = {role: "user" as const, content: message};
-        
-        try {
-            const res = await fetch("/api/chat", {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({messages: [userMessage]}),
-            });
-            const data = await res.json();
-            
-            const aiMessage = {role: "assistant" as const, content: data.answer};
-            setMessages([userMessage, aiMessage]);
-        } catch {
-            const errorMessage = {role: "assistant" as const, content: "Sorry, something went wrong."};
-            setMessages([userMessage, errorMessage]);
-        } finally {
-            setInitialLoading(false);
-        }
-    };
-
-    /**
      * Handle URL query parameters on mount.
      * Processes direct links to specific chat conversations.
      */
     useEffect(() => {
-        if (startQuery) {
+        if (startQuery && !hasInitialized.current) {
+            hasInitialized.current = true;
             const userMessage = {role: "user" as const, content: startQuery};
             setMessages([userMessage]);
             setInitialLoading(true);
-            sendInitialMessage(startQuery);
+            
+            // Make API call directly here to avoid double calls
+            const fetchInitialResponse = async () => {
+                try {
+                    const res = await fetch("/api/chat", {
+                        method: "POST",
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify({messages: [userMessage]}),
+                    });
+                    const data = await res.json();
+                    
+                    const aiMessage = {role: "assistant" as const, content: data.answer};
+                    setMessages([userMessage, aiMessage]);
+                } catch {
+                    const errorMessage = {role: "assistant" as const, content: "Sorry, something went wrong."};
+                    setMessages([userMessage, errorMessage]);
+                } finally {
+                    setInitialLoading(false);
+                }
+            };
+            
+            fetchInitialResponse();
         }
     }, [startQuery]);
 
