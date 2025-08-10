@@ -7,6 +7,7 @@ import GreetingText from "@/components/GreetingText";
 import ChatInput from "@/components/ChatInput";
 import LeetCodeStats from "@/components/LeetCodeStats";
 import GitHubStats from "@/components/GitHubStats";
+import ProfilePicture from "@/components/ProfilePicture";
 import TechStack from "@/components/TechStack";
 
 export default function Home() {
@@ -59,6 +60,7 @@ export default function Home() {
             <TechStack />
           </div>
           <GitHubStats />
+          <ProfilePicture />
         </div>
         <div className={`flex flex-col items-center justify-center text-center ${getDynamicSpacing()}`}>
           <GreetingText />
