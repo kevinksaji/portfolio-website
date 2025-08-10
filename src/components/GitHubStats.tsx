@@ -44,7 +44,7 @@ export default function GitHubStats() {
               <div className="text-center mb-2 sm:mb-3 md:mb-4">
                 <div className="h-3 sm:h-4 bg-muted rounded animate-pulse w-24 sm:w-28 md:w-32 mx-auto mb-2 sm:mb-3"></div>
                 <div className="flex justify-center">
-                  <div className="grid grid-cols-53 gap-0.5">
+                  <div className="grid grid-cols-35 gap-0.5">
                     {Array.from({ length: 365 }).map((_, i) => (
                       <div
                         key={i}
@@ -130,7 +130,7 @@ export default function GitHubStats() {
               <div className="text-center mb-2 sm:mb-3 md:mb-4">
                 <div className="text-xs sm:text-sm text-muted-foreground mb-2 sm:mb-3">Contribution Graph</div>
                 <div className="flex justify-center">
-                  <div className="grid grid-cols-53 gap-0.5">
+                  <div className="grid grid-cols-35 gap-0.5">
                     {contributions.map((day, i) => (
                       <div
                         key={i}
