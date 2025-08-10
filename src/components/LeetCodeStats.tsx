@@ -52,7 +52,7 @@ export default function LeetCodeStats() {
       className="bg-card border border-border rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300"
     >
       <div className="text-center">
-        <h3 className="text-lg font-semibold text-muted-foreground mb-4">
+        <h3 className="text-lg font-semibold text-foreground mb-4">
           LeetCode
         </h3>
         

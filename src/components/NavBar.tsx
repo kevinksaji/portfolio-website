@@ -21,7 +21,7 @@ export default function Navbar() {
         fixed top-0 left-0 z-[100] flex h-14 w-full
         items-center justify-between bg-background/80 backdrop-blur
         text-foreground
-        px-6 shadow-sm
+        px-6
       "
     >
       {/* initials (always visible) */}
