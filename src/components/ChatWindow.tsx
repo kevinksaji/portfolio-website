@@ -1,6 +1,6 @@
 "use client";
 
-import {useEffect, useRef} from "react";
+import { useRef, useEffect, useMemo } from "react";
 import ChatInput from "./ChatInput";
 import TypingIndicator from "./TypingIndicator";
 import FormattedMessage from "./FormattedMessage";
@@ -24,7 +24,7 @@ export default function ChatWindow({
     initialLoading,
     onSendMessage,
 }: Props) {
-    const messages = conversation?.messages ?? [];
+    const messages = useMemo(() => conversation?.messages ?? [], [conversation?.messages]);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     // Auto-scroll to bottom when messages or loading states change

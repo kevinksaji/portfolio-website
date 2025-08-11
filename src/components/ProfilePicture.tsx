@@ -2,14 +2,14 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 
 export default function ProfilePicture() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [displayText, setDisplayText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
 
-  const profiles = [
+  const profiles = useMemo(() => [
     {
       image: "/kevin-headshot.jpg",
       alt: "Kevin Saji",
@@ -25,7 +25,7 @@ export default function ProfilePicture() {
       alt: "Kevin Saji - Family",
       title: "Family Guy"
     }
-  ];
+  ], []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -33,31 +33,33 @@ export default function ProfilePicture() {
     }, 4000); // Change every 4 seconds
 
     return () => clearInterval(interval);
+  }, [profiles.length]);
+
+  const typeText = useCallback((title: string) => {
+    setIsTyping(true);
+    setDisplayText("");
+    
+    let charIndex = 0;
+    
+    const typeInterval = setInterval(() => {
+      if (charIndex < title.length) {
+        setDisplayText(title.slice(0, charIndex + 1));
+        charIndex++;
+      } else {
+        setIsTyping(false);
+        clearInterval(typeInterval);
+      }
+    }, 100); // Type each character every 100ms
+
+    return () => clearInterval(typeInterval);
   }, []);
 
   useEffect(() => {
     if (profiles[currentIndex]) {
-      setIsTyping(true);
-      setDisplayText("");
-      
-      const title = profiles[currentIndex].title;
-      let charIndex = 0;
-      
-      const typeInterval = setInterval(() => {
-        if (charIndex < title.length) {
-          setDisplayText(title.slice(0, charIndex + 1));
-          charIndex++;
-        } else {
-          setIsTyping(false);
-          clearInterval(typeInterval);
-        }
-      }, 100); // Type each character every 100ms
-
-      return () => clearInterval(typeInterval);
+      const cleanup = typeText(profiles[currentIndex].title);
+      return cleanup;
     }
-  }, [currentIndex]);
-
-  const currentProfile = profiles[currentIndex];
+  }, [currentIndex, profiles, typeText]);
 
   return (
     <motion.div

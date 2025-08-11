@@ -13,11 +13,13 @@ type ThemeProviderProps = {
 type ThemeProviderState = {
   theme: Theme
   setTheme: (theme: Theme) => void
+  mounted: boolean
 }
 
 const initialState: ThemeProviderState = {
   theme: "system",
   setTheme: () => null,
+  mounted: false,
 }
 
 const ThemeProviderContext = createContext<ThemeProviderState>(initialState)
@@ -37,7 +39,7 @@ export function ThemeProvider({
     let savedTheme: Theme | null = null
     try {
       savedTheme = localStorage.getItem(storageKey) as Theme
-    } catch (error) {
+    } catch {
       console.warn("localStorage not available, using default theme")
     }
 
@@ -75,7 +77,7 @@ export function ThemeProvider({
         try {
           localStorage.setItem(storageKey, newTheme)
           setTheme(newTheme)
-        } catch (error) {
+        } catch {
           console.warn("Could not save theme to localStorage")
           setTheme(newTheme)
         }
