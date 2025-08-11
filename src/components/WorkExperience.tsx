@@ -2,6 +2,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { TechTool } from "@/data/techIcons";
+import { useTheme } from "./ThemeProvider";
 
 type WorkExperienceProps = {
   role: string;
@@ -23,33 +24,8 @@ export default function WorkExperience({
   tools,
 }: WorkExperienceProps) {
   const [currentTechIndex, setCurrentTechIndex] = useState(0);
-  const [isDark, setIsDark] = useState(false);
-
-  // Check theme on mount and listen for changes
-  useEffect(() => {
-    const checkTheme = () => {
-      setIsDark(document.documentElement.classList.contains('dark'));
-    };
-
-    // Check initial theme
-    checkTheme();
-
-    // Listen for theme changes
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-          checkTheme();
-        }
-      });
-    });
-
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['class']
-    });
-
-    return () => observer.disconnect();
-  }, []);
+  const { theme } = useTheme();
+  const isDark = theme === "dark" || (theme === "system" && typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches);
 
   useEffect(() => {
     if (tools && tools.length > 0) {
