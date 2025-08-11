@@ -3,14 +3,25 @@
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import ThemeToggle from "./ThemeToggle"
+import { ThemeToggle } from "./ThemeToggle"
 
 export default function Navbar() {
   const pathname = usePathname()
   const router = useRouter()
 
   const onBack = () => {
-    router.push("/")
+    // Handle different routes intelligently
+    if (pathname.startsWith("/contact/")) {
+      router.push("/contact")
+    } else if (pathname.startsWith("/about")) {
+      router.push("/")
+    } else if (pathname.startsWith("/experience")) {
+      router.push("/")
+    } else if (pathname.startsWith("/blog")) {
+      router.push("/")
+    } else {
+      router.push("/")
+    }
   }
 
   const isHome = pathname === "/"
@@ -42,7 +53,7 @@ export default function Navbar() {
           >
             <Button size="sm" variant="outline" className="
               border-border text-foreground
-              hover:bg-foreground hover:text-white
+              hover:bg-accent hover:text-accent-foreground
             ">
               Download Résumé
             </Button>
@@ -50,7 +61,7 @@ export default function Navbar() {
         ) : (
           <Button size="sm" variant="outline" onClick={onBack} className="
             border-border text-foreground
-            hover:bg-foreground hover:text-white
+            hover:bg-accent hover:text-accent-foreground
           ">
             ← Back
           </Button>

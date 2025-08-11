@@ -98,7 +98,7 @@ export default function About() {
       imgAlt: "Kevin playing hockey",
       title: "Off the screen 🏑",
       description:
-        "Outside of coding I love staying active – you'll often find me playing hockey or trying new sports with friends.",
+        "Outside of coding I love staying active – you'll often find me playing floorball or trying new sports with friends.",
       reverse: true,
     },
   ];
