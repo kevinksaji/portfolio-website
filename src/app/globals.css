@@ -97,7 +97,7 @@
   --accent-foreground: hsl(0 0% 98%);
   --destructive: hsl(0 62.8% 30.6%);
   --destructive-foreground: hsl(0 0% 98%);
-  --border: hsl(0 0% 14.9%);
+  --border: hsl(0 0% 25%);
   --input: hsl(0 0% 14.9%);
   --ring: hsl(0 0% 83.1%);
   --chart-1: hsl(0 0% 98%);
@@ -111,7 +111,7 @@
   --sidebar-primary-foreground: hsl(0 0% 9%);
   --sidebar-accent: hsl(0 0% 14.9%);
   --sidebar-accent-foreground: hsl(0 0% 98%);
-  --sidebar-border: hsl(0 0% 14.9%);
+  --sidebar-border: hsl(0 0% 25%);
   --sidebar-ring: hsl(0 0% 83.1%);
 }
 
@@ -126,6 +126,10 @@
     transition: background-color 0.3s ease, color 0.3s ease;
     margin: 0;
     padding: 0;
+    /* Performance optimizations */
+    text-rendering: optimizeSpeed;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   
   * {
@@ -134,6 +138,16 @@
   
   main {
     padding-top: calc(3.5rem + 1rem);
+  }
+
+  /* Performance optimizations for animations */
+  .animate-bounce {
+    will-change: transform;
+  }
+
+  /* Optimize paint operations */
+  .bg-gradient-to-b {
+    will-change: background-image;
   }
 }
 
@@ -150,6 +164,7 @@
   
   .animate-in {
     animation-fill-mode: both;
+    will-change: opacity, transform;
   }
   
   .slide-in-from-bottom-2 {
@@ -212,5 +227,17 @@
   
   .mt-dynamic {
     margin-top: clamp(1rem, 3vh, 1.5rem);
+  }
+
+  /* Performance utilities */
+  .gpu-accelerated {
+    transform: translateZ(0);
+    will-change: transform;
+  }
+
+  .reduce-motion {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

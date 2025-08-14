@@ -2,7 +2,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { TechTool } from "@/data/techIcons";
-import { useTheme } from "./ThemeProvider";
+import React from "react"; // Added missing import for React
 
 type WorkExperienceProps = {
   role: string;
@@ -24,8 +24,6 @@ export default function WorkExperience({
   tools,
 }: WorkExperienceProps) {
   const [currentTechIndex, setCurrentTechIndex] = useState(0);
-  const { theme } = useTheme();
-  const isDark = theme === "dark" || (theme === "system" && typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches);
 
   useEffect(() => {
     if (tools && tools.length > 0) {
@@ -135,22 +133,11 @@ export default function WorkExperience({
                             ease: "easeOut",
                             delay: 0.1
                           }}
-                          className="text-5xl mb-3"
-                          style={{ 
-                            color: isDark ? '#ffffff' : '#000000'
-                          }}
+                          className="text-5xl mb-3 text-foreground"
                         >
-                          <svg
-                            role="img"
-                            viewBox="0 0 24 24"
-                            width="64"
-                            height="64"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill={isDark ? '#ffffff' : '#000000'}
-                          >
-                            <title>{currentTech.name}</title>
-                            <path d={currentTech.icon.path} />
-                          </svg>
+                          {React.createElement(currentTech.icon, {
+                            className: "w-16 h-16 fill-current"
+                          })}
                         </motion.div>
                         
                         {/* Tech Name */}

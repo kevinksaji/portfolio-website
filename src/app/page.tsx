@@ -1,7 +1,7 @@
-'use client';
+"use client"
 
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useRef, useCallback } from 'react';
 import NavigationButtons from "@/components/NavigationButtons";
 import GreetingText from "@/components/GreetingText";
 import ChatInput from "@/components/ChatInput";
@@ -9,70 +9,111 @@ import LeetCodeStats from "@/components/LeetCodeStats";
 import GitHubStats from "@/components/GitHubStats";
 import ProfilePicture from "@/components/ProfilePicture";
 import TechStack from "@/components/TechStack";
+import { motion } from 'framer-motion';
 
 export default function Home() {
   const router = useRouter();
-  const [viewportHeight, setViewportHeight] = useState(0);
+  const chatSectionRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const updateHeight = () => {
-      setViewportHeight(window.innerHeight);
-    };
-
-    updateHeight();
-    window.addEventListener('resize', updateHeight);
-    window.addEventListener('orientationchange', updateHeight);
-
-    return () => {
-      window.removeEventListener('resize', updateHeight);
-      window.removeEventListener('orientationchange', updateHeight);
-    };
-  }, []);
-
-  const handleSearch = async (text: string) => {
+  const handleSearch = useCallback(async (text: string) => {
     if (text.trim()) {
       // Redirect to chat page with the search query
       router.push(`/chat?q=${encodeURIComponent(text.trim())}`);
     }
-  };
+  }, [router]);
 
-  // Calculate dynamic spacing based on viewport height
-  const getDynamicSpacing = () => {
-    if (viewportHeight < 600) return 'gap-2 mb-2';
-    if (viewportHeight < 800) return 'gap-3 mb-3';
-    if (viewportHeight < 1000) return 'gap-4 mb-4';
-    return 'gap-6 mb-6';
-  };
-
-  const getDynamicMargin = () => {
-    if (viewportHeight < 600) return 'mt-2';
-    if (viewportHeight < 800) return 'mt-3';
-    if (viewportHeight < 1000) return 'mt-4';
-    return 'mt-6';
-  };
+  const scrollToChat = useCallback(() => {
+    chatSectionRef.current?.scrollIntoView({ 
+      behavior: 'smooth',
+      block: 'start'
+    });
+  }, []);
 
   return (
-    <main className="h-screen-navbar w-full flex flex-col items-center px-4 pt-navbar-safe pb-6 justify-center overflow-hidden bg-background">
-      <div className="flex flex-col items-center justify-center text-center w-full max-w-4xl mx-auto h-full">
-        <div className={`flex justify-center w-full gap-4 lg:gap-6 ${getDynamicSpacing()}`}>
-          <div className={`flex flex-col gap-4 lg:gap-6`}>
-            <LeetCodeStats />
-            <TechStack />
+    <div className="h-screen w-full overflow-y-auto scrollbar-hide bg-background snap-y snap-mandatory">
+      {/* Main Hero Section */}
+      <main className="h-screen w-full flex flex-col items-center px-4 pt-navbar-safe pb-6 justify-center bg-background snap-start">
+        <div className="flex flex-col items-center justify-center text-center w-full max-w-4xl mx-auto h-full">
+          <div className="flex justify-center w-full gap-4 lg:gap-6 mb-8">
+            <div className="flex flex-col gap-4 lg:gap-6">
+              <LeetCodeStats />
+              <TechStack />
+            </div>
+            <GitHubStats />
+            <ProfilePicture />
           </div>
-          <GitHubStats />
-          <ProfilePicture />
+          
+          <div className="flex flex-col items-center justify-center text-center mb-8">
+            <GreetingText />
+          </div>
+          
+          <NavigationButtons />
+          
+          {/* Scroll indicator */}
+          <div className="mt-8 animate-bounce">
+            <button
+              onClick={scrollToChat}
+              className="flex flex-col items-center text-muted-foreground hover:text-foreground transition-colors duration-300"
+              aria-label="Scroll to Ask Me Anything section"
+            >
+              <svg 
+                className="w-10 h-10" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  d="M19.5 8.25l-7.5 7.5-7.5-7.5" 
+                />
+              </svg>
+            </button>
+          </div>
         </div>
-        <div className={`flex flex-col items-center justify-center text-center ${getDynamicSpacing()}`}>
-          <GreetingText />
+      </main>
+
+      {/* Chat Section */}
+      <section 
+        ref={chatSectionRef}
+        className="min-h-screen w-full flex flex-col items-center justify-center px-4 bg-gradient-to-b from-background to-muted/20 snap-start"
+      >
+        <div className="text-center max-w-4xl mx-auto">
+          <motion.h1 
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            viewport={{ once: true, margin: "-100px" }}
+            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-8"
+          >
+            Ask Me Anything
+          </motion.h1>
+          
+          <motion.p 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+            viewport={{ once: true, margin: "-100px" }}
+            className="text-lg sm:text-xl md:text-2xl text-muted-foreground mb-12 max-w-2xl mx-auto"
+          >
+            Have questions about my experience, skills, or just want to chat? I&apos;m here to help!
+          </motion.p>
+          
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
+            viewport={{ once: true, margin: "-100px" }}
+            className="w-full max-w-2xl mx-auto"
+          >
+            <ChatInput 
+              onSendAction={handleSearch}
+              placeholder="Ask me anything about Kevin..."
+            />
+          </motion.div>
         </div>
-        <NavigationButtons />
-        <div className={`w-full max-w-2xl ${getDynamicMargin()}`}>
-          <ChatInput 
-            onSendAction={handleSearch}
-            placeholder="Ask me anything about Kevin..."
-          />
-        </div>
-      </div>
-    </main>
+      </section>
+    </div>
   );
 }

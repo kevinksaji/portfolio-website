@@ -1,6 +1,5 @@
 import { techTools } from "./techIcons";
 
-
 const experiences = [
   {
     role: "Software Developer Intern",
@@ -9,11 +8,11 @@ const experiences = [
     startDate: "May 2025",
     endDate: "Present",
     description: [
-      "Hands-on experience with Angular, Java, and Python, enhancing my expertise in full-stack development",
-      "Insight into the complete software development lifecycle, from design to deployment",
-      "Exposure to industry-standard tools and methodologies for software development and deployment"
+      "Developed Spring Batch jobs for batch processing under the Citizen Disbursement IT (CDIT) project",
+      "Configured AWS batch workflows and supported deployments across DEV, SIT, UAT, and production",
+      "Conducted dependency management research and impact analysis for framework version upgrades"
     ],
-    tools: [techTools.github, techTools.spring, techTools.aws, techTools.springboot, techTools.angular, techTools.python],
+    tools: [techTools.github, techTools.java, techTools.aws, techTools.springboot, techTools.angular],
   },
   {
     role: "Web Developer",
