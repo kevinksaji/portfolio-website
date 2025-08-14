@@ -87,7 +87,7 @@ export default function Home() {
             viewport={{ once: true, margin: "-100px" }}
             className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-8"
           >
-            Ask Me Anything
+            Ask away.
           </motion.h1>
           
           <motion.p 
@@ -97,7 +97,7 @@ export default function Home() {
             viewport={{ once: true, margin: "-100px" }}
             className="text-lg sm:text-xl md:text-2xl text-muted-foreground mb-12 max-w-2xl mx-auto"
           >
-            Have questions about my experience, skills, or just want to chat? I&apos;m here to help!
+            Have questions about Kevin's experience, skills, or just want to chat? I&apos;m here to help!
           </motion.p>
           
           <motion.div 
