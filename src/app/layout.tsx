@@ -35,14 +35,14 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://kevinksaji.com",
-    title: "Kevin Saji - Software Engineer",
+    url: "https://kevin-saji.vercel.app",
+    title: "kev.ai",
     description: "Software Engineer passionate about building scalable applications and solving complex problems.",
     siteName: "Kevin Saji Portfolio",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Kevin Saji - Software Engineer",
+    title: "kev.ai",
     description: "Software Engineer passionate about building scalable applications and solving complex problems.",
   },
   other: {
