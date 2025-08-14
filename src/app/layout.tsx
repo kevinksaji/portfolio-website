@@ -32,6 +32,11 @@ export const metadata: Metadata = {
   creator: "Kevin Saji",
   publisher: "Kevin Saji",
   robots: "index, follow",
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/favicon.ico",
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
