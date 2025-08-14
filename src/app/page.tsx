@@ -34,7 +34,7 @@ export default function Home() {
       {/* Main Hero Section */}
       <main className="h-screen w-full flex flex-col items-center px-4 pt-navbar-safe pb-6 justify-center bg-background snap-start">
         <div className="flex flex-col items-center justify-center text-center w-full max-w-4xl mx-auto h-full">
-          <div className="flex justify-center w-full gap-4 lg:gap-6 mb-8">
+          <div className="flex flex-col sm:flex-row justify-center w-full gap-4 lg:gap-6 mb-8">
             <div className="flex flex-col gap-4 lg:gap-6">
               <LeetCodeStats />
               <TechStack />

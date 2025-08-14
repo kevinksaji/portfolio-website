@@ -25,7 +25,7 @@ export const themeColor = [
 ];
 
 export const metadata: Metadata = {
-  title: "Kevin Saji - Software Engineer",
+  title: "kev.ai",
   description: "Software Engineer passionate about building scalable applications and solving complex problems.",
   keywords: ["Software Engineer", "Full Stack Developer", "React", "Next.js", "TypeScript"],
   authors: [{ name: "Kevin Saji" }],
