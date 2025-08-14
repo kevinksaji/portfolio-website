@@ -33,7 +33,7 @@ export default function Home() {
     <div className="h-screen w-full overflow-y-auto scrollbar-hide bg-background snap-y snap-mandatory">
       {/* Main Hero Section */}
       <main className="h-screen w-full flex flex-col items-center px-4 pt-navbar-safe pb-6 justify-center bg-background snap-start">
-        <div className="flex flex-col items-center justify-center text-center w-full max-w-4xl mx-auto h-full">
+        <div className="flex flex-col items-center justify-center text-center w-full max-w-4xl mx-auto min-h-full py-8 mt-40 sm:mt-32 lg:mt-0">
           <div className="flex flex-col sm:flex-row justify-center w-full gap-4 lg:gap-6 mb-8">
             <div className="flex flex-col gap-4 lg:gap-6">
               <LeetCodeStats />
@@ -77,7 +77,7 @@ export default function Home() {
       {/* Chat Section */}
       <section 
         ref={chatSectionRef}
-        className="min-h-screen w-full flex flex-col items-center justify-center px-4 bg-gradient-to-b from-background to-muted/20 snap-start"
+        className="min-h-screen w-full flex flex-col items-center justify-center px-4 bg-gradient-to-b from-background to-muted/20 snap-start snap-margin-top-20"
       >
         <div className="text-center max-w-4xl mx-auto">
           <motion.h1 
@@ -97,7 +97,7 @@ export default function Home() {
             viewport={{ once: true, margin: "-100px" }}
             className="text-lg sm:text-xl md:text-2xl text-muted-foreground mb-12 max-w-2xl mx-auto"
           >
-            Have questions about Kevin's experience, skills, or just want to chat? I&apos;m here to help!
+            Have questions about Kevin&apos;s experience, skills, or just want to chat? I&apos;m here to help!
           </motion.p>
           
           <motion.div 
@@ -109,7 +109,7 @@ export default function Home() {
           >
             <ChatInput 
               onSendAction={handleSearch}
-              placeholder="Ask me anything about Kevin..."
+              placeholder="Ask me anything about Kevin&apos;s..."
             />
           </motion.div>
         </div>
