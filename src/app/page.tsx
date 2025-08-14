@@ -30,9 +30,9 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="h-screen w-full overflow-y-auto scrollbar-hide bg-background snap-y snap-mandatory">
+    <div className="h-screen w-full overflow-y-auto scrollbar-hide bg-background sm:snap-y sm:snap-mandatory">
       {/* Main Hero Section */}
-      <main className="h-screen w-full flex flex-col items-center px-4 pt-navbar-safe pb-6 justify-center bg-background snap-start">
+      <main className="h-screen w-full flex flex-col items-center px-4 pt-navbar-safe pb-6 justify-center bg-background sm:snap-start">
         <div className="flex flex-col items-center justify-center text-center w-full max-w-4xl mx-auto min-h-full py-8 mt-40 sm:mt-32 lg:mt-0">
           <div className="flex flex-col sm:flex-row justify-center w-full gap-4 lg:gap-6 mb-8">
             <div className="flex flex-col gap-4 lg:gap-6">
@@ -77,7 +77,7 @@ export default function Home() {
       {/* Chat Section */}
       <section 
         ref={chatSectionRef}
-        className="min-h-screen w-full flex flex-col items-center justify-center px-4 bg-gradient-to-b from-background to-muted/20 snap-start snap-margin-top-20"
+        className="min-h-screen w-full flex flex-col items-center justify-center px-4 bg-gradient-to-b from-background to-muted/20 sm:snap-start"
       >
         <div className="text-center max-w-4xl mx-auto">
           <motion.h1 
