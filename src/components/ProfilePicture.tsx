@@ -62,17 +62,12 @@ export default function ProfilePicture() {
   }, [currentIndex, profiles, typeText]);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -100 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className="bg-card border border-border rounded-xl p-3 sm:p-4 md:p-6 shadow-lg hover:shadow-xl transition-all duration-300 min-w-[180px] sm:min-w-[220px] md:min-w-[260px]"
-    >
+    <div className="bg-card border border-border rounded-xl p-3 sm:p-4 md:p-6 shadow-lg hover:shadow-xl transition-all duration-300 min-w-[180px] sm:min-w-[220px] md:min-w-[260px]">
       <div className="text-center">
         <h3 className="text-sm sm:text-base md:text-lg font-semibold text-foreground mb-3 sm:mb-4 md:mb-6">Profile</h3>
         
         <div className="flex flex-col items-center justify-center space-y-3 sm:space-y-4 md:space-y-6">
-          <div className="w-48 sm:w-52 md:w-56 h-40 sm:h-44 md:h-48 rounded-2xl overflow-hidden border-2 border-border relative">
+          <div className="w-48 sm:w-52 md:w-56 h-40 sm:h-44 md:h-48 rounded-2xl overflow-hidden relative">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentIndex}
@@ -85,9 +80,13 @@ export default function ProfilePicture() {
                 <Image
                   src={profiles[currentIndex].image}
                   alt={profiles[currentIndex].alt}
-                  width={192}
+                  width={224}
                   height={192}
                   className="w-full h-full object-cover"
+                  priority={currentIndex === 0}
+                  loading={currentIndex === 0 ? "eager" : "lazy"}
+                  sizes="(max-width: 640px) 192px, (max-width: 768px) 208px, 224px"
+                  quality={85}
                 />
               </motion.div>
             </AnimatePresence>
@@ -112,6 +111,6 @@ export default function ProfilePicture() {
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   )
 }

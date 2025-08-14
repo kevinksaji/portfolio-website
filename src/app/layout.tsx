@@ -1,96 +1,111 @@
-import type { Metadata } from "next";
-import { Analytics } from "@vercel/analytics/next"
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/NavBar";
-import { GitHubProvider } from "@/lib/GitHubContext";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { GitHubProvider } from "@/lib/GitHubContext";
+import Navbar from "@/components/NavBar";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({ 
   subsets: ["latin"],
+  display: 'swap',
+  preload: true,
+  fallback: ['system-ui', 'arial'],
+  variable: '--font-inter',
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
+
+export const themeColor = [
+  { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+  { media: "(prefers-color-scheme: dark)", color: "#000000" },
+];
 
 export const metadata: Metadata = {
-  title: "kev.ai",
-  description: "Kevin's Website",
+  title: "Kevin Saji - Software Engineer",
+  description: "Software Engineer passionate about building scalable applications and solving complex problems.",
+  keywords: ["Software Engineer", "Full Stack Developer", "React", "Next.js", "TypeScript"],
+  authors: [{ name: "Kevin Saji" }],
+  creator: "Kevin Saji",
+  publisher: "Kevin Saji",
+  robots: "index, follow",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://kevinksaji.com",
+    title: "Kevin Saji - Software Engineer",
+    description: "Software Engineer passionate about building scalable applications and solving complex problems.",
+    siteName: "Kevin Saji Portfolio",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Kevin Saji - Software Engineer",
+    description: "Software Engineer passionate about building scalable applications and solving complex problems.",
+  },
+  other: {
+    "msapplication-TileColor": "#000000",
+    "apple-mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-status-bar-style": "default",
+  },
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className={inter.variable} suppressHydrationWarning>
       <head>
+        {/* Preload critical resources */}
+        <link rel="preload" href="/kevin-headshot.jpg" as="image" />
+        <link rel="preload" href="/kevin-floorball-homepage.jpg" as="image" />
+        <link rel="preload" href="/kevin-family.jpg" as="image" />
+        
+        {/* DNS prefetch for external resources */}
+        <link rel="dns-prefetch" href="//api.github.com" />
+        <link rel="dns-prefetch" href="//leetcode.com" />
+        
+        {/* Preconnect to external domains */}
+        <link rel="preconnect" href="https://api.github.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://leetcode.com" crossOrigin="anonymous" />
+        
+        {/* Performance meta tags */}
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        
+        {/* Service Worker Registration */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
-              (function() {
-                // Apply theme immediately to prevent any flash
-                var root = document.documentElement;
-                
-                try {
-                  // Get theme from localStorage or default to system preference
-                  var theme = localStorage.getItem('ui-theme');
-                  if (!theme || !['light', 'dark', 'system'].includes(theme)) {
-                    var mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-                    theme = mediaQuery.matches ? 'dark' : 'light';
-                    // Store the detected theme for consistency
-                    try {
-                      localStorage.setItem('ui-theme', theme);
-                    } catch (e) {
-                      // Ignore localStorage errors
-                    }
-                  }
-                  
-                  // Apply theme immediately to prevent flash
-                  root.classList.remove('light', 'dark');
-                  root.classList.add(theme);
-                  root.style.colorScheme = theme;
-                  
-                  // Listen for system theme changes if using system theme
-                  if (theme === 'system') {
-                    var mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-                    var updateTheme = function(e) {
-                      var newTheme = e.matches ? 'dark' : 'light';
-                      root.classList.remove('light', 'dark');
-                      root.classList.add(newTheme);
-                      root.style.colorScheme = newTheme;
-                    };
-                    mediaQuery.addEventListener('change', updateTheme);
-                  }
-                } catch (e) {
-                  // Fallback to light theme if anything fails
-                  root.classList.remove('light', 'dark');
-                  root.classList.add('light');
-                  root.style.colorScheme = 'light';
-                }
-              })();
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js')
+                    .then(function(registration) {
+                      console.log('SW registered: ', registration);
+                    })
+                    .catch(function(registrationError) {
+                      console.log('SW registration failed: ', registrationError);
+                    });
+                });
+              }
             `,
           }}
         />
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground transition-colors duration-300`}
-        suppressHydrationWarning
-      >
+      <body className={`${inter.className} antialiased`}>
         <ThemeProvider
           defaultTheme="system"
           storageKey="ui-theme"
         >
-          <Navbar/>
           <GitHubProvider>
+            <Navbar />
             {children}
           </GitHubProvider>
         </ThemeProvider>
-        <Analytics />
       </body>
     </html>
   );
