@@ -46,6 +46,13 @@ export function ThemeProvider({
     // Set the theme immediately if valid
     if (savedTheme && ["light", "dark", "system"].includes(savedTheme)) {
       setTheme(savedTheme)
+    } else {
+      // If no saved theme, detect system preference immediately
+      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
+        .matches
+        ? "dark"
+        : "light"
+      setTheme(systemTheme)
     }
 
     // Mark as mounted after theme is set
@@ -71,7 +78,7 @@ export function ThemeProvider({
   }, [theme, mounted])
 
   const value = {
-    theme: mounted ? theme : defaultTheme, // Always return default during SSR
+    theme: mounted ? theme : "system", // Return "system" during SSR to prevent mismatch
     setTheme: (newTheme: Theme) => {
       if (mounted && ["light", "dark", "system"].includes(newTheme)) {
         try {
