@@ -30,11 +30,37 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="h-screen w-full overflow-y-auto scrollbar-hide bg-background sm:snap-y sm:snap-mandatory">
+    <div className="min-h-screen w-full bg-background overflow-y-auto" style={{ 
+      scrollbarWidth: 'none',
+      msOverflowStyle: 'none'
+    }}>
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          .overflow-y-auto::-webkit-scrollbar {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+          }
+          .overflow-y-auto::-webkit-scrollbar-track {
+            display: none !important;
+          }
+          .overflow-y-auto::-webkit-scrollbar-thumb {
+            display: none !important;
+          }
+          body::-webkit-scrollbar {
+            display: none !important;
+            width: 0 !important;
+          }
+          html::-webkit-scrollbar {
+            display: none !important;
+            width: 0 !important;
+          }
+        `
+      }} />
       {/* Main Hero Section */}
-      <main className="h-screen w-full flex flex-col items-center px-4 pt-navbar-safe pb-6 justify-center bg-background sm:snap-start">
-        <div className="flex flex-col items-center justify-center text-center w-full max-w-4xl mx-auto min-h-full py-8 mt-40 sm:mt-32 lg:mt-0">
-          <div className="flex flex-col sm:flex-row justify-center w-full gap-4 lg:gap-6 mb-8">
+      <main className="min-h-screen w-full flex flex-col items-center px-4 pt-20 pb-8 justify-start lg:justify-center bg-background">
+        <div className="flex flex-col items-center justify-center text-center w-full max-w-4xl mx-auto py-8 lg:py-0">
+          <div className="flex flex-col sm:flex-row justify-center w-full gap-4 lg:gap-6 mb-12">
             <div className="flex flex-col gap-4 lg:gap-6">
               <LeetCodeStats />
               <TechStack />
@@ -43,14 +69,14 @@ export default function Home() {
             <ProfilePicture />
           </div>
           
-          <div className="flex flex-col items-center justify-center text-center mb-8">
+          <div className="flex flex-col items-center justify-center text-center mb-12">
             <GreetingText />
           </div>
           
           <NavigationButtons />
           
           {/* Scroll indicator */}
-          <div className="mt-8 animate-bounce">
+          <div className="mt-12 animate-bounce">
             <button
               onClick={scrollToChat}
               className="flex flex-col items-center text-muted-foreground hover:text-foreground transition-colors duration-300"
@@ -77,7 +103,7 @@ export default function Home() {
       {/* Chat Section */}
       <section 
         ref={chatSectionRef}
-        className="min-h-screen w-full flex flex-col items-center justify-center px-4 bg-gradient-to-b from-background to-muted/20 sm:snap-start"
+        className="min-h-screen w-full flex flex-col items-center justify-center px-4 bg-gradient-to-b from-background to-muted/20"
       >
         <div className="text-center max-w-4xl mx-auto">
           <motion.h1 

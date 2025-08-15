@@ -25,6 +25,18 @@ export default function Navbar() {
   }
 
   const isHome = pathname === "/"
+  
+  // Get page title based on current route
+  const getPageTitle = () => {
+    if (pathname.startsWith("/about")) return "About"
+    if (pathname.startsWith("/experience")) return "Experiences"
+    if (pathname.startsWith("/blog")) return "Blog"
+    if (pathname.startsWith("/contact")) return "Contact"
+    if (pathname.startsWith("/chat")) return "Chat"
+    return ""
+  }
+
+  const pageTitle = getPageTitle()
 
   return (
     <header
@@ -39,6 +51,15 @@ export default function Navbar() {
       <Link href="/" className="text-lg font-bold tracking-wide">
         KS
       </Link>
+
+      {/* center - page title (only visible when not on home) */}
+      {!isHome && pageTitle && (
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+          <h1 className="text-lg font-semibold text-foreground">
+            {pageTitle}
+          </h1>
+        </div>
+      )}
 
       {/* right side - theme toggle and navigation */}
       <div className="flex items-center space-x-4">

@@ -39,7 +39,7 @@ export default function WorkExperience({
 
   return (
     <section
-      className="h-screen snap-start flex items-center justify-center px-6 py-10"
+      className="flex items-center justify-center px-6 py-10 min-h-screen"
     >
       <motion.div
         className="bg-card border border-border rounded-xl p-8 shadow-lg hover:shadow-xl max-w-4xl w-full"
