@@ -66,11 +66,6 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
       <head>
-        {/* Preload critical resources */}
-        <link rel="preload" href="/kevin-headshot.jpg" as="image" />
-        <link rel="preload" href="/kevin-floorball-homepage.jpg" as="image" />
-        <link rel="preload" href="/kevin-family.jpg" as="image" />
-        
         {/* DNS prefetch for external resources */}
         <link rel="dns-prefetch" href="//api.github.com" />
         <link rel="dns-prefetch" href="//leetcode.com" />
