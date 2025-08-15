@@ -9,7 +9,6 @@ import LeetCodeStats from "@/components/LeetCodeStats";
 import GitHubStats from "@/components/GitHubStats";
 import ProfilePicture from "@/components/ProfilePicture";
 import TechStack from "@/components/TechStack";
-import { motion } from 'framer-motion';
 
 export default function Home() {
   const router = useRouter();

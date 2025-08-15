@@ -1,6 +1,5 @@
 "use client"
 
-import { motion } from 'framer-motion'
 import { useGitHub } from '@/lib/GitHubContext'
 
 export default function GitHubStats() {

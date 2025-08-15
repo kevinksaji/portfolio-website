@@ -81,7 +81,7 @@ export default function ExperiencePage() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentExperience, experiences.length, isScrolling]);
+  }, [currentExperience, isScrolling]);
 
   return (
     <main 

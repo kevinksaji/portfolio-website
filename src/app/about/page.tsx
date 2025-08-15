@@ -81,31 +81,31 @@ function Slide({ // destructuring the props, each prop becomes a local variable
   );
 }
 
+// define slides data
+const slides = [
+  {
+    imgSrc: "/kevin-big.jpeg",
+    imgAlt: "Portrait of Kevin",
+    title: "Hello, I'm Kevin 👋",
+    description:
+      "I am a Computer Science student at SMU specialising in AI and product development.",
+    reverse: false,
+  },
+  {
+    imgSrc: "/kevin-floorball.jpg",
+    imgAlt: "Kevin playing hockey",
+    title: "Off the screen 🏑",
+    description:
+      "Outside of coding I love staying active – you'll often find me playing floorball or trying new sports with friends.",
+    reverse: true,
+  },
+];
+
 export default function About() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
   const [isScrolling, setIsScrolling] = useState(false);
-
-  // define slides data
-  const slides = [
-    {
-      imgSrc: "/kevin-big.jpeg",
-      imgAlt: "Portrait of Kevin",
-      title: "Hello, I'm Kevin 👋",
-      description:
-        "I am a Computer Science student at SMU specialising in AI and product development.",
-      reverse: false,
-    },
-    {
-      imgSrc: "/kevin-floorball.jpg",
-      imgAlt: "Kevin playing hockey",
-      title: "Off the screen 🏑",
-      description:
-        "Outside of coding I love staying active – you'll often find me playing floorball or trying new sports with friends.",
-      reverse: true,
-    },
-  ];
 
   // Touch handlers for swipe detection
   const onTouchStart = (e: React.TouchEvent) => {
@@ -177,7 +177,7 @@ export default function About() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentSlide, slides.length, isScrolling]);
+  }, [currentSlide, isScrolling]);
 
   return (
     <main 
