@@ -66,10 +66,7 @@ export default function TechStack() {
   const currentTech = techCategories[currentIndex]
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
+    <div
       className="bg-card border border-border rounded-xl p-3 sm:p-4 md:p-6 shadow-lg hover:shadow-xl transition-all duration-300"
     >
       <div className="text-center">
@@ -118,6 +115,6 @@ export default function TechStack() {
           </AnimatePresence>
         </div>
       </div>
-    </motion.div>
+    </div>
   )
 }

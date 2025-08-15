@@ -45,10 +45,7 @@ export default function LeetCodeStats() {
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
+    <div
       className="bg-card border border-border rounded-xl p-3 sm:p-4 md:p-6 shadow-lg hover:shadow-xl transition-all duration-300"
     >
       <div className="text-center">
@@ -91,6 +88,6 @@ export default function LeetCodeStats() {
 
         {/* Remove the old dots section */}
       </div>
-    </motion.div>
+    </div>
   )
 }
