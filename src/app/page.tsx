@@ -11,6 +11,12 @@ import ProfilePicture from "@/components/ProfilePicture";
 import TechStack from "@/components/TechStack";
 import { motion, AnimatePresence } from 'framer-motion';
 
+// define sections data
+const sections = [
+  'hero', // Main hero section
+  'chat'  // Ask away section
+];
+
 export default function Home() {
   const router = useRouter();
   const [currentSection, setCurrentSection] = useState(0);
@@ -18,11 +24,6 @@ export default function Home() {
   const [touchEnd, setTouchEnd] = useState(0);
   const [isScrolling, setIsScrolling] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
-
-  const sections = [
-    'hero', // Main hero section
-    'chat'  // Ask away section
-  ];
 
   // Touch handlers for swipe detection
   const onTouchStart = (e: React.TouchEvent) => {
