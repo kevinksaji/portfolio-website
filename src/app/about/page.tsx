@@ -102,37 +102,37 @@ const slides = [
 ];
 
 export default function About() {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [touchStart, setTouchStart] = useState(0);
-  const [touchEnd, setTouchEnd] = useState(0);
-  const [isScrolling, setIsScrolling] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0); // state to track the current slide  
+  const [touchStart, setTouchStart] = useState(0); // state to track the touch start position
+  const [touchEnd, setTouchEnd] = useState(0); // state to track the touch end position
+  const [isScrolling, setIsScrolling] = useState(false); // state to track if the user is scrolling
 
   // Touch handlers for swipe detection
   const onTouchStart = (e: React.TouchEvent) => {
     setTouchStart(e.targetTouches[0].clientY);
   };
-
-  const onTouchMove = (e: React.TouchEvent) => {
+ 
+  const onTouchMove = (e: React.TouchEvent) => { 
     setTouchEnd(e.targetTouches[0].clientY);
   };
 
   const onTouchEnd = () => {
-    if (!touchStart || !touchEnd || isScrolling) return;
+    if (!touchStart || !touchEnd || isScrolling) return; // if the touch start or touch end is not defined, or the isScrolling state is true, then return
     
     const distance = touchStart - touchEnd;
-    const isSwipeUp = distance > 50; // Swipe up threshold
-    const isSwipeDown = distance < -50; // Swipe down threshold
+    const isSwipeUp = distance > 50; // Swipe up threshold - if the distance is greater than 50, then it is a swipe up
+    const isSwipeDown = distance < -50; // Swipe down threshold - if the distance is less than -50, then it is a swipe down
 
     if (isSwipeDown && currentSlide > 0) {
       // Swipe down - go to previous slide
       setCurrentSlide(currentSlide - 1);
       setIsScrolling(true);
-      setTimeout(() => setIsScrolling(false), 500); // 500ms cooldown
+      setTimeout(() => setIsScrolling(false), 500); // 500ms cooldown - set the isScrolling state to false after 500ms
     } else if (isSwipeUp && currentSlide < slides.length - 1) {
       // Swipe up - go to next slide
       setCurrentSlide(currentSlide + 1);
       setIsScrolling(true);
-      setTimeout(() => setIsScrolling(false), 500); // 500ms cooldown
+      setTimeout(() => setIsScrolling(false), 500); // 500ms cooldown - set the isScrolling state to false after 500ms
     }
 
     // Reset touch values
@@ -164,19 +164,19 @@ export default function About() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isScrolling) return; // Prevent rapid key presses
       
-      if (e.key === 'ArrowUp' && currentSlide < slides.length - 1) {
+      if (e.key === 'ArrowDown' && currentSlide < slides.length - 1) { // if the arrow down key is pressed and the current slide is less than the length of the slides, then go to the next slide
         setCurrentSlide(currentSlide + 1);
         setIsScrolling(true);
-        setTimeout(() => setIsScrolling(false), 500); // 500ms cooldown
-      } else if (e.key === 'ArrowDown' && currentSlide > 0) {
+        setTimeout(() => setIsScrolling(false), 500); // 500ms cooldown - set the isScrolling state to false after 500ms
+      } else if (e.key === 'ArrowUp' && currentSlide > 0) { // if the arrow up key is pressed and the current slide is greater than 0, then go to the previous slide
         setCurrentSlide(currentSlide - 1);
         setIsScrolling(true);
-        setTimeout(() => setIsScrolling(false), 500); // 500ms cooldown
+        setTimeout(() => setIsScrolling(false), 500); // 500ms cooldown - set the isScrolling state to false after 500ms
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown); // add the event listener for the keydown event
+    return () => window.removeEventListener('keydown', handleKeyDown); // remove the event listener for the keydown event when the component unmounts
   }, [currentSlide, isScrolling]);
 
   return (
