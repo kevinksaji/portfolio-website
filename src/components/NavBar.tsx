@@ -69,7 +69,7 @@ export default function Navbar() {
         {/* right-hand button changes depending on route */}
         {isHome ? (
           <Link
-            href="/kevinksaji_resume.pdf"
+            href="/kevin-saji-resume.pdf"
             download
           >
             <Button size="sm" variant="outline" className="
@@ -84,7 +84,7 @@ export default function Navbar() {
             border-border text-foreground
             hover:bg-accent hover:text-accent-foreground
           ">
-            ← Back
+            Back
           </Button>
         )}
       </div>

@@ -187,7 +187,11 @@ export default function Home() {
                 
                 {/* Bouncing chevron indicator */}
                 <div className="mt-12 animate-bounce">
-                  <div className="flex flex-col items-center text-muted-foreground">
+                  <button
+                    onClick={() => setCurrentSection(1)}
+                    className="flex flex-col items-center text-muted-foreground hover:text-foreground transition-colors duration-300 cursor-pointer"
+                    aria-label="Go to Ask Away section"
+                  >
                     <svg 
                       className="w-12 h-12" 
                       fill="none" 
@@ -201,7 +205,7 @@ export default function Home() {
                         d="M19.5 8.25l-7.5 7.5-7.5-7.5" 
                       />
                     </svg>
-                  </div>
+                  </button>
                 </div>
               </div>
             </div>
