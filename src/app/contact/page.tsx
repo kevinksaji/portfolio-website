@@ -40,20 +40,20 @@ const itemVariants = {
 
 export default function Contact() {
   return (
-    <main className="h-screen w-full flex items-center justify-center bg-background pt-14">
+    <main className="min-h-screen w-full flex items-center justify-center bg-background pt-20">
       <motion.div 
-        className="flex flex-col md:flex-row items-center justify-between w-full max-w-6xl px-8 gap-12"
+        className="flex flex-col sm:flex-row items-center justify-between w-full max-w-6xl px-8 gap-12"
         variants={containerVariants}
         initial="hidden"
         animate="show"
       >
         {/* Left Side - Let's Connect */}
         <motion.div 
-          className="flex-1 text-center md:text-left"
+          className="flex-1 text-center sm:text-left"
           variants={itemVariants}
         >
           <motion.h1 
-            className="text-6xl md:text-7xl font-bold text-foreground mb-6"
+            className="text-6xl sm:text-7xl font-bold text-foreground mb-6"
             variants={itemVariants}
           >
             Let&apos;s Connect.
