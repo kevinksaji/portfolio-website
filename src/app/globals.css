@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap');
+ @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -118,6 +118,7 @@
 @layer base {
   * {
     @apply border-border;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
   }
   
   body {
@@ -132,22 +133,14 @@
     -moz-osx-font-smoothing: grayscale;
   }
   
-  * {
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-  }
-  
   main {
     padding-top: calc(3.5rem + 1rem);
   }
 
-  /* Performance optimizations for animations */
-  .animate-bounce {
-    will-change: transform;
-  }
-
-  /* Optimize paint operations */
-  .bg-gradient-to-b {
-    will-change: background-image;
+  /* Fix email autofill input background colors */
+  input {
+    background-color: var(--background);
+    color: var(--foreground);
   }
 }
 
@@ -164,7 +157,6 @@
   
   .animate-in {
     animation-fill-mode: both;
-    will-change: opacity, transform;
   }
   
   .slide-in-from-bottom-2 {
@@ -232,7 +224,6 @@
   /* Performance utilities */
   .gpu-accelerated {
     transform: translateZ(0);
-    will-change: transform;
   }
 
   .reduce-motion {

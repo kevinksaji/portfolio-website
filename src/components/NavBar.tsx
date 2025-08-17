@@ -17,6 +17,8 @@ export default function Navbar() {
       router.push("/")
     } else if (pathname.startsWith("/experience")) {
       router.push("/")
+    } else if (pathname.startsWith("/blog/")) {
+      router.push("/blog")
     } else if (pathname.startsWith("/blog")) {
       router.push("/")
     } else {
