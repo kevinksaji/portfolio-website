@@ -186,9 +186,26 @@ export async function getNotionPage(pageId: string) {
   try {
     console.log('🔄 Fetching Notion page content:', pageId);
     
-    // Use the official Notion API to get page blocks
-    const blocks = await notion.blocks.children.list({ block_id: pageId });
-    console.log('📄 Fetched', blocks.results.length, 'blocks');
+    // Use the official Notion API to get page blocks with pagination
+    let allBlocks: Record<string, unknown>[] = [];
+    let hasMore = true;
+    let startCursor: string | undefined;
+    
+    while (hasMore) {
+      const response = await notion.blocks.children.list({ 
+        block_id: pageId,
+        start_cursor: startCursor,
+        page_size: 100 // Maximum allowed by Notion API
+      });
+      
+      allBlocks = allBlocks.concat(response.results);
+      hasMore = response.has_more;
+      startCursor = response.next_cursor || undefined;
+      
+      console.log(`📄 Fetched ${response.results.length} blocks (total: ${allBlocks.length})`);
+    }
+    
+    console.log(`📄 Total blocks fetched: ${allBlocks.length}`);
     
     // Convert the official API response to a format our renderer can use
     const recordMap = {
@@ -211,7 +228,7 @@ export async function getNotionPage(pageId: string) {
     };
     
     // Add all the blocks
-    blocks.results.forEach((block: Record<string, unknown>) => {
+    allBlocks.forEach((block: Record<string, unknown>) => {
       const blockId = block.id as string;
       const blockType = block.type as string;
       const blockProperties = (block[blockType] as Record<string, unknown>) || {};
