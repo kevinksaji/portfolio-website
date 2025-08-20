@@ -1,28 +1,24 @@
-import { Client } from '@notionhq/client';
-import { unstable_cache } from 'next/cache';
+// for fetching blog posts from Notion database
 
-// Initialize Notion client for official API
+import { Client } from '@notionhq/client';
+
+// initialize Notion client for official API
 export const notion = new Client({
   auth: process.env.NOTION_TOKEN,
 });
 
-// Cache for blog posts to avoid repeated API calls
-let blogPostsCache: BlogPost[] | null = null;
-let cacheTimestamp: number = 0;
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes cache
-
-// Types for blog posts
+// types for blog posts
 export interface BlogPost {
   id: string;
   title: string;
-  category: string;
   slug: string;
+  excerpt: string;
   publishedDate: string;
-  coverImage?: string;
-  status: 'Draft' | 'Published';
+  category: string;
+  content: string;
 }
 
-// Type for Notion page properties
+// type for Notion page properties
 interface NotionProperties {
   Title?: {
     title: Array<{ plain_text: string }>;
@@ -42,142 +38,120 @@ interface NotionProperties {
   'Cover Image'?: {
     files: Array<{ file: { url: string } }>;
   };
+  Excerpt?: {
+    rich_text: Array<{ plain_text: string }>;
+  };
 }
 
-// Helper function to check if cache is still valid
-function isCacheValid(): boolean {
-  return blogPostsCache !== null && (Date.now() - cacheTimestamp) < CACHE_DURATION;
-}
-
-// Server-side cached version of getBlogPosts for better performance
-export const getCachedBlogPosts = unstable_cache(
-  async (): Promise<BlogPost[]> => {
-    return getBlogPosts();
-  },
-  ['blog-posts'],
-  {
-    revalidate: 300, // 5 minutes
-    tags: ['blog-posts']
-  }
-);
-
-// Fetch all published blog posts from Notion database with caching
+// fetch all published blog posts from Notion database with caching
 export async function getBlogPosts(): Promise<BlogPost[]> {
-  // Return cached data if it's still valid
-  if (isCacheValid()) {
-    console.log('📦 Returning cached blog posts');
-    return blogPostsCache!;
-  }
-
   try {
-    console.log('🔄 Fetching fresh blog posts from Notion...');
+    const response = await fetch(
+      `https://api.notion.com/v1/databases/${process.env.NOTION_DATABASE_ID}/query`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.NOTION_API_KEY}`,
+          'Notion-Version': '2022-06-28',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          filter: {
+            property: 'Status',
+            select: {
+              equals: 'Published'
+            }
+          },
+          sorts: [
+            {
+              property: 'Published Date',
+              direction: 'descending'
+            }
+          ]
+        }),
+        next: { revalidate: 3600 } // Cache for 1 hour using Next.js built-in caching
+      }
+    );
+
+    if (!response.ok) { // if the response is not ok, throw an error
+      throw new Error(`Notion API error: ${response.status}`);
+    }
+
     
-    const response = await notion.databases.query({
-      database_id: process.env.NOTION_DATABASE_ID!,
-      filter: {
-        property: 'Status',
-        status: {
-          equals: 'Published',
-        },
-      },
-      sorts: [
+    const data = await response.json(); // get the data from the response if response is ok
+    const posts: BlogPost[] = []; // initialize an empty array of blog posts
+
+    for (const page of data.results) { // loop through the results
+      const properties = page.properties;
+      
+      const title = properties.Title?.title?.[0]?.plain_text || 'Untitled'; // get the title from the properties
+      const slug = properties.Slug?.rich_text?.[0]?.plain_text || // get the slug from the properties
+                   title.toLowerCase().replace(/[^a-z0-9]+/g, '-'); // if the slug is not found, use the title and replace all non-alphanumeric characters with a dash
+      const excerpt = properties.Excerpt?.rich_text?.[0]?.plain_text || ''; // get the excerpt from the properties
+      const publishedDate = properties['Published Date']?.date?.start || ''; // get the published date from the properties
+      const category = properties.Category?.select?.name || 'Uncategorized'; // get the category from the properties
+      
+      // get the full page content
+      const contentResponse = await fetch(
+        `https://api.notion.com/v1/blocks/${page.id}/children`,
         {
-          property: 'Published Date',
-          direction: 'descending',
-        },
-      ],
-    });
-
-    const posts = response.results
-      .filter((page) => 'properties' in page)
-      .map((page) => {
-        const p = page as Record<string, unknown>;
-        const properties = p.properties as NotionProperties;
-        return {
-          id: p.id as string,
-          title: properties.Title?.title?.[0]?.plain_text || '',
-          category: properties.Category?.select?.name || '',
-          slug: properties.Slug?.rich_text?.[0]?.plain_text || '',
-          publishedDate: properties['Published Date']?.date?.start || '',
-          coverImage: properties['Cover Image']?.files?.[0]?.file?.url || '',
-          status: (properties.Status?.status?.name as 'Draft' | 'Published') || 'Draft',
-        };
-      });
-
-    // Update cache
-    blogPostsCache = posts;
-    cacheTimestamp = Date.now();
-    console.log(`✅ Cached ${posts.length} blog posts`);
+          headers: {
+            'Authorization': `Bearer ${process.env.NOTION_API_KEY}`,
+            'Notion-Version': '2022-06-28',
+          },
+          next: { revalidate: 3600 } // cache for 1 hour
+        }
+      );
+      
+      if (contentResponse.ok) {
+        const contentData = await contentResponse.json();
+        const content = contentData.results
+          .map((block: any) => {
+            if (block.type === 'paragraph') {
+              return block.paragraph.rich_text
+                .map((text: any) => text.plain_text)
+                .join('');
+            }
+            return '';
+          })
+          .join('\n\n');
+        
+        posts.push({
+          id: page.id,
+          title,
+          slug,
+          excerpt,
+          publishedDate,
+          category,
+          content
+        });
+      }
+    }
 
     return posts;
   } catch (error) {
-    console.error('❌ Error fetching blog posts:', error);
-    
-    // Return cached data if available, even if expired
-    if (blogPostsCache !== null) {
-      console.log('⚠️ Returning expired cache due to API error');
-      return blogPostsCache;
-    }
-    
+    console.error('Error fetching blog posts:', error);
     return [];
   }
 }
 
-// Fetch a single blog post by slug (uses cached data when possible)
 export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
-  // Try to get from cache first
-  if (isCacheValid()) {
-    const cachedPost = blogPostsCache!.find(post => post.slug === slug);
-    if (cachedPost) {
-      console.log('📦 Returning cached blog post:', slug);
-      return cachedPost;
-    }
-  }
-
-  // If not in cache, fetch fresh data
   try {
-    console.log('🔄 Fetching fresh blog post:', slug);
-    
-    const response = await notion.databases.query({
-      database_id: process.env.NOTION_DATABASE_ID!,
-      filter: {
-        property: 'Slug',
-        rich_text: {
-          equals: slug,
-        },
-      },
-    });
-
-    if (response.results.length === 0) return null;
-
-    const page = response.results[0];
-    if (!('properties' in page)) return null;
-    
-    const properties = page.properties as unknown as NotionProperties;
-    const post = {
-      id: page.id,
-      title: properties.Title?.title?.[0]?.plain_text || '',
-      category: properties.Category?.select?.name || '',
-      slug: properties.Slug?.rich_text?.[0]?.plain_text || '',
-      publishedDate: properties['Published Date']?.date?.start || '',
-      coverImage: properties['Cover Image']?.files?.[0]?.file?.url || '',
-      status: (properties.Status?.status?.name as 'Draft' | 'Published') || 'Draft',
-    };
-
-    // Update cache with this post if it's not already there
-    if (blogPostsCache) {
-      const existingIndex = blogPostsCache.findIndex(p => p.id === post.id);
-      if (existingIndex >= 0) {
-        blogPostsCache[existingIndex] = post;
-      } else {
-        blogPostsCache.push(post);
-      }
-    }
-
-    return post;
+    const posts = await getBlogPosts();
+    return posts.find(post => post.slug === slug) || null;
   } catch (error) {
-    console.error('❌ Error fetching blog post by slug:', error);
+    console.error('Error fetching blog post by slug:', error);
     return null;
+  }
+}
+
+export async function getBlogPostsByCategory(category: string): Promise<BlogPost[]> {
+  try {
+    const posts = await getBlogPosts();
+    return posts.filter(post => post.category.toLowerCase() === category.toLowerCase());
+  } catch (error) {
+    console.error('Error fetching blog posts by category:', error);
+    return [];
   }
 }
 
@@ -195,7 +169,7 @@ export async function getNotionPage(pageId: string) {
       const response = await notion.blocks.children.list({ 
         block_id: pageId,
         start_cursor: startCursor,
-        page_size: 100 // Maximum allowed by Notion API
+        page_size: 100 // maximum allowed by Notion API
       });
       
       allBlocks = allBlocks.concat(response.results);
@@ -244,11 +218,11 @@ export async function getNotionPage(pageId: string) {
       };
     });
     
-    console.log('✅ Page content processed successfully');
+    console.log('Page content processed successfully');
     return recordMap;
     
   } catch (error) {
-    console.error('❌ Error fetching Notion page content:', error);
+    console.error('Error fetching Notion page content:', error);
     return null;
   }
 }
