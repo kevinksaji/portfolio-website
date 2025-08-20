@@ -5,6 +5,19 @@ import { FaCode, FaFutbol, FaChartLine } from 'react-icons/fa';
 export default async function BlogPage() {
   const posts = await getCachedBlogPosts();
   
+  // Debug: Log the posts data
+  // console.log('🔍 Blog posts data:', {
+  //   count: posts.length,
+  //   posts: posts.map(post => ({
+  //     id: post.id,
+  //     title: post.title,
+  //     slug: post.slug,
+  //     category: post.category,
+  //     excerpt: post.excerpt,
+  //     publishedDate: post.publishedDate
+  //   }))
+  // });
+  
   // Get unique categories and count posts in each
   const categories = posts.reduce((acc, post) => {
     if (post.category) {
@@ -52,7 +65,7 @@ export default async function BlogPage() {
         </div>
 
         {/* Category Tiles */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
           {categoryTiles.map((category) => {
             const IconComponent = category.icon;
             return (
@@ -74,6 +87,8 @@ export default async function BlogPage() {
             );
           })}
         </div>
+
+
       </div>
     </main>
   );
