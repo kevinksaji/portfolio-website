@@ -8,6 +8,15 @@ export const notionClient = new NotionAPI({
   authToken: process.env.NOTION_TOKEN_V2
 });
 
+// Validate environment variables
+if (!process.env.NOTION_ACTIVE_USER || !process.env.NOTION_TOKEN_V2) {
+  console.error('❌ Missing Notion environment variables:', {
+    NOTION_ACTIVE_USER: !!process.env.NOTION_ACTIVE_USER,
+    NOTION_TOKEN_V2: !!process.env.NOTION_TOKEN_V2,
+    NODE_ENV: process.env.NODE_ENV
+  });
+}
+
 // types for blog posts
 export interface BlogPost {
   id: string;
@@ -50,11 +59,26 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
     
     // if the database page id is not set, return an empty array
     if (!databasePageId) {
+      console.error('❌ NOTION_DATABASE_ID environment variable is not set');
       return [];
     }
     
+    // Validate Notion client credentials
+    if (!process.env.NOTION_ACTIVE_USER || !process.env.NOTION_TOKEN_V2) {
+      console.error('❌ Missing Notion credentials - cannot fetch blog posts');
+      return [];
+    }
+    
+    // Add timeout to prevent hanging in production
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      setTimeout(() => reject(new Error('Notion API request timed out after 30 seconds')), 30000);
+    });
+    
     // fetch the database page to get all the blog post pages
-    const databasePage = await notionClient.getPage(databasePageId);
+    const databasePage = await Promise.race([
+      notionClient.getPage(databasePageId),
+      timeoutPromise
+    ]);
     
     if (!databasePage) {
       console.log('Database page not found');
@@ -81,7 +105,16 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
     // Fetch each blog post page
     for (const pageId of pageIds) {
       try {
-        const postPage = await notionClient.getPage(pageId);
+        // Add timeout for individual page fetching
+        const pageTimeoutPromise = new Promise<never>((_, reject) => {
+          setTimeout(() => reject(new Error(`Page ${pageId} request timed out after 15 seconds`)), 15000);
+        });
+        
+        const postPage = await Promise.race([
+          notionClient.getPage(pageId),
+          pageTimeoutPromise
+        ]);
+        
         if (!postPage) {
           continue;
         }
