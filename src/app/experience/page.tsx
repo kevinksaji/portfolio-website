@@ -44,10 +44,8 @@ export default function ExperiencePage() {
     setTouchEnd(0);
   };
 
-  // Mouse wheel navigation for desktop with debouncing
+  // Mouse wheel navigation for desktop - no preventDefault
   const onWheel = (e: React.WheelEvent) => {
-    e.preventDefault();
-    
     if (isScrolling) return; // Prevent rapid scrolling
     
     if (e.deltaY > 0 && currentExperience < experiences.length - 1) {
@@ -62,6 +60,8 @@ export default function ExperiencePage() {
       setTimeout(() => setIsScrolling(false), 500); // 500ms cooldown
     }
   };
+
+
 
   // Keyboard navigation
   useEffect(() => {
