@@ -44,7 +44,7 @@ interface NotionRendererProps {
 }
 
 export default function NotionRenderer({ recordMap }: NotionRendererProps) {
-  const { theme, mounted } = useTheme();
+  const { theme, mounted } = useTheme(); // get the theme from the ThemeProvider
   
   if (!recordMap) {
     return null;

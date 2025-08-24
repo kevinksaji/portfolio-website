@@ -1,22 +1,9 @@
-import { getCachedBlogPosts } from '@/lib/notion';
+import { getBlogPosts } from '@/lib/notion';
 import Link from 'next/link';
-import { FaCode, FaFutbol, FaChartLine } from 'react-icons/fa';
+import { FaCode, FaFutbol, FaChartLine, FaBook, FaLightbulb, FaHeart } from 'react-icons/fa';
 
 export default async function BlogPage() {
-  const posts = await getCachedBlogPosts();
-  
-  // Debug: Log the posts data
-  // console.log('🔍 Blog posts data:', {
-  //   count: posts.length,
-  //   posts: posts.map(post => ({
-  //     id: post.id,
-  //     title: post.title,
-  //     slug: post.slug,
-  //     category: post.category,
-  //     excerpt: post.excerpt,
-  //     publishedDate: post.publishedDate
-  //   }))
-  // });
+  const posts = await getBlogPosts();
   
   // Get unique categories and count posts in each
   const categories = posts.reduce((acc, post) => {
@@ -26,26 +13,35 @@ export default async function BlogPage() {
     return acc;
   }, {} as Record<string, number>);
 
-  const categoryTiles = [
-    { 
-      name: 'Computer Science', 
-      count: categories['Computer Science'] || 0, 
-      color: 'bg-blue-500/10 text-blue-600 border-blue-200',
-      icon: FaCode
-    },
-    { 
-      name: 'Sports', 
-      count: categories['Sports'] || 0, 
-      color: 'bg-green-500/10 text-green-600 border-green-200',
-      icon: FaFutbol
-    },
-    { 
-      name: 'Hobbies', 
-      count: categories['Hobbies'] || 0, 
-      color: 'bg-purple-500/10 text-purple-600 border-purple-200',
-      icon: FaChartLine
-    },
-  ];
+  // Dynamically generate category tiles based on actual blog post categories
+  const categoryTiles = Object.entries(categories).map(([categoryName, count]) => {
+    // Map category names to icons and colors
+    const getCategoryStyle = (name: string) => {
+      const lowerName = name.toLowerCase();
+      if (lowerName.includes('computer') || lowerName.includes('science') || lowerName.includes('tech')) {
+        return { icon: FaCode, color: 'bg-blue-500/10 text-blue-600 border-blue-200' };
+      } else if (lowerName.includes('sport') || lowerName.includes('futbol') || lowerName.includes('game')) {
+        return { icon: FaFutbol, color: 'bg-green-500/10 text-green-600 border-green-200' };
+      } else if (lowerName.includes('hobby') || lowerName.includes('interest') || lowerName.includes('personal')) {
+        return { icon: FaHeart, color: 'bg-purple-500/10 text-purple-600 border-purple-200' };
+      } else if (lowerName.includes('book') || lowerName.includes('read') || lowerName.includes('learn')) {
+        return { icon: FaBook, color: 'bg-orange-500/10 text-orange-600 border-orange-200' };
+      } else if (lowerName.includes('idea') || lowerName.includes('thought') || lowerName.includes('insight')) {
+        return { icon: FaLightbulb, color: 'bg-yellow-500/10 text-yellow-600 border-yellow-200' };
+      }
+      // Default fallback
+      return { icon: FaBook, color: 'bg-gray-500/10 text-gray-600 border-gray-200' };
+    };
+
+    const { icon, color } = getCategoryStyle(categoryName);
+    
+    return {
+      name: categoryName,
+      count,
+      color,
+      icon
+    };
+  });
 
   return (
     <main className="min-h-screen w-full bg-background pt-12 flex items-center justify-center">
@@ -78,17 +74,15 @@ export default async function BlogPage() {
                     <h2 className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors duration-300">
                       {category.name}
                     </h2>
-                    <p className="text-sm text-muted-foreground">
-                      {category.count} {category.count === 1 ? 'post' : 'posts'}
-                    </p>
+                                         <p className="text-sm text-muted-foreground">
+                       {category.count} {category.count === 1 ? 'post' : 'posts'}
+                     </p>
                   </div>
                 </div>
               </Link>
             );
           })}
         </div>
-
-
       </div>
     </main>
   );

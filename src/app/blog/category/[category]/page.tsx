@@ -1,4 +1,4 @@
-import { getCachedBlogPosts } from '@/lib/notion';
+import { getBlogPosts } from '@/lib/notion';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -9,7 +9,7 @@ interface CategoryPageProps {
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
   const { category } = await params;
-  const posts = await getCachedBlogPosts();
+  const posts = await getBlogPosts();
   
   // Decode the category from URL and filter posts
   const decodedCategory = decodeURIComponent(category).replace(/-/g, ' ');

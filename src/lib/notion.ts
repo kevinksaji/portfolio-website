@@ -13,26 +13,47 @@ export interface BlogPost {
   id: string;
   title: string;
   slug: string;
-  excerpt: string;
+  status: string;
   publishedDate: string;
   category: string;
   content: string;
   coverImage?: string;
 }
 
-// fetch all published blog posts from Notion database
+// Smart caching for blog posts - single fetch strategy
+// This cache is shared across all blog-related pages to minimize API calls
+let blogPostsCache: BlogPost[] | null = null;
+let cacheTimestamp: number = 0;
+const CACHE_DURATION = 10 * 60 * 1000; // 10 minutes - longer since we're fetching once
+
+/**
+ * Fetches all blog posts from Notion database with intelligent caching
+ * 
+ * This function implements a smart caching strategy where:
+ * - First call to any blog page fetches data from Notion
+ * - Subsequent calls within 10 minutes use cached data
+ * - All blog-related pages share the same cache
+ * - Cache automatically expires after 10 minutes
+ * 
+ * @returns Promise<BlogPost[]> Array of all blog posts sorted by published date
+ */
 export async function getBlogPosts(): Promise<BlogPost[]> {
   try {
+    const now = Date.now();
+    
+    // Check if we have valid cached data
+    if (blogPostsCache && (now - cacheTimestamp) < CACHE_DURATION) {
+      return blogPostsCache;
+    }
+    
     const databasePageId = process.env.NOTION_DATABASE_ID;
     
+    // if the database page id is not set, return an empty array
     if (!databasePageId) {
-      console.log('NOTION_DATABASE_ID not set - returning empty blog posts');
       return [];
     }
-
-    console.log('🔄 Fetching blog posts from database:', databasePageId);
     
-    // Fetch the database page to get all the blog post pages
+    // fetch the database page to get all the blog post pages
     const databasePage = await notionClient.getPage(databasePageId);
     
     if (!databasePage) {
@@ -40,6 +61,7 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
       return [];
     }
 
+    // initialize an empty array to store the blog posts
     const posts: BlogPost[] = [];
     
     // Extract all the pages from the database
@@ -49,8 +71,6 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
       id !== databasePageId
     );
 
-    console.log(`📄 Found ${allPageIds.length} potential blog posts`);
-    
     // Pre-filter pages to only include those that seem accessible
     const pageIds = allPageIds.filter(id => {
       const block = databasePage.block[id];
@@ -58,34 +78,26 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
       return block?.value?.properties || block?.value?.type === 'page';
     });
 
-    console.log(`📄 Filtered to ${pageIds.length} accessible blog posts`);
-
     // Fetch each blog post page
     for (const pageId of pageIds) {
       try {
-        console.log(`🔄 Fetching blog post page: ${pageId}`);
-        
         const postPage = await notionClient.getPage(pageId);
         if (!postPage) {
-          console.log(`⚠️ No data returned for page: ${pageId}`);
           continue;
         }
 
         const page = postPage.block[pageId];
         if (!page?.value) {
-          console.log(`⚠️ No page value found for: ${pageId}`);
           continue;
         }
 
         // Extract blog post data from properties
         const properties = page.value.properties || {};
         
-        // Debug: Log the properties structure to understand what's available
-        // console.log(`🔍 Properties for ${pageId}:`, JSON.stringify(properties, null, 2));
+
         
         // Skip database pages (pages that only have a title, no other properties)
         if (Object.keys(properties).length <= 1) {
-          console.log(`⏭️ Skipping database page: ${pageId}`);
           continue;
         }
         
@@ -98,33 +110,45 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
           category = properties['POZ`'][0]?.[0] || 'Uncategorized';
         }
         
-        // Also try to extract slug from Oa:r field and published date from eVWe field
-        let extractedSlug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-        if (properties['Oa:r']) {
-          extractedSlug = properties['Oa:r'][0]?.[0] || extractedSlug;
+        // Extract slug from properties - Oa:r field contains the slug
+        let slug = properties['Oa:r']?.[0]?.[0] || '';
+        if (!slug) {
+          // Generate slug from title if not provided
+          slug = title.toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '');
         }
         
-        let extractedDate = new Date().toISOString();
-        if (properties['eVWe'] && properties['eVWe'][0]?.[1]?.[0]?.[1]?.start_date) {
+        // Extract status from properties - Kq:o field contains the status
+        let status = 'Draft';
+        if (properties['Kq:o']) {
+          status = properties['Kq:o'][0]?.[0] || 'Draft';
+        }
+        
+        // Extract published date - eVWe field contains the published date
+        let publishedDate = new Date().toISOString();
+        if (properties['eVWe']?.[0]?.[1]?.[0]?.[1]?.start_date) {
           const dateStr = properties['eVWe'][0][1][0][1].start_date;
-          extractedDate = new Date(dateStr).toISOString();
+          publishedDate = new Date(dateStr).toISOString();
         }
         
-        // Use extracted values and placeholder values
-        const slug = extractedSlug;
-        const excerpt = `Excerpt for ${title}`;
-        const publishedDate = extractedDate;
-        const coverImage = undefined;
+        // Extract cover image
+        const coverImage = properties['Cover Image']?.[0]?.[0] || undefined;
         
         // Extract content from the page blocks - be more flexible with content extraction
         let content = '';
         const allBlocks = Object.values(postPage.block);
-        
+
         // Get text content from various block types
-        allBlocks.forEach(block => {
-          if (block.value && block.value.id !== pageId) { // Skip the page block itself
+        allBlocks.forEach((block) => {
+          if (
+            block &&
+            typeof block === 'object' &&
+            block.value &&
+            block.value.id !== pageId
+          ) {
             const blockProps = block.value.properties;
-            
+
             // Extract text from different block types
             if (blockProps?.title && Array.isArray(blockProps.title)) {
               const text = blockProps.title.map((item: unknown[]) => item[0]).join('');
@@ -144,16 +168,14 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
           id: pageId,
           title,
           slug,
-          excerpt,
+          status,
           publishedDate,
           category,
           content: content.trim(),
           coverImage
         });
 
-        console.log(`✅ Processed blog post: ${title}`);
-      } catch (error) {
-        console.error(`❌ Error processing blog post ${pageId}:`, error);
+      } catch {
         // Don't let one failed page break the entire process
         continue;
       }
@@ -162,7 +184,10 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
     // Sort by published date (newest first)
     posts.sort((a, b) => new Date(b.publishedDate).getTime() - new Date(a.publishedDate).getTime());
     
-    console.log(`📚 Successfully fetched ${posts.length} blog posts`);
+            // Cache the results - this will be used by ALL blog-related pages
+    blogPostsCache = posts;
+    cacheTimestamp = now;
+    
     return posts;
     
   } catch (error) {
@@ -171,21 +196,64 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
   }
 }
 
-// Cached version of getBlogPosts for better performance
-export async function getCachedBlogPosts(): Promise<BlogPost[]> {
-  return getBlogPosts();
-}
 
-export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
+
+/**
+ * Fetches a single blog post by its slug
+ * 
+ * This function uses the reliable approach of fetching all posts and finding by slug.
+ * While not the most efficient for large datasets, it ensures reliability and works
+ * with the existing caching system.
+ * 
+ * @param slug - The URL slug of the blog post to find
+ * @returns Promise<BlogPost | null> The blog post if found, null otherwise
+ */
+export async function getBlogPostBySlugDirect(slug: string): Promise<BlogPost | null> {
   try {
+    console.log('🔍 Fetching blog post by slug:', slug);
+    
+    // Use the reliable approach: fetch all posts and find by slug
+    // This is actually the RIGHT approach for a blog with reasonable post count
     const posts = await getBlogPosts();
-    return posts.find(post => post.slug === slug) || null;
+    const post = posts.find(p => p.slug === slug);
+    
+    if (post) {
+      console.log(`✅ Found blog post: ${post.title}`);
+      return post;
+    } else {
+      console.log('❌ No blog post found with slug:', slug);
+      return null;
+    }
+    
   } catch (error) {
     console.error('Error fetching blog post by slug:', error);
     return null;
   }
 }
 
+/**
+ * Main function to get a blog post by slug
+ * 
+ * This is the public API function that delegates to getBlogPostBySlugDirect.
+ * It maintains backward compatibility while allowing for future optimizations.
+ * 
+ * @param slug - The URL slug of the blog post to find
+ * @returns Promise<BlogPost | null> The blog post if found, null otherwise
+ */
+export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
+  // Use the direct method instead of fetching all posts
+  return getBlogPostBySlugDirect(slug);
+}
+
+/**
+ * Fetches all blog posts in a specific category
+ * 
+ * This function filters the cached blog posts by category name.
+ * It's case-insensitive and uses the existing cache for performance.
+ * 
+ * @param category - The category name to filter by (case-insensitive)
+ * @returns Promise<BlogPost[]> Array of blog posts in the specified category
+ */
 export async function getBlogPostsByCategory(category: string): Promise<BlogPost[]> {
   try {
     const posts = await getBlogPosts();
@@ -196,16 +264,21 @@ export async function getBlogPostsByCategory(category: string): Promise<BlogPost
   }
 }
 
-// Get Notion page content for rendering using notion-client
+/**
+ * Fetches the full Notion page content for rendering
+ * 
+ * This function retrieves the complete page content including all blocks,
+ * which is needed for the NotionRenderer component to display the full blog post.
+ * 
+ * @param pageId - The Notion page ID to fetch content for
+ * @returns Promise<any> The full page record map for rendering
+ */
 export async function getNotionPage(pageId: string) {
   try {
-    console.log('🔄 Fetching Notion page content:', pageId);
-    
-    // Use notion-client to get the full page content
-    const recordMap = await notionClient.getPage(pageId);
-    
-    console.log('Page content fetched successfully');
-    return recordMap;
+            // Use notion-client to get the full page content
+        const recordMap = await notionClient.getPage(pageId);
+        
+        return recordMap;
     
   } catch (error) {
     console.error('Error fetching Notion page content:', error);
