@@ -77,45 +77,32 @@ export default function Home() {
     setTouchEnd(0);
   };
 
-  // Wheel event handler with non-passive behavior
+  // Wheel navigation for desktop - no preventDefault
   const handleWheel = useCallback((e: WheelEvent) => {
     if (isScrolling) return; // Prevent rapid scrolling
     
     if (currentSection === 0) {
-      // In hero section - check scroll boundaries
+      // In hero section - only transition when scrolling down at bottom
       const heroElement = heroRef.current;
       if (heroElement) {
         const { scrollTop, scrollHeight, clientHeight } = heroElement;
         
-        if (e.deltaY > 0) {
-          // Scrolling down
-          if (scrollTop + clientHeight >= scrollHeight) {
-            // At bottom of hero section, transition to next section
-            e.preventDefault();
-            setCurrentSection(1);
-            setIsScrolling(true);
-            setTimeout(() => setIsScrolling(false), 500);
-          }
-        } else if (e.deltaY < 0) {
-          // Scrolling up
-          if (scrollTop <= 0) {
-            // At top of hero section, prevent further scrolling
-            e.preventDefault();
-            // Don't call setCurrentSection(0) since we're already in section 0
-          }
+        if (e.deltaY > 0 && scrollTop + clientHeight >= scrollHeight) {
+          // At bottom of hero section, transition to next section
+          setCurrentSection(1);
+          setIsScrolling(true);
+          setTimeout(() => setIsScrolling(false), 500);
         }
       }
-    } else if (currentSection === 1) {
-      // In chat section - check scroll boundaries
-      e.preventDefault();
-      if (e.deltaY < 0) {
-        // Scrolling up, transition to hero section
-        setCurrentSection(0);
-        setIsScrolling(true);
-        setTimeout(() => setIsScrolling(false), 500);
-      }
+    } else if (currentSection === 1 && e.deltaY < 0) {
+      // In chat section - only transition when scrolling up
+      setCurrentSection(0);
+      setIsScrolling(true);
+      setTimeout(() => setIsScrolling(false), 500);
     }
   }, [currentSection, isScrolling]);
+
+
 
   // Keyboard navigation
   useEffect(() => {
@@ -134,7 +121,7 @@ export default function Home() {
     };
 
     window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('wheel', handleWheel, { passive: false });
+    window.addEventListener('wheel', handleWheel);
     
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
