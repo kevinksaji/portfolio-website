@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { FaCode, FaFutbol, FaBook, FaLightbulb, FaHeart } from 'react-icons/fa';
 
 export default async function BlogPage() {
-  let posts: any[] = [];
+  let posts: Awaited<ReturnType<typeof getBlogPosts>> = [];
   let error: string | null = null;
   
   try {
