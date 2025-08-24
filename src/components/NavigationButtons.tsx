@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { Button } from "./ui/button"
 import { motion } from "framer-motion"
+import { useCallback } from "react"
 
 const links = [
   { href: "/about", label: "About" },
@@ -12,6 +13,18 @@ const links = [
 ]
 
 export default function NavigationButtons() {
+  // Prefetch blog data on hover
+  const handleBlogHover = useCallback(async () => {
+    try {
+      console.log('🚀 Prefetching blog data on hover...');
+      const { getBlogPosts } = await import('@/lib/notion');
+      await getBlogPosts();
+      console.log('✅ Blog data prefetched on hover');
+    } catch (error) {
+      console.log('⚠️ Blog hover prefetch failed (non-critical):', error);
+    }
+  }, []);
+
   return (
     <div className="grid w-full grid-cols-2 gap-2 sm:gap-3 md:gap-4">
       {links.map((link) => (
@@ -25,6 +38,7 @@ export default function NavigationButtons() {
               transition-all duration-300
               text-sm sm:text-base
             "
+            onMouseEnter={link.label === "Blog" ? handleBlogHover : undefined}
           >
             {link.label === "About" ? (
               <motion.span layoutId="about-title">{link.label}</motion.span>

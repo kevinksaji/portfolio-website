@@ -19,10 +19,7 @@ export const viewport: Viewport = {
   maximumScale: 5,
 };
 
-export const themeColor = [
-  { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-  { media: "(prefers-color-scheme: dark)", color: "#000000" },
-];
+
 
 export const metadata: Metadata = {
   title: "kev.ai",

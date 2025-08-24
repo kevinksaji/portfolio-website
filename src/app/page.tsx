@@ -25,6 +25,25 @@ export default function Home() {
   const [isScrolling, setIsScrolling] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
 
+  // Prefetch blog data when homepage loads
+  useEffect(() => {
+    const prefetchBlogData = async () => {
+      try {
+        console.log('🚀 Prefetching blog data on homepage load...');
+        // Import dynamically to avoid server-side issues
+        const { getBlogPosts } = await import('@/lib/notion');
+        await getBlogPosts();
+        console.log('✅ Blog data prefetched successfully');
+      } catch (error) {
+        console.log('⚠️ Blog prefetch failed (non-critical):', error);
+        // Don't show error to user - this is just optimization
+      }
+    };
+
+    // Start prefetching immediately
+    prefetchBlogData();
+  }, []);
+
   // Touch handlers for swipe detection
   const onTouchStart = (e: React.TouchEvent) => {
     setTouchStart(e.targetTouches[0].clientY);
