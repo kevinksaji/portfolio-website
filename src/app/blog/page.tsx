@@ -1,6 +1,6 @@
 import { getBlogPosts } from '@/lib/notion';
 import Link from 'next/link';
-import { FaCode, FaFutbol, FaChartLine, FaBook, FaLightbulb, FaHeart } from 'react-icons/fa';
+import { FaCode, FaFutbol, FaBook, FaLightbulb, FaHeart } from 'react-icons/fa';
 
 export default async function BlogPage() {
   const posts = await getBlogPosts();
