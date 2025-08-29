@@ -8,15 +8,6 @@ export const notionClient = new NotionAPI({
   authToken: process.env.NOTION_TOKEN_V2
 });
 
-// Validate environment variables
-if (!process.env.NOTION_ACTIVE_USER || !process.env.NOTION_TOKEN_V2) {
-  console.error('❌ Missing Notion environment variables:', {
-    NOTION_ACTIVE_USER: !!process.env.NOTION_ACTIVE_USER,
-    NOTION_TOKEN_V2: !!process.env.NOTION_TOKEN_V2,
-    NODE_ENV: process.env.NODE_ENV
-  });
-}
-
 // types for blog posts
 export interface BlogPost {
   id: string;
@@ -55,17 +46,44 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
       return blogPostsCache;
     }
     
+    // Comprehensive environment variable debugging
+    console.log('🔍 Environment Variables Debug:', {
+      NODE_ENV: process.env.NODE_ENV,
+      NOTION_DATABASE_ID: process.env.NOTION_DATABASE_ID ? 'SET' : 'NOT SET',
+      NOTION_ACTIVE_USER: process.env.NOTION_ACTIVE_USER ? 'SET' : 'NOT SET',
+      NOTION_TOKEN_V2: process.env.NOTION_TOKEN_V2 ? 'SET' : 'NOT SET',
+      ALL_ENV_KEYS: Object.keys(process.env).filter(key => key.includes('NOTION')),
+      TOTAL_ENV_COUNT: Object.keys(process.env).length,
+      VERCEL_URL: process.env.VERCEL_URL,
+      VERCEL_ENV: process.env.VERCEL_ENV
+    });
+    
     const databasePageId = process.env.NOTION_DATABASE_ID;
     
     // if the database page id is not set, return an empty array
     if (!databasePageId) {
       console.error('❌ NOTION_DATABASE_ID environment variable is not set');
+      console.error('🔍 Debug Info:', {
+        'Check Vercel Dashboard': 'Settings → Environment Variables',
+        'Variable Name': 'NOTION_DATABASE_ID (exact casing)',
+        'Environment': 'Must be set for Production',
+        'Value': 'Should not be empty',
+        'Current Value': process.env.NOTION_DATABASE_ID
+      });
       return [];
     }
     
     // Validate Notion client credentials
     if (!process.env.NOTION_ACTIVE_USER || !process.env.NOTION_TOKEN_V2) {
       console.error('❌ Missing Notion credentials - cannot fetch blog posts');
+      console.error('🔍 Debug Info:', {
+        'NOTION_ACTIVE_USER': process.env.NOTION_ACTIVE_USER ? 'SET' : 'NOT SET',
+        'NOTION_TOKEN_V2': process.env.NOTION_TOKEN_V2 ? 'SET' : 'NOT SET',
+        'Check Vercel Dashboard': 'Settings → Environment Variables',
+        'Variable Names': ['NOTION_ACTIVE_USER', 'NOTION_TOKEN_V2'],
+        'Environment': 'Must be set for Production',
+        'Casing': 'Must be exact uppercase'
+      });
       return [];
     }
     
@@ -217,7 +235,7 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
     // Sort by published date (newest first)
     posts.sort((a, b) => new Date(b.publishedDate).getTime() - new Date(a.publishedDate).getTime());
     
-            // Cache the results - this will be used by ALL blog-related pages
+    // Cache the results - this will be used by ALL blog-related pages
     blogPostsCache = posts;
     cacheTimestamp = now;
     
@@ -228,8 +246,6 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
     return [];
   }
 }
-
-
 
 /**
  * Fetches a single blog post by its slug
@@ -308,11 +324,11 @@ export async function getBlogPostsByCategory(category: string): Promise<BlogPost
  */
 export async function getNotionPage(pageId: string) {
   try {
-            // Use notion-client to get the full page content
-        const recordMap = await notionClient.getPage(pageId);
-        
-        return recordMap;
+    // Use notion-client to get the full page content
+    const recordMap = await notionClient.getPage(pageId);
     
+    return recordMap;
+  
   } catch (error) {
     console.error('Error fetching Notion page content:', error);
     return null;

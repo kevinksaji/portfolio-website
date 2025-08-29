@@ -142,8 +142,6 @@ export default function About() {
 
   // Mouse wheel navigation for desktop with debouncing
   const onWheel = (e: React.WheelEvent) => {
-    e.preventDefault();
-    
     if (isScrolling) return; // Prevent rapid scrolling
     
     if (e.deltaY > 0 && currentSlide < slides.length - 1) {
