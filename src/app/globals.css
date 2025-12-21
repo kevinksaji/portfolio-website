@@ -1,29 +1,29 @@
- @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap');
 @import "tailwindcss";
-@import "tw-animate-css";
+
+/*
+  Global styles for the App Router.
+
+  Styling model in this repo:
+  - Use Tailwind utilities in components for layout/spacing.
+  - Use semantic tokens (bg-background, text-foreground, border-border, etc.)
+    backed by CSS variables defined below.
+  - Keep globals minimal: tokens + a small set of base element defaults.
+*/
 
 
 
+/*
+  Tailwind v4 token bridge.
+
+  This maps our design-system CSS variables (e.g. --background) into Tailwind's
+  semantic tokens (e.g. --color-background) so classes like `bg-background`
+  and `text-foreground` work everywhere.
+*/
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --font-mono: 'Geist Mono', monospace;
-  --font-geist-sans: 'Geist', system-ui, sans-serif;
-  --font-geist-mono: 'Geist Mono', monospace;
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -46,6 +46,13 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
+/*
+  Light theme tokens.
+
+  These are semantic colors (not component-specific). Components should prefer
+  Tailwind semantic utilities (bg-card, text-muted-foreground, etc.) rather than
+  hard-coded grays.
+*/
 :root {
   --radius: 0.625rem;
   --background: hsl(0 0% 100%);
@@ -67,21 +74,14 @@
   --border: hsl(0 0% 89.8%);
   --input: hsl(0 0% 89.8%);
   --ring: hsl(0 0% 3.9%);
-  --chart-1: hsl(0 0% 9%);
-  --chart-2: hsl(0 0% 9%);
-  --chart-3: hsl(0 0% 9%);
-  --chart-4: hsl(0 0% 9%);
-  --chart-5: hsl(0 0% 9%);
-  --sidebar: hsl(0 0% 100%);
-  --sidebar-foreground: hsl(0 0% 3.9%);
-  --sidebar-primary: hsl(0 0% 9%);
-  --sidebar-primary-foreground: hsl(0 0% 98%);
-  --sidebar-accent: hsl(0 0% 96.1%);
-  --sidebar-accent-foreground: hsl(0 0% 9%);
-  --sidebar-border: hsl(0 0% 89.8%);
-  --sidebar-ring: hsl(0 0% 3.9%);
 }
 
+/*
+  Dark theme overrides.
+
+  The ThemeProvider toggles a `dark` class on the <html> element.
+  Same semantic class names render differently because these variables change.
+*/
 .dark {
   --background: hsl(0 0% 3.9%);
   --foreground: hsl(0 0% 98%);
@@ -102,31 +102,17 @@
   --border: hsl(0 0% 25%);
   --input: hsl(0 0% 14.9%);
   --ring: hsl(0 0% 83.1%);
-  --chart-1: hsl(0 0% 98%);
-  --chart-2: hsl(0 0% 98%);
-  --chart-3: hsl(0 0% 98%);
-  --chart-4: hsl(0 0% 98%);
-  --chart-5: hsl(0 0% 98%);
-  --sidebar: hsl(0 0% 3.9%);
-  --sidebar-foreground: hsl(0 0% 98%);
-  --sidebar-primary: hsl(0 0% 98%);
-  --sidebar-primary-foreground: hsl(0 0% 9%);
-  --sidebar-accent: hsl(0 0% 14.9%);
-  --sidebar-accent-foreground: hsl(0 0% 98%);
-  --sidebar-border: hsl(0 0% 25%);
-  --sidebar-ring: hsl(0 0% 83.1%);
 }
 
 @layer base {
-  * {
-    /* stylelint-disable-next-line at-rule-no-unknown */
-    @apply border-border;
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-  }
-  
+  /*
+    Base document styles.
+
+    Note: we intentionally do NOT apply a default border color to `*`.
+    Borders should opt-in via `border-border` (or component primitives that do it).
+  */
   body {
-    @apply bg-background text-foreground;
-    font-family: 'Inter', system-ui, sans-serif;
+    @apply bg-background text-foreground font-sans;
     transition: background-color 0.3s ease, color 0.3s ease;
     margin: 0;
     padding: 0;
@@ -135,103 +121,37 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  
-  main {
-    padding-top: calc(3.5rem + 1rem);
-  }
 
-  /* Fix email autofill input background colors */
-  input {
-    background-color: var(--background);
-    color: var(--foreground);
+  /*
+    Fix Safari/Chrome autofill styling.
+    Without this, autofilled inputs can get a browser-imposed background/text color
+    that clashes with your theme.
+  */
+  input:-webkit-autofill,
+  textarea:-webkit-autofill,
+  select:-webkit-autofill {
+    -webkit-text-fill-color: var(--foreground);
+    caret-color: var(--foreground);
+    box-shadow: 0 0 0px 1000px var(--card) inset;
+    background-color: var(--card);
+    transition: background-color 9999s ease-in-out 0s;
   }
 }
 
-/* Custom utilities */
+/*
+  Custom utilities.
+
+  Keep this section small. Prefer semantic tokens and component-level Tailwind
+  utilities instead of growing a bespoke utility library.
+*/
 @layer utilities {
+  /* Hide scrollbars while preserving scroll behavior (used for small scroll areas). */
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-  
+
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
-  }
-  
-  .animate-in {
-    animation-fill-mode: both;
-  }
-  
-  .slide-in-from-bottom-2 {
-    animation-name: slideInFromBottom2;
-  }
-  
-  @keyframes slideInFromBottom2 {
-    from {
-      opacity: 0;
-      transform: translateY(8px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .grid-cols-53 {
-    grid-template-columns: repeat(53, minmax(0, 1fr));
-  }
-  
-  .grid-cols-26 {
-    grid-template-columns: repeat(26, minmax(0, 1fr));
-  }
-
-  /* Height-based responsive utilities */
-  .h-screen-dynamic {
-    min-height: 100vh;
-    min-height: 100dvh; /* Dynamic viewport height for mobile */
-  }
-  
-  .h-screen-fallback {
-    min-height: 100vh;
-    min-height: -webkit-fill-available; /* iOS Safari fallback */
-  }
-  
-  /* Viewport height utilities that account for fixed navbar */
-  .h-screen-navbar {
-    min-height: calc(100vh - 3.5rem); /* 100vh - navbar height (h-14) */
-    min-height: calc(100dvh - 3.5rem); /* Dynamic viewport height - navbar height */
-  }
-  
-  .pt-navbar {
-    padding-top: 3.5rem; /* h-14 navbar height */
-  }
-  
-  .pt-navbar-safe {
-    padding-top: calc(3.5rem + 1rem); /* navbar height + safe spacing */
-  }
-  
-  /* Responsive spacing based on viewport height */
-  .space-y-dynamic {
-    --dynamic-spacing: clamp(1rem, 4vh, 2rem);
-    gap: var(--dynamic-spacing);
-  }
-  
-  .mb-dynamic {
-    margin-bottom: clamp(1rem, 3vh, 1.5rem);
-  }
-  
-  .mt-dynamic {
-    margin-top: clamp(1rem, 3vh, 1.5rem);
-  }
-
-  /* Performance utilities */
-  .gpu-accelerated {
-    transform: translateZ(0);
-  }
-
-  .reduce-motion {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
   }
 }
