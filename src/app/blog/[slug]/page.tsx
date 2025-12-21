@@ -16,21 +16,21 @@ interface BlogPostPageProps {
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   // Extract slug from the dynamic route parameters
   const { slug } = await params;
-  
+
   // Fetch blog post metadata using the slug
   const post = await getBlogPostBySlug(slug);
-  
+
   // If no post found, trigger Next.js 404 page
   if (!post) {
     notFound();
   }
 
-  // Fetch the full Notion page content using the post ID
-  const notionPage = await getNotionPage(post.id);
+  // Fetch the page content blocks using the official Notion API
+  const notionBlocks = await getNotionPage(post.id);
 
   return (
-    <main className="min-h-screen w-full bg-background overflow-y-auto">
-      <article className="pt-20 px-4 max-w-4xl mx-auto pb-16">
+    <div className="min-h-screen w-full bg-background overflow-y-auto">
+      <article className="pt-6 px-4 max-w-4xl mx-auto pb-16">
         {/* Blog post header section with cover image and metadata */}
         <header className="mb-8">
           {/* Conditional cover image display */}
@@ -44,7 +44,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               />
             </div>
           )}
-          
+
           {/* Post title and publication date */}
           <div className="text-center">
             <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
@@ -60,10 +60,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
         {/* Main content section - renders Notion content or fallback */}
         <div className="flex justify-center">
-          {notionPage ? (
+          {notionBlocks ? (
             // Render the Notion content using the NotionRenderer component
             <NotionRenderer
-              recordMap={notionPage}
+              blocks={notionBlocks}
             />
           ) : (
             // Fallback UI when Notion content fails to load
@@ -88,6 +88,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           )}
         </div>
       </article>
-    </main>
+    </div>
   );
 }

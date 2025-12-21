@@ -5,7 +5,7 @@ import { FaCode, FaFutbol, FaBook, FaLightbulb, FaHeart } from 'react-icons/fa';
 export default async function BlogPage() {
   let posts: Awaited<ReturnType<typeof getBlogPosts>> = [];
   let error: string | null = null;
-  
+
   try {
     posts = await getBlogPosts();
     console.log('Blog posts fetched:', posts.length);
@@ -14,7 +14,7 @@ export default async function BlogPage() {
     error = 'Failed to load blog posts';
     posts = []; // Ensure posts is always an array
   }
-  
+
   // Get unique categories and count posts in each
   const categories = posts.reduce((acc, post) => {
     if (post.category) {
@@ -44,7 +44,7 @@ export default async function BlogPage() {
     };
 
     const { icon, color } = getCategoryStyle(categoryName);
-    
+
     return {
       name: categoryName,
       count,
@@ -54,7 +54,7 @@ export default async function BlogPage() {
   });
 
   return (
-    <main className="min-h-screen w-full bg-background pt-12 flex items-center justify-center">
+    <div className="min-h-screen w-full bg-background flex items-center justify-center">
       <div className="max-w-4xl mx-auto px-6 -mt-20">
         {/* Blog Header */}
         <div className="text-center mb-8">
@@ -87,8 +87,7 @@ export default async function BlogPage() {
                 Posts fetched: {posts.length}<br />
                 Categories: {Object.keys(categories).length}<br />
                 Database ID: {process.env.NOTION_DATABASE_ID ? 'Set' : 'Not Set'}<br />
-                Active User: {process.env.NOTION_ACTIVE_USER ? 'Set' : 'Not Set'}<br />
-                Token: {process.env.NOTION_TOKEN_V2 ? 'Set' : 'Not Set'}
+                API Key: {process.env.NOTION_API_KEY ? 'Set' : 'Not Set'}
               </p>
             </div>
           </div>
@@ -141,6 +140,6 @@ export default async function BlogPage() {
           </div>
         )}
       </div>
-    </main>
+    </div>
   );
 }

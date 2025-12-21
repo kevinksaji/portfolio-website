@@ -1,11 +1,11 @@
 export default function Loading() {
   return (
-    <main className="min-h-screen w-full bg-background overflow-y-auto">
-      <article className="pt-20 px-4 max-w-4xl mx-auto">
+    <div className="min-h-screen w-full bg-background overflow-y-auto">
+      <article className="pt-6 px-4 max-w-4xl mx-auto">
         {/* Header skeleton */}
         <header className="mb-8">
           <div className="h-64 md:h-96 bg-muted rounded-lg mb-6 animate-pulse"></div>
-          
+
           <div className="text-center">
             <div className="h-10 bg-muted rounded-lg mb-4 animate-pulse"></div>
             <div className="flex items-center justify-center gap-4 mb-4">
@@ -23,6 +23,6 @@ export default function Loading() {
           ))}
         </div>
       </article>
-    </main>
+    </div>
   );
 }

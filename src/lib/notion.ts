@@ -1,12 +1,13 @@
-// for fetching blog posts from Notion database and individual pages
+// Fetch blog posts and page content from Notion (official API)
 
-import { NotionAPI } from 'notion-client';
-
-// initialize Notion client for react-notion-x
-export const notionClient = new NotionAPI({
-  activeUser: process.env.NOTION_ACTIVE_USER,
-  authToken: process.env.NOTION_TOKEN_V2
-});
+import { Client } from '@notionhq/client';
+import type {
+  BlockObjectResponse,
+  PageObjectResponse,
+  PartialBlockObjectResponse,
+  PartialPageObjectResponse,
+  RichTextItemResponse,
+} from '@notionhq/client/build/src/api-endpoints';
 
 // types for blog posts
 export interface BlogPost {
@@ -20,227 +21,214 @@ export interface BlogPost {
   coverImage?: string;
 }
 
-// Smart caching for blog posts - single fetch strategy
-// This cache is shared across all blog-related pages to minimize API calls
-let blogPostsCache: BlogPost[] | null = null;
-let cacheTimestamp: number = 0;
-const CACHE_DURATION = 10 * 60 * 1000; // 10 minutes - longer since we're fetching once
+export type NotionBlock = BlockObjectResponse & { children?: NotionBlock[] };
+
+function getNotionClient(): Client | null {
+  const apiKey = process.env.NOTION_API_KEY;
+  if (!apiKey) {
+    return null;
+  }
+
+  return new Client({ auth: apiKey });
+}
+
+function richTextToPlainText(richText: RichTextItemResponse[] | undefined): string {
+  if (!richText || richText.length === 0) {
+    return '';
+  }
+  return richText.map((t) => t.plain_text).join('');
+}
+
+function slugify(input: string): string {
+  return input
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function isPageObject(
+  value: PageObjectResponse | PartialPageObjectResponse | unknown
+): value is PageObjectResponse | PartialPageObjectResponse {
+  return typeof value === 'object' && value !== null && (value as { object?: string }).object === 'page';
+}
+
+function isFullPage(value: PageObjectResponse | PartialPageObjectResponse): value is PageObjectResponse {
+  return 'properties' in value;
+}
+
+function getFirstTitleFromPage(page: PageObjectResponse): string {
+  const props = Object.values(page.properties);
+  const titleProp = props.find((p) => p.type === 'title');
+  if (!titleProp || titleProp.type !== 'title') {
+    return 'Untitled';
+  }
+  const title = richTextToPlainText(titleProp.title);
+  return title || 'Untitled';
+}
+
+function getPropertyByName(page: PageObjectResponse, name: string) {
+  const target = name.toLowerCase();
+  return Object.entries(page.properties).find(([key]) => key.toLowerCase() === target)?.[1];
+}
+
+function tryGetStringProperty(page: PageObjectResponse, names: string[]): string {
+  for (const name of names) {
+    const prop = getPropertyByName(page, name);
+    if (!prop) continue;
+
+    if (prop.type === 'rich_text') {
+      const value = richTextToPlainText(prop.rich_text);
+      if (value) return value;
+    }
+
+    if (prop.type === 'title') {
+      const value = richTextToPlainText(prop.title);
+      if (value) return value;
+    }
+
+    if (prop.type === 'url') {
+      if (prop.url) return prop.url;
+    }
+
+    if (prop.type === 'select') {
+      if (prop.select?.name) return prop.select.name;
+    }
+
+    if (prop.type === 'status') {
+      if (prop.status?.name) return prop.status.name;
+    }
+  }
+
+  return '';
+}
+
+function tryGetCategory(page: PageObjectResponse): string {
+  const prop =
+    getPropertyByName(page, 'Category') ??
+    getPropertyByName(page, 'Tags') ??
+    getPropertyByName(page, 'Tag');
+
+  if (!prop) return 'Uncategorized';
+
+  if (prop.type === 'select') {
+    return prop.select?.name || 'Uncategorized';
+  }
+  if (prop.type === 'multi_select') {
+    return prop.multi_select?.[0]?.name || 'Uncategorized';
+  }
+
+  const asText = tryGetStringProperty(page, ['Category', 'Tags', 'Tag']);
+  return asText || 'Uncategorized';
+}
+
+function tryGetPublishedDate(page: PageObjectResponse): string {
+  const candidates = ['Published', 'Publish Date', 'Published Date', 'Date'];
+  for (const name of candidates) {
+    const prop = getPropertyByName(page, name);
+    if (prop?.type === 'date' && prop.date?.start) {
+      return new Date(prop.date.start).toISOString();
+    }
+  }
+  return new Date(page.created_time).toISOString();
+}
+
+function tryGetCoverUrl(page: PageObjectResponse): string | undefined {
+  // Prefer the page cover if present (official API)
+  if (page.cover) {
+    if (page.cover.type === 'external') {
+      return page.cover.external.url;
+    }
+    if (page.cover.type === 'file') {
+      return page.cover.file.url;
+    }
+  }
+
+  const prop = getPropertyByName(page, 'Cover Image') ?? getPropertyByName(page, 'Cover');
+  if (!prop) return undefined;
+
+  if (prop.type === 'files') {
+    const file = prop.files?.[0];
+    if (!file) return undefined;
+    if (file.type === 'external') return file.external.url;
+    if (file.type === 'file') return file.file.url;
+  }
+
+  if (prop.type === 'url' && prop.url) return prop.url;
+
+  return undefined;
+}
+
+function isPublishedStatus(status: string): boolean {
+  const s = status.trim().toLowerCase();
+  if (!s) return true; // if no status property exists, treat as publishable
+  return s === 'published' || s === 'public' || s === 'live';
+}
+
+function pageToBlogPost(page: PageObjectResponse): BlogPost {
+  const title = getFirstTitleFromPage(page);
+  const slug = tryGetStringProperty(page, ['Slug', 'slug']) || slugify(title);
+  const status = tryGetStringProperty(page, ['Status', 'status']);
+  const publishedDate = tryGetPublishedDate(page);
+  const category = tryGetCategory(page);
+  const coverImage = tryGetCoverUrl(page);
+
+  return {
+    id: page.id,
+    title,
+    slug,
+    status: status || 'Published',
+    publishedDate,
+    category,
+    content: '',
+    coverImage,
+  };
+}
 
 /**
- * Fetches all blog posts from Notion database with intelligent caching
- * 
- * This function implements a smart caching strategy where:
- * - First call to any blog page fetches data from Notion
- * - Subsequent calls within 10 minutes use cached data
- * - All blog-related pages share the same cache
- * - Cache automatically expires after 10 minutes
- * 
- * @returns Promise<BlogPost[]> Array of all blog posts sorted by published date
+ * Fetches all blog posts from Notion database.
  */
 export async function getBlogPosts(): Promise<BlogPost[]> {
   try {
-    const now = Date.now();
-    
-    // Check if we have valid cached data
-    if (blogPostsCache && (now - cacheTimestamp) < CACHE_DURATION) {
-      return blogPostsCache;
+    const databaseId = process.env.NOTION_DATABASE_ID;
+    const notion = getNotionClient();
+
+    if (!databaseId || !notion) {
+      return [];
     }
-    
-    // Comprehensive environment variable debugging
-    console.log('🔍 Environment Variables Debug:', {
-      NODE_ENV: process.env.NODE_ENV,
-      NOTION_DATABASE_ID: process.env.NOTION_DATABASE_ID ? 'SET' : 'NOT SET',
-      NOTION_ACTIVE_USER: process.env.NOTION_ACTIVE_USER ? 'SET' : 'NOT SET',
-      NOTION_TOKEN_V2: process.env.NOTION_TOKEN_V2 ? 'SET' : 'NOT SET',
-      ALL_ENV_KEYS: Object.keys(process.env).filter(key => key.includes('NOTION')),
-      TOTAL_ENV_COUNT: Object.keys(process.env).length,
-      VERCEL_URL: process.env.VERCEL_URL,
-      VERCEL_ENV: process.env.VERCEL_ENV
-    });
-    
-    const databasePageId = process.env.NOTION_DATABASE_ID;
-    
-    // if the database page id is not set, return an empty array
-    if (!databasePageId) {
-      console.error('❌ NOTION_DATABASE_ID environment variable is not set');
-      console.error('🔍 Debug Info:', {
-        'Check Vercel Dashboard': 'Settings → Environment Variables',
-        'Variable Name': 'NOTION_DATABASE_ID (exact casing)',
-        'Environment': 'Must be set for Production',
-        'Value': 'Should not be empty',
-        'Current Value': process.env.NOTION_DATABASE_ID
+
+    const pages: PageObjectResponse[] = [];
+    let startCursor: string | undefined;
+
+    // Paginate through all pages in the database
+    while (true) {
+      const response = await notion.databases.query({
+        database_id: databaseId,
+        start_cursor: startCursor,
+        page_size: 100,
       });
-      return [];
-    }
-    
-    // Validate Notion client credentials
-    if (!process.env.NOTION_ACTIVE_USER || !process.env.NOTION_TOKEN_V2) {
-      console.error('❌ Missing Notion credentials - cannot fetch blog posts');
-      console.error('🔍 Debug Info:', {
-        'NOTION_ACTIVE_USER': process.env.NOTION_ACTIVE_USER ? 'SET' : 'NOT SET',
-        'NOTION_TOKEN_V2': process.env.NOTION_TOKEN_V2 ? 'SET' : 'NOT SET',
-        'Check Vercel Dashboard': 'Settings → Environment Variables',
-        'Variable Names': ['NOTION_ACTIVE_USER', 'NOTION_TOKEN_V2'],
-        'Environment': 'Must be set for Production',
-        'Casing': 'Must be exact uppercase'
-      });
-      return [];
-    }
-    
-    // Add timeout to prevent hanging in production
-    const timeoutPromise = new Promise<never>((_, reject) => {
-      setTimeout(() => reject(new Error('Notion API request timed out after 30 seconds')), 30000);
-    });
-    
-    // fetch the database page to get all the blog post pages
-    const databasePage = await Promise.race([
-      notionClient.getPage(databasePageId),
-      timeoutPromise
-    ]);
-    
-    if (!databasePage) {
-      console.log('Database page not found');
-      return [];
-    }
 
-    // initialize an empty array to store the blog posts
-    const posts: BlogPost[] = [];
-    
-    // Extract all the pages from the database
-    // The database structure will have child pages that are blog posts
-    const allPageIds = Object.keys(databasePage.block).filter(id => 
-      databasePage.block[id]?.value?.type === 'page' && 
-      id !== databasePageId
-    );
-
-    // Pre-filter pages to only include those that seem accessible
-    const pageIds = allPageIds.filter(id => {
-      const block = databasePage.block[id];
-      // Basic check - ensure the block has the expected structure
-      return block?.value?.properties || block?.value?.type === 'page';
-    });
-
-    // Fetch each blog post page
-    for (const pageId of pageIds) {
-      try {
-        // Add timeout for individual page fetching
-        const pageTimeoutPromise = new Promise<never>((_, reject) => {
-          setTimeout(() => reject(new Error(`Page ${pageId} request timed out after 15 seconds`)), 15000);
-        });
-        
-        const postPage = await Promise.race([
-          notionClient.getPage(pageId),
-          pageTimeoutPromise
-        ]);
-        
-        if (!postPage) {
-          continue;
+      for (const result of response.results) {
+        if (isPageObject(result) && isFullPage(result)) {
+          pages.push(result);
         }
-
-        const page = postPage.block[pageId];
-        if (!page?.value) {
-          continue;
-        }
-
-        // Extract blog post data from properties
-        const properties = page.value.properties || {};
-        
-
-        
-        // Skip database pages (pages that only have a title, no other properties)
-        if (Object.keys(properties).length <= 1) {
-          continue;
-        }
-        
-        // Get title from the page title property
-        const title = properties.title?.[0]?.[0] || `Blog Post ${pageId.slice(0, 8)}`;
-        
-        // Extract category from properties - POZ` field contains the category
-        let category = 'Uncategorized';
-        if (properties['POZ`']) {
-          category = properties['POZ`'][0]?.[0] || 'Uncategorized';
-        }
-        
-        // Extract slug from properties - Oa:r field contains the slug
-        let slug = properties['Oa:r']?.[0]?.[0] || '';
-        if (!slug) {
-          // Generate slug from title if not provided
-          slug = title.toLowerCase()
-            .replace(/[^a-z0-9]+/g, '-')
-            .replace(/^-+|-+$/g, '');
-        }
-        
-        // Extract status from properties - Kq:o field contains the status
-        let status = 'Draft';
-        if (properties['Kq:o']) {
-          status = properties['Kq:o'][0]?.[0] || 'Draft';
-        }
-        
-        // Extract published date - eVWe field contains the published date
-        let publishedDate = new Date().toISOString();
-        if (properties['eVWe']?.[0]?.[1]?.[0]?.[1]?.start_date) {
-          const dateStr = properties['eVWe'][0][1][0][1].start_date;
-          publishedDate = new Date(dateStr).toISOString();
-        }
-        
-        // Extract cover image
-        const coverImage = properties['Cover Image']?.[0]?.[0] || undefined;
-        
-        // Extract content from the page blocks - be more flexible with content extraction
-        let content = '';
-        const allBlocks = Object.values(postPage.block);
-
-        // Get text content from various block types
-        allBlocks.forEach((block) => {
-          if (
-            block &&
-            typeof block === 'object' &&
-            block.value &&
-            block.value.id !== pageId
-          ) {
-            const blockProps = block.value.properties;
-
-            // Extract text from different block types
-            if (blockProps?.title && Array.isArray(blockProps.title)) {
-              const text = blockProps.title.map((item: unknown[]) => item[0]).join('');
-              if (text.trim()) {
-                content += text + '\n\n';
-              }
-            }
-          }
-        });
-
-        // If no content was extracted, use a placeholder
-        if (!content.trim()) {
-          content = `Content for ${title}`;
-        }
-
-        posts.push({
-          id: pageId,
-          title,
-          slug,
-          status,
-          publishedDate,
-          category,
-          content: content.trim(),
-          coverImage
-        });
-
-      } catch {
-        // Don't let one failed page break the entire process
-        continue;
       }
+
+      if (!response.has_more || !response.next_cursor) {
+        break;
+      }
+      startCursor = response.next_cursor;
     }
+
+    const posts = pages
+      .filter((p) => !p.archived)
+      .map(pageToBlogPost)
+      .filter((p) => isPublishedStatus(p.status));
 
     // Sort by published date (newest first)
     posts.sort((a, b) => new Date(b.publishedDate).getTime() - new Date(a.publishedDate).getTime());
-    
-    // Cache the results - this will be used by ALL blog-related pages
-    blogPostsCache = posts;
-    cacheTimestamp = now;
-    
     return posts;
-    
+
   } catch (error) {
     console.error('Error fetching blog posts:', error);
     return [];
@@ -260,12 +248,12 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
 export async function getBlogPostBySlugDirect(slug: string): Promise<BlogPost | null> {
   try {
     console.log('🔍 Fetching blog post by slug:', slug);
-    
+
     // Use the reliable approach: fetch all posts and find by slug
     // This is actually the RIGHT approach for a blog with reasonable post count
     const posts = await getBlogPosts();
     const post = posts.find(p => p.slug === slug);
-    
+
     if (post) {
       console.log(`✅ Found blog post: ${post.title}`);
       return post;
@@ -273,7 +261,7 @@ export async function getBlogPostBySlugDirect(slug: string): Promise<BlogPost | 
       console.log('❌ No blog post found with slug:', slug);
       return null;
     }
-    
+
   } catch (error) {
     console.error('Error fetching blog post by slug:', error);
     return null;
@@ -297,8 +285,8 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
 /**
  * Fetches all blog posts in a specific category
  * 
- * This function filters the cached blog posts by category name.
- * It's case-insensitive and uses the existing cache for performance.
+ * This function filters blog posts by category name.
+ * It's case-insensitive.
  * 
  * @param category - The category name to filter by (case-insensitive)
  * @returns Promise<BlogPost[]> Array of blog posts in the specified category
@@ -322,15 +310,55 @@ export async function getBlogPostsByCategory(category: string): Promise<BlogPost
  * @param pageId - The Notion page ID to fetch content for
  * @returns Promise<any> The full page record map for rendering
  */
-export async function getNotionPage(pageId: string) {
+function isFullBlock(
+  block: BlockObjectResponse | PartialBlockObjectResponse
+): block is BlockObjectResponse {
+  return 'type' in block;
+}
+
+async function fetchBlockChildren(notion: Client, blockId: string, depth: number): Promise<NotionBlock[]> {
+  if (depth <= 0) return [];
+
+  const children: NotionBlock[] = [];
+  let startCursor: string | undefined;
+
+  while (true) {
+    const response = await notion.blocks.children.list({
+      block_id: blockId,
+      start_cursor: startCursor,
+      page_size: 100,
+    });
+
+    for (const result of response.results) {
+      if (!isFullBlock(result)) continue;
+      const block: NotionBlock = { ...result };
+      if (block.has_children) {
+        block.children = await fetchBlockChildren(notion, block.id, depth - 1);
+      }
+      children.push(block);
+    }
+
+    if (!response.has_more || !response.next_cursor) {
+      break;
+    }
+    startCursor = response.next_cursor;
+  }
+
+  return children;
+}
+
+/**
+ * Fetches a Notion page's block tree using the official Notion API.
+ */
+export async function getNotionPage(pageId: string): Promise<NotionBlock[] | null> {
   try {
-    // Use notion-client to get the full page content
-    const recordMap = await notionClient.getPage(pageId);
-    
-    return recordMap;
-  
+    const notion = getNotionClient();
+    if (!notion) return null;
+
+    // Depth cap keeps requests bounded; increase if you use deep toggles.
+    return await fetchBlockChildren(notion, pageId, 5);
   } catch (error) {
-    console.error('Error fetching Notion page content:', error);
+    console.error('Error fetching Notion page blocks:', error);
     return null;
   }
 }

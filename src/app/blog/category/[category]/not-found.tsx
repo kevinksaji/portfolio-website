@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export default function CategoryNotFound() {
   return (
-    <main className="min-h-screen w-full bg-background pt-20">
+    <div className="min-h-screen w-full bg-background">
       <div className="max-w-4xl mx-auto px-6 text-center">
         <div className="py-16">
           <div className="text-6xl mb-4">🔍</div>
@@ -12,7 +12,7 @@ export default function CategoryNotFound() {
           <p className="text-xl text-muted-foreground mb-8">
             The category you&apos;re looking for doesn&apos;t exist or has no posts yet.
           </p>
-          <Link 
+          <Link
             href="/blog"
             className="inline-flex items-center px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
           >
@@ -20,6 +20,6 @@ export default function CategoryNotFound() {
           </Link>
         </div>
       </div>
-    </main>
+    </div>
   );
 }

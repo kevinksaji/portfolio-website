@@ -1,6 +1,6 @@
 export default function CategoryLoading() {
   return (
-    <main className="min-h-screen w-full bg-background pt-12 flex items-center justify-center">
+    <div className="min-h-screen w-full bg-background flex items-center justify-center">
       <div className="max-w-4xl mx-auto px-6 -mt-20">
         {/* Category Title Skeleton */}
         <div className="text-center mb-12">
@@ -14,7 +14,7 @@ export default function CategoryLoading() {
               <div key={i} className="group flex flex-col space-y-3 p-8 rounded-xl bg-card border border-border">
                 {/* Image Skeleton */}
                 <div className="w-full h-48 rounded-lg bg-muted animate-pulse mb-4"></div>
-                
+
                 {/* Content Skeleton */}
                 <div className="text-center">
                   <div className="flex items-center justify-center gap-2 mb-3">
@@ -27,6 +27,6 @@ export default function CategoryLoading() {
           </div>
         </div>
       </div>
-    </main>
+    </div>
   );
 }
