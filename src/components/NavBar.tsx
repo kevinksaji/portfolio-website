@@ -28,17 +28,17 @@ export default function Navbar() {
 
   return (
     <header className="fixed top-0 left-0 z-[100] h-14 w-full bg-background text-foreground border-b border-border">
-      <div className="mx-auto grid h-full w-full max-w-7xl grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-4 sm:gap-4 sm:px-6 lg:px-8">
+      <div className="mx-auto grid h-full w-full max-w-8xl grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-0 px-0">
         {/* left */}
-        <Button asChild variant="ghost" size="sm" className="shrink-0 px-2">
+        <Button asChild variant="ghost" size="sm" className="col-start-1 row-start-1 shrink-0 px-10 relative z-10">
           <Link href="/" aria-label="Go to homepage" className="text-base font-bold tracking-wide">
             KS
           </Link>
         </Button>
 
         {/* center */}
-        <nav className="min-w-0" aria-label="Primary">
-          <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide sm:gap-2 md:justify-center">
+        <nav className="col-start-1 col-end-4 row-start-1 min-w-0 justify-self-center" aria-label="Primary">
+          <div className="flex items-center justify-center gap-8 overflow-x-auto scrollbar-hide sm:gap-10">
             {navLinks.map((link) => {
               const isActive =
                 link.href === "/blog"
@@ -52,7 +52,7 @@ export default function Navbar() {
                   variant="ghost"
                   size="sm"
                   className={cn(
-                    "h-9 rounded-none border-b-2 border-transparent px-2 text-xs sm:text-sm",
+                    "h-9 rounded-none border-b-2 border-transparent px-3 text-xs sm:px-6 sm:text-sm",
                     "text-muted-foreground",
                     isActive && "border-foreground text-foreground"
                   )}
@@ -72,7 +72,7 @@ export default function Navbar() {
         </nav>
 
         {/* right */}
-        <div className="shrink-0 flex items-center gap-3 whitespace-nowrap sm:gap-4">
+        <div className="col-start-3 row-start-1 justify-self-end shrink-0 flex items-center gap-3 whitespace-nowrap relative z-10 sm:gap-4 px-10">
           <ThemeToggle />
 
           <Button asChild size="sm" variant="outline">
