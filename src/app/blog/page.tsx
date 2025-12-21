@@ -28,7 +28,7 @@ export default async function BlogPage() {
     // Map category names to icons and colors
     const getCategoryStyle = (name: string) => {
       const lowerName = name.toLowerCase();
-      if (lowerName.includes('computer') || lowerName.includes('science') || lowerName.includes('tech')) {
+      if (lowerName.includes('computer') || lowerName.includes('science') || lowerName.includes('academics')) {
         return { icon: FaCode, color: 'bg-blue-500/10 text-blue-600 border-blue-200' };
       } else if (lowerName.includes('sport') || lowerName.includes('futbol') || lowerName.includes('game')) {
         return { icon: FaFutbol, color: 'bg-green-500/10 text-green-600 border-green-200' };

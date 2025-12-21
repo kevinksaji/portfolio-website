@@ -1,6 +1,5 @@
 "use client"
 
-import { motion, AnimatePresence } from "framer-motion"
 import { useState, useEffect } from "react"
 import experiences from "@/data/experiences"
 import WorkExperience from "@/components/WorkExperience"
@@ -22,7 +21,7 @@ export default function ExperiencePage() {
 
   const onTouchEnd = () => {
     if (!touchStart || !touchEnd || isScrolling) return;
-    
+
     const distance = touchStart - touchEnd;
     const isSwipeUp = distance > 50; // Swipe up threshold
     const isSwipeDown = distance < -50; // Swipe down threshold
@@ -47,7 +46,7 @@ export default function ExperiencePage() {
   // Mouse wheel navigation for desktop - no preventDefault
   const onWheel = (e: React.WheelEvent) => {
     if (isScrolling) return; // Prevent rapid scrolling
-    
+
     if (e.deltaY > 0 && currentExperience < experiences.length - 1) {
       // Scroll down - go to next experience
       setCurrentExperience(currentExperience + 1);
@@ -67,7 +66,7 @@ export default function ExperiencePage() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isScrolling) return; // Prevent rapid key presses
-      
+
       if (e.key === 'ArrowUp' && currentExperience < experiences.length - 1) {
         setCurrentExperience(currentExperience + 1);
         setIsScrolling(true);
@@ -84,8 +83,8 @@ export default function ExperiencePage() {
   }, [currentExperience, isScrolling]);
 
   return (
-    <main 
-      className="h-screen w-full bg-background overflow-hidden"
+    <div
+      className="h-[calc(100dvh-3.5rem)] w-full bg-background overflow-hidden"
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
@@ -96,28 +95,18 @@ export default function ExperiencePage() {
         {experiences.map((_, index) => (
           <div
             key={index}
-            className={`w-3 h-3 rounded-full transition-all duration-300 ${
-              index === currentExperience 
-                ? 'bg-foreground scale-125' 
-                : 'bg-muted-foreground/30'
-            }`}
+            className={`w-3 h-3 rounded-full transition-all duration-300 ${index === currentExperience
+              ? 'bg-foreground scale-125'
+              : 'bg-muted-foreground/30'
+              }`}
           />
         ))}
       </div>
 
       {/* Current experience */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={currentExperience}
-          initial={{ opacity: 0, y: 100 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -100 }}
-          transition={{ duration: 0.5, ease: "easeInOut" }}
-          className="h-full flex items-center justify-center"
-        >
-          <WorkExperience {...experiences[currentExperience]} />
-        </motion.div>
-      </AnimatePresence>
-    </main>
+      <div className="h-full flex items-center justify-center">
+        <WorkExperience {...experiences[currentExperience]} />
+      </div>
+    </div>
   )
 }

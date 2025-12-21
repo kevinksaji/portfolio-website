@@ -1,9 +1,10 @@
 "use client";
 
-import { useRef, useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import ChatInput from "./ChatInput";
 import TypingIndicator from "./TypingIndicator";
 import FormattedMessage from "./FormattedMessage";
+import { cn } from "@/lib/utils";
 
 export type ChatMessageType = { role: "user" | "assistant"; content: string };
 
@@ -29,7 +30,7 @@ export default function ChatWindow({
 
     // Auto-scroll to bottom when messages or loading states change
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages, loading, initialLoading]);
 
     const handleSendMessage = async (text: string) => {
@@ -37,9 +38,9 @@ export default function ChatWindow({
     };
 
     return (
-        <div className="h-screen w-full bg-background relative overflow-hidden">
-            <div className="h-[calc(100vh-220px)] overflow-y-auto py-2 w-full flex justify-center scrollbar-hide">
-                <div className="w-full max-w-2xl px-4 space-y-3 pt-16 pb-16">
+        <div className="h-full w-full bg-background overflow-hidden flex flex-col">
+            <div className="flex-1 overflow-y-auto w-full scrollbar-hide">
+                <div className="w-full max-w-4xl lg:max-w-5xl xl:max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3 py-6 sm:py-8">
                     {/* Empty state when no messages */}
                     {messages.length === 0 && !loading && !initialLoading && (
                         <div className="text-center text-muted-foreground mt-8">
@@ -48,55 +49,58 @@ export default function ChatWindow({
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                                 </svg>
                             </div>
-                            <p className="text-lg font-medium text-muted-foreground mb-2">Start a conversation</p>
-                            <p className="text-muted-foreground">Ask me anything and I&apos;ll help you out!</p>
                         </div>
                     )}
-                    
-                    {/* Message list with speech bubble styling */}
+
                     {messages.map((m, i) => (
                         <div
                             key={i}
-                            className={`flex ${m.role === "user" ? "justify-end" : "justify-start"} animate-in slide-in-from-bottom-2 duration-300 ease-out`}
+                            className={cn(
+                                "flex",
+                                m.role === "user" ? "justify-end" : "justify-start"
+                            )}
                         >
                             <div
-                                className={`max-w-[70%] px-4 py-3 shadow-lg relative ${
+                                className={cn(
+                                    "max-w-[70%] px-4 py-3 shadow-lg relative",
                                     m.role === "user"
                                         ? "bg-background text-foreground rounded-2xl rounded-br-md border border-border"
                                         : "bg-background text-foreground border border-border rounded-2xl rounded-bl-md"
-                                }`}
+                                )}
                             >
                                 {/* Speech bubble tails */}
                                 {m.role === "user" && (
-                                    <div className="absolute bottom-0 right-0 w-0 h-0 border-l-[12px] border-l-background border-t-[12px] border-t-transparent"></div>
+                                    <div className="absolute bottom-0 right-0 w-0 h-0 border-l-[12px] border-l-background border-t-[12px] border-t-transparent" />
                                 )}
                                 {m.role === "assistant" && (
-                                    <div className="absolute bottom-0 left-0 w-0 h-0 border-r-[12px] border-r-background border-t-[12px] border-t-transparent"></div>
+                                    <div className="absolute bottom-0 left-0 w-0 h-0 border-r-[12px] border-r-background border-t-[12px] border-t-transparent" />
                                 )}
-                                
+
                                 <FormattedMessage content={m.content} />
                             </div>
                         </div>
                     ))}
-                    
+
                     {/* Typing indicator during API calls */}
                     {(loading || initialLoading) && (
-                        <div className="flex justify-start animate-in slide-in-from-bottom-2 duration-300 ease-out">
+                        <div className="flex justify-start">
                             <TypingIndicator />
                         </div>
                     )}
-                    
+
                     <div className="h-10"></div>
                     <div ref={messagesEndRef} />
                 </div>
             </div>
 
-            {/* Fixed input bar at bottom */}
-            <div className="fixed bottom-27 left-1/2 transform -translate-x-1/2 w-full max-w-4xl px-4 z-10">
-                <ChatInput
-                    onSendAction={handleSendMessage}
-                    disabled={loading || initialLoading || !conversation}
-                />
+            {/* Sticky input bar */}
+            <div className="sticky bottom-0 w-full bg-background/80 backdrop-blur-sm border-t border-border/20">
+                <div className="w-full max-w-4xl lg:max-w-5xl xl:max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
+                    <ChatInput
+                        onSendAction={handleSendMessage}
+                        disabled={loading || initialLoading || !conversation}
+                    />
+                </div>
             </div>
         </div>
     );

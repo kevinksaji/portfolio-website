@@ -8,6 +8,12 @@ import { Button } from "@/components/ui/button"
 export function ThemeToggle() {
   const { theme, setTheme, mounted } = useTheme()
 
+  const resolvedTheme = React.useMemo<"light" | "dark">(() => {
+    if (typeof window === "undefined") return "light"
+    if (theme === "dark" || theme === "light") return theme
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+  }, [theme])
+
   // Don't render until theme is properly initialized to prevent flicker
   if (!mounted) {
     return (
@@ -27,10 +33,10 @@ export function ThemeToggle() {
     <Button
       variant="outline"
       size="icon"
-      onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+      onClick={() => setTheme(resolvedTheme === "light" ? "dark" : "light")}
       className="h-9 w-9 relative"
     >
-      {theme === "dark" ? (
+      {resolvedTheme === "dark" ? (
         <FaSun className="h-[1.2rem] w-[1.2rem] text-yellow-500" />
       ) : (
         <FaMoon className="h-[1.2rem] w-[1.2rem] text-muted-foreground" />

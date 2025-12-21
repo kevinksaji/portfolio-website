@@ -4,11 +4,12 @@
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { useRef, useEffect } from "react";
-import { motion } from "framer-motion";
 import { FaPaperPlane, FaCheck } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import { submitContactForm } from "./actions";
+import { cn } from "@/lib/utils";
 
 /**
  * Contact form component using Next.js Form with server actions
@@ -17,16 +18,22 @@ import { submitContactForm } from "./actions";
 export default function EmailContact() {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
-  
+
+  const fieldWrapperClassName =
+    "bg-card rounded-2xl border border-border/50 shadow-lg p-2 sm:p-3";
+
+  const fieldClassName =
+    "w-full h-auto text-sm sm:text-base border-0 rounded-xl px-3 sm:px-4 py-2 sm:py-3 bg-card text-foreground placeholder:text-muted-foreground shadow-none ring-0 outline-none transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0";
+
   // Next.js Form state management using useActionState
   const [state, formAction] = useActionState(submitContactForm, null);
-  
+
   // Reset form and redirect on successful submission
   useEffect(() => {
     if (state?.success) {
       // Reset form
       formRef.current?.reset();
-      
+
       // Redirect after 2 seconds
       setTimeout(() => {
         router.push("/");
@@ -35,49 +42,31 @@ export default function EmailContact() {
   }, [state?.success, router]);
 
   return (
-    <main className="min-h-screen w-full flex items-center justify-center bg-background pt-14 px-4">
-      <motion.div 
-        className="w-full max-w-2xl"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
+    <div className="min-h-screen w-full flex items-center justify-center bg-background px-4">
+      <div className="w-full max-w-2xl">
         {/* Header Section */}
         <div className="text-center mb-8">
-          <motion.h1 
-            className="text-6xl md:text-7xl font-bold text-foreground mb-6"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-          >
+          <h1 className="text-6xl md:text-7xl font-bold text-foreground mb-6">
             Send me a message.
-          </motion.h1>
-          <motion.p 
-            className="text-xl text-muted-foreground max-w-md mx-auto"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2 }}
-          >
+          </h1>
+          <p className="text-xl text-muted-foreground max-w-md mx-auto">
             I&apos;m always open to new opportunities, collaborations, and interesting conversations!
-          </motion.p>
+          </p>
         </div>
 
         {/* Contact Form - Using Next.js Form Component */}
-        <motion.form 
+        <form
           ref={formRef}
           action={formAction}
           className="space-y-6"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
         >
           {/* Email Input Field */}
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
               Your Email
             </label>
-            <div className="bg-card rounded-2xl border border-border/50 shadow-lg p-2 sm:p-3">
-              <input
+            <div className={fieldWrapperClassName}>
+              <Input
                 type="email"
                 id="email"
                 name="email"
@@ -87,8 +76,7 @@ export default function EmailContact() {
                 autoCorrect="off"
                 autoCapitalize="off"
                 spellCheck="false"
-                className="w-full text-sm sm:text-base border-0 rounded-xl px-3 sm:px-4 py-2 sm:py-3 focus:ring-0 focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-0 transition-all bg-card text-foreground placeholder:text-muted-foreground shadow-none ring-0 outline-none [&:-webkit-autofill]:bg-card [&:-webkit-autofill]:text-foreground [&:-webkit-autofill]:shadow-[0_0_0_1000px_hsl(var(--card))_inset] dark:[&:-webkit-autofill]:shadow-[0_0_0_1000px_hsl(var(--card))_inset] [&:-webkit-autofill]:border-0 [&:-webkit-autofill]:-webkit-text-fill-color:hsl(var(--foreground)) [&:-webkit-autofill]:caret-color:hsl(var(--foreground)) [&:autofill]:bg-card [&:autofill]:text-foreground [&:autofill]:border-0"
-                style={{ border: 'none', outline: 'none', boxShadow: 'none' }}
+                className={fieldClassName}
               />
             </div>
           </div>
@@ -98,8 +86,8 @@ export default function EmailContact() {
             <label htmlFor="subject" className="block text-sm font-medium text-foreground mb-2">
               Subject
             </label>
-            <div className="bg-card rounded-2xl border border-border/50 shadow-lg p-2 sm:p-3">
-              <input
+            <div className={fieldWrapperClassName}>
+              <Input
                 type="text"
                 id="subject"
                 name="subject"
@@ -109,8 +97,7 @@ export default function EmailContact() {
                 autoCorrect="off"
                 autoCapitalize="off"
                 spellCheck="false"
-                className="w-full text-sm sm:text-base border-0 rounded-xl px-3 sm:px-4 py-2 sm:py-3 focus:ring-0 focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-0 transition-all bg-card text-foreground placeholder:text-muted-foreground shadow-none ring-0 outline-none [&:-webkit-autofill]:bg-card [&:-webkit-autofill]:text-foreground [&:-webkit-autofill]:shadow-[0_0_0_1000px_hsl(var(--card))_inset] dark:[&:-webkit-autofill]:shadow-[0_0_0_1000px_hsl(var(--card))_inset] [&:-webkit-autofill]:border-0 [&:-webkit-autofill]:-webkit-text-fill-color:hsl(var(--foreground)) [&:-webkit-autofill]:caret-color:hsl(var(--foreground)) [&:autofill]:bg-card [&:autofill]:text-foreground [&:autofill]:border-0"
-                style={{ border: 'none', outline: 'none', boxShadow: 'none' }}
+                className={fieldClassName}
               />
             </div>
           </div>
@@ -120,7 +107,7 @@ export default function EmailContact() {
             <label htmlFor="message" className="block text-sm font-medium text-foreground mb-2">
               Message
             </label>
-            <div className="bg-card rounded-2xl border border-border/50 shadow-lg p-2 sm:p-3">
+            <div className={fieldWrapperClassName}>
               <textarea
                 id="message"
                 name="message"
@@ -131,8 +118,7 @@ export default function EmailContact() {
                 autoCorrect="off"
                 autoCapitalize="off"
                 spellCheck="false"
-                className="w-full text-sm sm:text-base border-0 rounded-xl px-3 sm:px-4 py-2 sm:py-3 focus:ring-0 focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-0 transition-all resize-none bg-card text-foreground placeholder:text-muted-foreground shadow-none ring-0 outline-none [&:-webkit-autofill]:bg-card [&:-webkit-autofill]:text-foreground [&:-webkit-autofill]:shadow-[0_0_0_1000px_hsl(var(--card))_inset] dark:[&:-webkit-autofill]:shadow-[0_0_0_1000px_hsl(var(--card))_inset] [&:-webkit-autofill]:border-0 [&:-webkit-autofill]:-webkit-text-fill-color:hsl(var(--foreground)) [&:-webkit-autofill]:caret-color:hsl(var(--foreground)) [&:autofill]:bg-card [&:autofill]:text-foreground [&:autofill]:border-0"
-                style={{ border: 'none', outline: 'none', boxShadow: 'none' }}
+                className={cn(fieldClassName, "resize-none")}
               />
             </div>
           </div>
@@ -144,64 +130,32 @@ export default function EmailContact() {
 
           {/* Error Message Display */}
           {state?.error && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="p-4 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive text-center"
-            >
+            <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive text-center">
               ❌ {state.error}
-            </motion.div>
+            </div>
           )}
-        </motion.form>
+        </form>
 
         {/* Success Animation Overlay */}
         {state?.success && (
-          <motion.div
+          <div
             className="fixed inset-0 bg-black/90 flex items-center justify-center z-50"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
           >
-            <motion.div
-              className="text-center"
-              initial={{ scale: 0.5, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ 
-                type: "spring", 
-                stiffness: 260, 
-                damping: 20,
-                delay: 0.2
-              }}
-            >
+            <div className="text-center">
               {/* Success Checkmark Icon */}
-              <motion.div
-                className="w-24 h-24 mx-auto mb-6 rounded-full bg-green-500 flex items-center justify-center"
-                initial={{ scale: 0, rotate: -180 }}
-                animate={{ scale: 1, rotate: 0 }}
-                transition={{ 
-                  type: "spring", 
-                  stiffness: 200, 
-                  damping: 15,
-                  delay: 0.4
-                }}
-              >
+              <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-green-500 flex items-center justify-center">
                 <FaCheck className="w-12 h-12 text-white" />
-              </motion.div>
-              
+              </div>
+
               {/* Success Message */}
-              <motion.h2
-                className="text-2xl md:text-3xl font-bold text-white mb-4"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 }}
-              >
+              <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
                 Message Sent Successfully!
-              </motion.h2>
-            </motion.div>
-          </motion.div>
+              </h2>
+            </div>
+          </div>
         )}
-      </motion.div>
-    </main>
+      </div>
+    </div>
   );
 }
 
@@ -211,7 +165,7 @@ export default function EmailContact() {
  */
 function SubmitButton() {
   const { pending } = useFormStatus();
-  
+
   return (
     <Button
       type="submit"

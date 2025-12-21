@@ -1,133 +1,31 @@
 "use client"
 
 import { useRouter } from 'next/navigation';
-import { useState, useRef, useCallback, useEffect } from 'react';
-import NavigationButtons from "@/components/NavigationButtons";
-import GreetingText from "@/components/GreetingText";
+import { useCallback, useEffect } from 'react';
 import ChatInput from "@/components/ChatInput";
 import LeetCodeStats from "@/components/LeetCodeStats";
 import GitHubStats from "@/components/GitHubStats";
 import ProfilePicture from "@/components/ProfilePicture";
 import TechStack from "@/components/TechStack";
-import { motion, AnimatePresence } from 'framer-motion';
-
-// define sections data
-const sections = [
-  'hero', // Main hero section
-  'chat'  // Ask away section
-];
 
 export default function Home() {
   const router = useRouter();
-  const [currentSection, setCurrentSection] = useState(0);
-  const [touchStart, setTouchStart] = useState(0);
-  const [touchEnd, setTouchEnd] = useState(0);
-  const [isScrolling, setIsScrolling] = useState(false);
-  const heroRef = useRef<HTMLDivElement>(null);
 
   // Prefetch blog data when homepage loads
   useEffect(() => {
     const prefetchBlogData = async () => {
       try {
-        console.log('🚀 Prefetching blog data on homepage load...');
         // Import dynamically to avoid server-side issues
         const { getBlogPosts } = await import('@/lib/notion');
         await getBlogPosts();
-        console.log('✅ Blog data prefetched successfully');
-      } catch (error) {
-        console.log('⚠️ Blog prefetch failed (non-critical):', error);
-        // Don't show error to user - this is just optimization
+      } catch {
+        // non-critical prefetch
       }
     };
 
     // Start prefetching immediately
     prefetchBlogData();
   }, []);
-
-  // Touch handlers for swipe detection
-  const onTouchStart = (e: React.TouchEvent) => {
-    setTouchStart(e.targetTouches[0].clientY);
-  };
-
-  const onTouchMove = (e: React.TouchEvent) => {
-    setTouchEnd(e.targetTouches[0].clientY);
-  };
-
-  const onTouchEnd = () => {
-    if (!touchStart || !touchEnd || isScrolling) return;
-    
-    const distance = touchStart - touchEnd;
-    const isSwipeUp = distance > 50; // Swipe up threshold
-    const isSwipeDown = distance < -50; // Swipe down threshold
-
-    if (isSwipeDown && currentSection > 0) {
-      // Swipe down - go to previous section
-      setCurrentSection(currentSection - 1);
-      setIsScrolling(true);
-      setTimeout(() => setIsScrolling(false), 500); // 500ms cooldown
-    } else if (isSwipeUp && currentSection < sections.length - 1) {
-      // Swipe up - go to next section
-      setCurrentSection(currentSection + 1);
-      setIsScrolling(true);
-      setTimeout(() => setIsScrolling(false), 500); // 500ms cooldown
-    }
-
-    // Reset touch values
-    setTouchStart(0);
-    setTouchEnd(0);
-  };
-
-  // Wheel navigation for desktop - no preventDefault
-  const handleWheel = useCallback((e: WheelEvent) => {
-    if (isScrolling) return; // Prevent rapid scrolling
-    
-    if (currentSection === 0) {
-      // In hero section - only transition when scrolling down at bottom
-      const heroElement = heroRef.current;
-      if (heroElement) {
-        const { scrollTop, scrollHeight, clientHeight } = heroElement;
-        
-        if (e.deltaY > 0 && scrollTop + clientHeight >= scrollHeight) {
-          // At bottom of hero section, transition to next section
-          setCurrentSection(1);
-          setIsScrolling(true);
-          setTimeout(() => setIsScrolling(false), 500);
-        }
-      }
-    } else if (currentSection === 1 && e.deltaY < 0) {
-      // In chat section - only transition when scrolling up
-      setCurrentSection(0);
-      setIsScrolling(true);
-      setTimeout(() => setIsScrolling(false), 500);
-    }
-  }, [currentSection, isScrolling]);
-
-
-
-  // Keyboard navigation
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (isScrolling) return; // Prevent rapid key presses
-      
-      if (e.key === 'ArrowUp' && currentSection < sections.length - 1) {
-        setCurrentSection(currentSection + 1);
-        setIsScrolling(true);
-        setTimeout(() => setIsScrolling(false), 500); // 500ms cooldown
-      } else if (e.key === 'ArrowDown' && currentSection > 0) {
-        setCurrentSection(currentSection - 1);
-        setIsScrolling(true);
-        setTimeout(() => setIsScrolling(false), 500); // 500ms cooldown
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('wheel', handleWheel);
-    
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('wheel', handleWheel);
-    };
-  }, [currentSection, isScrolling, handleWheel]);
 
   const handleSearch = useCallback(async (text: string) => {
     if (text.trim()) {
@@ -137,100 +35,19 @@ export default function Home() {
   }, [router]);
 
   return (
-    <main 
-      className="h-screen w-full bg-background overflow-hidden"
-      onTouchStart={onTouchStart}
-      onTouchMove={onTouchMove}
-      onTouchEnd={onTouchEnd}
-    >
-      {/* Current section */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={currentSection}
-          initial={{ opacity: 0, y: 100 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -100 }}
-          transition={{ duration: 0.5, ease: "easeInOut" }}
-          className="h-full flex items-center justify-center"
-        >
-          {currentSection === 0 ? (
-            // Main Hero Section - Scrollable
-            <div 
-              ref={heroRef}
-              className="h-full w-full overflow-y-auto px-4 pt-8 pb-8"
-              style={{ scrollbarWidth: 'none' }}
-            >
-              <style dangerouslySetInnerHTML={{
-                __html: `
-                  .overflow-y-auto::-webkit-scrollbar {
-                    display: none !important;
-                    width: 0 !important;
-                    height: 0 !important;
-                  }
-                  .overflow-y-auto::-webkit-scrollbar-track {
-                    display: none !important;
-                  }
-                  .overflow-y-auto::-webkit-scrollbar-thumb {
-                    display: none !important;
-                  }
-                `
-              }} />
-              <div className="flex flex-col items-center justify-center text-center w-full max-w-4xl mx-auto py-8 lg:py-0 min-h-full">
-                <div className="flex flex-col sm:flex-row justify-center w-full gap-4 lg:gap-6 mb-12">
-                  <div className="flex flex-col gap-4 lg:gap-6">
-                    <LeetCodeStats />
-                    <TechStack />
-                  </div>
-                  <GitHubStats />
-                  <ProfilePicture />
-                </div>
-                
-                <div className="flex flex-col items-center justify-center text-center mb-12">
-                  <GreetingText />
-                </div>
-                
-                <NavigationButtons />
-                
-                {/* Bouncing chevron indicator */}
-                <div className="mt-12 animate-bounce">
-                  <button
-                    onClick={() => setCurrentSection(1)}
-                    className="flex flex-col items-center text-muted-foreground hover:text-foreground transition-colors duration-300 cursor-pointer"
-                    aria-label="Go to Ask Away section"
-                  >
-                    <svg 
-                      className="w-12 h-12" 
-                      fill="none" 
-                      stroke="currentColor" 
-                      viewBox="0 0 24 24"
-                      strokeWidth="1.5"
-                    >
-                      <path 
-                        strokeLinecap="round" 
-                        strokeLinejoin="round" 
-                        d="M19.5 8.25l-7.5 7.5-7.5-7.5" 
-                      />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
-          ) : (
-            // Chat Section
-            <div className="text-center max-w-4xl mx-auto px-4">
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-8">
-                Ask away.
-              </h1>
-              <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground mb-12 max-w-2xl mx-auto">
-                Have questions about Kevin&apos;s experience, skills, or just want to chat? I&apos;m here to help!
-              </p>
-              <div className="w-full max-w-2xl mx-auto">
-                <ChatInput onSendAction={handleSearch} placeholder="Ask me anything about Kevin..." />
-              </div>
-            </div>
-          )}
-        </motion.div>
-      </AnimatePresence>
-    </main>
+    <div className="w-full bg-background min-h-[calc(100dvh-3.5rem)] flex items-center">
+      <div className="w-full max-w-6xl xl:max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 py-6 sm:py-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 xl:gap-8 w-full items-stretch lg:auto-rows-[220px] xl:auto-rows-[240px] lg:grid-flow-dense">
+          <ProfilePicture className="h-full min-w-0 sm:col-span-2 lg:col-span-2 lg:row-span-2" />
+          <GitHubStats className="h-full min-w-0" />
+          <TechStack className="h-full min-w-0" />
+          <LeetCodeStats className="h-full min-w-0 sm:col-span-2 lg:col-span-2" />
+        </div>
+
+        <div className="mt-6 sm:mt-8 lg:mt-10 w-full max-w-2xl lg:max-w-3xl xl:max-w-4xl mx-auto">
+          <ChatInput onSendAction={handleSearch} placeholder="Ask me anything about Kevin..." />
+        </div>
+      </div>
+    </div>
   );
 }

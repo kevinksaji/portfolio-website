@@ -2,23 +2,8 @@
 
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
-
-const containerVariants = {
-  // for animating each section of the page
-  hidden: {},
-  show: { transition: { staggerChildren: 0.3 } },
-};
-const itemVariants = {
-  // for animating each item in the section
-  hidden: { opacity: 0, y: 10 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { ease: "easeOut" as const, duration: 0.3 },
-  },
-};
+import Image from "next/image";
 
 // reusable full-screen slide component (declared as a type which is similar to an interface)
 type SlideProps = {
@@ -37,47 +22,43 @@ function Slide({ // destructuring the props, each prop becomes a local variable
   reverse = false,
 }: SlideProps) {
   return (
-    <motion.section
+    <section
       className="flex min-h-screen flex-col items-center justify-center px-6 py-10 sm:flex-row lg:justify-center"
-      variants={containerVariants} // for animating the section
-      initial="hidden"
-      whileInView="show"
-      viewport={{ amount: 0.6 }}
     >
       {reverse ? (
         <>
-          <motion.div
+          <div
             className="max-w-xl space-y-4 text-center sm:text-left sm:mr-12"
-            variants={itemVariants} // for animating the text
           >
             <h2 className="text-4xl font-bold text-foreground">{title}</h2>
             <p className="text-lg text-muted-foreground">{description}</p>
-          </motion.div>
-          <motion.img
+          </div>
+          <Image
             src={imgSrc}
             alt={imgAlt}
+            width={320}
+            height={320}
             className="mb-8 h-72 w-72 rounded-2xl object-cover shadow-xl sm:mb-0 sm:h-80 sm:w-80"
-            variants={itemVariants} // for animating the image
           />
         </>
       ) : (
         <>
-          <motion.img
+          <Image
             src={imgSrc}
             alt={imgAlt}
+            width={320}
+            height={320}
             className="mb-8 h-72 w-72 rounded-2xl object-cover shadow-xl sm:mb-0 sm:h-80 sm:w-80 sm:mr-12"
-            variants={itemVariants} // for animating the image
           />
-          <motion.div
+          <div
             className="max-w-xl space-y-4 text-center sm:text-left"
-            variants={itemVariants} // for animating the text
           >
             <h2 className="text-4xl font-bold text-foreground">{title}</h2>
             <p className="text-lg text-muted-foreground">{description}</p>
-          </motion.div>
+          </div>
         </>
       )}
-    </motion.section>
+    </section>
   );
 }
 
@@ -111,14 +92,14 @@ export default function About() {
   const onTouchStart = (e: React.TouchEvent) => {
     setTouchStart(e.targetTouches[0].clientY);
   };
- 
-  const onTouchMove = (e: React.TouchEvent) => { 
+
+  const onTouchMove = (e: React.TouchEvent) => {
     setTouchEnd(e.targetTouches[0].clientY);
   };
 
   const onTouchEnd = () => {
     if (!touchStart || !touchEnd || isScrolling) return; // if the touch start or touch end is not defined, or the isScrolling state is true, then return
-    
+
     const distance = touchStart - touchEnd;
     const isSwipeUp = distance > 50; // Swipe up threshold - if the distance is greater than 50, then it is a swipe up
     const isSwipeDown = distance < -50; // Swipe down threshold - if the distance is less than -50, then it is a swipe down
@@ -143,7 +124,7 @@ export default function About() {
   // Mouse wheel navigation for desktop with debouncing
   const onWheel = (e: React.WheelEvent) => {
     if (isScrolling) return; // Prevent rapid scrolling
-    
+
     if (e.deltaY > 0 && currentSlide < slides.length - 1) {
       // Scroll down - go to next slide
       setCurrentSlide(currentSlide + 1);
@@ -161,7 +142,7 @@ export default function About() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isScrolling) return; // Prevent rapid key presses
-      
+
       if (e.key === 'ArrowDown' && currentSlide < slides.length - 1) { // if the arrow down key is pressed and the current slide is less than the length of the slides, then go to the next slide
         setCurrentSlide(currentSlide + 1);
         setIsScrolling(true);
@@ -178,8 +159,8 @@ export default function About() {
   }, [currentSlide, isScrolling]);
 
   return (
-    <main 
-      className="h-screen w-full bg-background overflow-hidden"
+    <div
+      className="h-[calc(100dvh-3.5rem)] w-full bg-background overflow-hidden"
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
@@ -190,34 +171,24 @@ export default function About() {
         {slides.map((_, index) => (
           <div
             key={index}
-            className={`w-3 h-3 rounded-full transition-all duration-300 ${
-              index === currentSlide 
-                ? 'bg-foreground scale-125' 
-                : 'bg-muted-foreground/30'
-            }`}
+            className={`w-3 h-3 rounded-full transition-all duration-300 ${index === currentSlide
+              ? 'bg-foreground scale-125'
+              : 'bg-muted-foreground/30'
+              }`}
           />
         ))}
       </div>
 
       {/* Current slide */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={currentSlide}
-          initial={{ opacity: 0, y: 100 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -100 }}
-          transition={{ duration: 0.5, ease: "easeInOut" }}
-          className="h-full flex items-center justify-center"
-        >
-          <Slide
-            imgSrc={slides[currentSlide].imgSrc}
-            imgAlt={slides[currentSlide].imgAlt}
-            title={slides[currentSlide].title}
-            description={slides[currentSlide].description}
-            reverse={slides[currentSlide].reverse}
-          />
-        </motion.div>
-      </AnimatePresence>
-    </main>
+      <div className="h-full flex items-center justify-center">
+        <Slide
+          imgSrc={slides[currentSlide].imgSrc}
+          imgAlt={slides[currentSlide].imgAlt}
+          title={slides[currentSlide].title}
+          description={slides[currentSlide].description}
+          reverse={slides[currentSlide].reverse}
+        />
+      </div>
+    </div>
   );
 }

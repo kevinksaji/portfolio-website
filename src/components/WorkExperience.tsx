@@ -1,6 +1,5 @@
 "use client";
-import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useMemo } from "react";
 import { TechTool } from "@/data/techIcons";
 import React from "react"; // Added missing import for React
 
@@ -23,64 +22,31 @@ export default function WorkExperience({
   description,
   tools,
 }: WorkExperienceProps) {
-  const [currentTechIndex, setCurrentTechIndex] = useState(0);
-
-  useEffect(() => {
-    if (tools && tools.length > 0) {
-      const interval = setInterval(() => {
-        setCurrentTechIndex((prev) => (prev + 1) % tools.length);
-      }, 2500); // Change every 2.5 seconds
-
-      return () => clearInterval(interval);
-    }
-  }, [tools]);
-
-  const currentTech = tools && tools.length > 0 ? tools[currentTechIndex] : null;
+  const safeTools = useMemo(() => tools ?? [], [tools]);
 
   return (
     <section
       className="flex items-center justify-center px-6 py-10 min-h-screen"
     >
-      <motion.div
-        className="bg-card border border-border rounded-xl p-8 shadow-lg hover:shadow-xl max-w-4xl w-full"
-        whileHover={{ 
-          y: -8,
-          boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)"
-        }}
-        transition={{ type: "spring", stiffness: 500, damping: 30 }}
-        style={{
-          transformStyle: 'preserve-3d',
-          willChange: 'transform',
-          transition: 'none', // Override global transitions
-          backfaceVisibility: 'hidden',
-          perspective: '1000px',
-          transformOrigin: '50% 50%'
-        }}
-      >
-        <div 
-          className="grid md:grid-cols-2 gap-8 items-center"
-          style={{
-            transform: 'translateZ(0)',
-            backfaceVisibility: 'hidden'
-          }}
-        >
+      <div className="bg-card border border-border rounded-xl p-8 shadow-lg hover:shadow-xl max-w-4xl w-full">
+        <div className="grid md:grid-cols-2 gap-8 items-center">
           {/* Left side - Company logo and info */}
           <div
             className="text-center space-y-8"
           >
-            <h2 
+            <h2
               className="text-3xl font-bold text-foreground"
             >
               {role}
             </h2>
-            
-            <h3 
+
+            <h3
               className="text-xl font-semibold text-foreground"
             >
               {company}
             </h3>
-            
-            <p 
+
+            <p
               className="text-sm text-muted-foreground"
             >
               {location} • {startDate} – {endDate}
@@ -108,59 +74,23 @@ export default function WorkExperience({
             </div>
 
             {/* Tech Stack Section */}
-            {tools && tools.length > 0 && (
+            {safeTools.length > 0 && (
               <div className="border-t border-border pt-6">
-                <div className="flex flex-col items-center justify-center min-h-[120px]">
-                  <AnimatePresence mode="wait">
-                    {currentTech && (
-                      <motion.div
-                        key={currentTechIndex}
-                        initial={{ opacity: 0, y: 30, scale: 0.8 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: -30, scale: 0.8 }}
-                        transition={{ 
-                          duration: 0.6,
-                          ease: "easeInOut"
-                        }}
-                        className="flex flex-col items-center"
-                      >
-                        {/* Tech Icon */}
-                        <motion.div
-                          initial={{ rotate: 360, scale: 0 }}
-                          animate={{ rotate: 0, scale: 1 }}
-                          transition={{ 
-                            duration: 0.8,
-                            ease: "easeOut",
-                            delay: 0.1
-                          }}
-                          className="text-5xl mb-3 text-foreground"
-                        >
-                          {React.createElement(currentTech.icon, {
-                            className: "w-16 h-16 fill-current"
-                          })}
-                        </motion.div>
-                        
-                        {/* Tech Name */}
-                        <motion.div
-                          initial={{ opacity: 0, y: 15 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ 
-                            duration: 0.5,
-                            delay: 0.3
-                          }}
-                          className="text-sm text-muted-foreground font-medium"
-                        >
-                          {currentTech.name}
-                        </motion.div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                <div className="grid grid-cols-3 gap-4">
+                  {safeTools.slice(0, 9).map((tool) => (
+                    <div key={tool.name} className="flex flex-col items-center text-center">
+                      <div className="text-3xl text-foreground">
+                        {React.createElement(tool.icon, { className: "w-10 h-10 fill-current" })}
+                      </div>
+                      <div className="mt-1 text-xs text-muted-foreground font-medium">{tool.name}</div>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
           </div>
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 }
