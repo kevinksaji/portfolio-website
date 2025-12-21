@@ -1,9 +1,21 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Allow accessing the dev server from other devices on your LAN.
+  // This prevents Next.js dev-mode cross-origin warnings for /_next/* requests.
+  allowedDevOrigins: [
+    '*',
+    'localhost',
+    '127.0.0.1',
+    '192.168.1.122',
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'http://192.168.1.122:3000',
+  ],
+
   // Enable experimental features for better performance
   experimental: {
-    optimizePackageImports: ['framer-motion', 'react-icons'],
+    optimizePackageImports: ['react-icons'],
   },
 
   // Turbopack configuration (stable in Next.js 15)
@@ -26,7 +38,7 @@ const nextConfig: NextConfig = {
   // Compression and optimization
   compress: true,
   poweredByHeader: false,
-  
+
   // Bundle analyzer (uncomment for production analysis)
   // webpack: (config, { isServer }) => {
   //   if (!isServer) {
