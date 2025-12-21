@@ -105,6 +105,7 @@
 }
 
 @layer base {
+
   /*
     Base document styles.
 
@@ -145,6 +146,7 @@
   utilities instead of growing a bespoke utility library.
 */
 @layer utilities {
+
   /* Hide scrollbars while preserving scroll behavior (used for small scroll areas). */
   .scrollbar-hide {
     -ms-overflow-style: none;
