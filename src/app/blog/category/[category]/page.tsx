@@ -10,15 +10,15 @@ interface CategoryPageProps {
 export default async function CategoryPage({ params }: CategoryPageProps) {
   const { category } = await params;
   const posts = await getBlogPosts();
-  
+
   // Decode the category from URL and filter posts
   const decodedCategory = decodeURIComponent(category).replace(/-/g, ' ');
   // Properly capitalize the category name
-  const formattedCategory = decodedCategory.split(' ').map(word => 
+  const formattedCategory = decodedCategory.split(' ').map(word =>
     word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
   ).join(' ');
-  
-  const filteredPosts = posts.filter(post => 
+
+  const filteredPosts = posts.filter(post =>
     post.category.toLowerCase() === decodedCategory.toLowerCase()
   );
 
@@ -36,7 +36,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   };
 
   return (
-    <main className="min-h-screen w-full bg-background pt-12 flex items-center justify-center">
+    <div className="min-h-screen w-full bg-background flex items-center justify-center">
       <div className="max-w-4xl mx-auto px-6 -mt-20">
         {/* Category Title */}
         <div className="text-center mb-12">
@@ -76,6 +76,6 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           </div>
         </div>
       </div>
-    </main>
+    </div>
   );
 }

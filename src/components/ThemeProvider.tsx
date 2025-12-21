@@ -27,7 +27,6 @@ const ThemeProviderContext = createContext<ThemeProviderState>(initialState)
 export function ThemeProvider({
   children,
   defaultTheme = "system",
-  storageKey = "ui-theme",
   ...props
 }: ThemeProviderProps) {
   // Always start with default theme to prevent hydration mismatch
@@ -35,59 +34,52 @@ export function ThemeProvider({
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    // Get theme from localStorage immediately and synchronously
-    let savedTheme: Theme | null = null
-    try {
-      savedTheme = localStorage.getItem(storageKey) as Theme
-    } catch {
-      console.warn("localStorage not available, using default theme")
-    }
-
-    // Set the theme immediately if valid
-    if (savedTheme && ["light", "dark", "system"].includes(savedTheme)) {
-      setTheme(savedTheme)
-    } else {
-      // If no saved theme, detect system preference immediately
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-        .matches
-        ? "dark"
-        : "light"
-      setTheme(systemTheme)
-    }
-
-    // Mark as mounted after theme is set
     setMounted(true)
-  }, [storageKey])
+  }, [])
 
   useEffect(() => {
     if (!mounted) return
 
     const root = window.document.documentElement
-    root.classList.remove("light", "dark")
 
-    if (theme === "system") {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-        .matches
-        ? "dark"
-        : "light"
-      root.classList.add(systemTheme)
-      return
+    const applyThemeClass = (t: Theme) => {
+      root.classList.remove("light", "dark")
+
+      if (t === "system") {
+        const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
+          .matches
+          ? "dark"
+          : "light"
+        root.classList.add(systemTheme)
+        return
+      }
+
+      root.classList.add(t)
     }
 
-    root.classList.add(theme)
+    applyThemeClass(theme)
+
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
+    const handleSystemThemeChange = () => {
+      if (theme === "system") {
+        applyThemeClass("system")
+      }
+    }
+
+    if (typeof mediaQuery.addEventListener === "function") {
+      mediaQuery.addEventListener("change", handleSystemThemeChange)
+      return () => mediaQuery.removeEventListener("change", handleSystemThemeChange)
+    }
+
+    mediaQuery.addListener(handleSystemThemeChange)
+    return () => mediaQuery.removeListener(handleSystemThemeChange)
   }, [theme, mounted])
 
   const value = {
     theme: mounted ? theme : "system", // Return "system" during SSR to prevent mismatch
     setTheme: (newTheme: Theme) => {
       if (mounted && ["light", "dark", "system"].includes(newTheme)) {
-        try {
-          localStorage.setItem(storageKey, newTheme)
-          setTheme(newTheme)
-        } catch {
-          console.warn("Could not save theme to localStorage")
-          setTheme(newTheme)
-        }
+        setTheme(newTheme)
       }
     },
     mounted,

@@ -1,5 +1,7 @@
 'use server';
 
+import { sendContactEmail } from '@/lib/email';
+
 /**
  * Server action for contact form submission
  * Processes form data and sends email via API endpoint
@@ -31,19 +33,11 @@ export async function submitContactForm(
       return { success: false, error: 'Please enter a valid email address' };
     }
 
-    // Send data to existing email API endpoint
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    const response = await fetch(`${baseUrl}/api/contact/send`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, subject, message }),
+    await sendContactEmail({
+      fromEmail: email,
+      subject,
+      message,
     });
-
-    if (!response.ok) {
-      throw new Error('Failed to send email');
-    }
 
     return { success: true };
   } catch (error) {

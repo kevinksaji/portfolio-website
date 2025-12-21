@@ -1,8 +1,8 @@
 "use client";
 
-import {useEffect, useState, Suspense, useRef} from "react";
-import {useSearchParams} from "next/navigation";
-import ChatWindow, {ChatMessageType} from "@/components/ChatWindow";
+import { useEffect, useState, Suspense, useRef } from "react";
+import { useSearchParams } from "next/navigation";
+import ChatWindow, { ChatMessageType } from "@/components/ChatWindow";
 
 /**
  * Chat page controller component.
@@ -23,25 +23,25 @@ function ChatPageContent() {
      */
     const sendMessage = async (text: string) => {
         if (!text.trim()) return;
-        
-        const userMessage = {role: "user" as const, content: text.trim()};
+
+        const userMessage = { role: "user" as const, content: text.trim() };
         const nextMsgs: ChatMessageType[] = [...messages, userMessage];
-        
+
         setMessages(nextMsgs);
         setLoading(true);
-        
+
         try {
             const res = await fetch("/api/chat", {
                 method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({messages: nextMsgs}),
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ messages: nextMsgs }),
             });
             const data = await res.json();
-            
-            const aiMessage = {role: "assistant" as const, content: data.answer};
+
+            const aiMessage = { role: "assistant" as const, content: data.answer };
             setMessages([...nextMsgs, aiMessage]);
         } catch {
-            const errorMessage = {role: "assistant" as const, content: "Sorry, something went wrong."};
+            const errorMessage = { role: "assistant" as const, content: "Sorry, something went wrong." };
             setMessages([...nextMsgs, errorMessage]);
         } finally {
             setLoading(false);
@@ -55,30 +55,30 @@ function ChatPageContent() {
     useEffect(() => {
         if (startQuery && !hasInitialized.current) {
             hasInitialized.current = true;
-            const userMessage = {role: "user" as const, content: startQuery};
+            const userMessage = { role: "user" as const, content: startQuery };
             setMessages([userMessage]);
             setInitialLoading(true);
-            
+
             // Make API call directly here to avoid double calls
             const fetchInitialResponse = async () => {
                 try {
                     const res = await fetch("/api/chat", {
                         method: "POST",
-                        headers: {"Content-Type": "application/json"},
-                        body: JSON.stringify({messages: [userMessage]}),
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ messages: [userMessage] }),
                     });
                     const data = await res.json();
-                    
-                    const aiMessage = {role: "assistant" as const, content: data.answer};
+
+                    const aiMessage = { role: "assistant" as const, content: data.answer };
                     setMessages([userMessage, aiMessage]);
                 } catch {
-                    const errorMessage = {role: "assistant" as const, content: "Sorry, something went wrong."};
+                    const errorMessage = { role: "assistant" as const, content: "Sorry, something went wrong." };
                     setMessages([userMessage, errorMessage]);
                 } finally {
                     setInitialLoading(false);
                 }
             };
-            
+
             fetchInitialResponse();
         }
     }, [startQuery]);
@@ -86,7 +86,7 @@ function ChatPageContent() {
     const conversation = messages.length > 0 ? { id: "current", messages } : null;
 
     return (
-        <main className="h-screen w-full flex flex-col bg-background pt-14">
+        <div className="h-[calc(100dvh-3.5rem)] w-full flex flex-col bg-background">
             <div className="flex h-full w-full overflow-hidden">
                 <div className="w-full h-full">
                     <ChatWindow
@@ -97,7 +97,7 @@ function ChatPageContent() {
                     />
                 </div>
             </div>
-        </main>
+        </div>
     );
 }
 

@@ -1,11 +1,10 @@
 "use client"
 
-import { motion, AnimatePresence } from 'framer-motion'
-import { useState, useEffect } from 'react'
-import { 
-  SiC, 
-  SiPython, 
-  SiMysql, 
+import { useEffect, useMemo, useRef, useState } from 'react'
+import {
+  SiC,
+  SiPython,
+  SiMysql,
   SiGo,
   SiReact,
   SiReactrouter,
@@ -20,6 +19,7 @@ import {
   SiJavascript
 } from 'react-icons/si'
 import { DiJava, DiDatabase } from 'react-icons/di'
+import { cn } from '@/lib/utils'
 
 interface TechCategory {
   name: string
@@ -36,7 +36,7 @@ const techCategories: TechCategory[] = [
   { name: 'TypeScript', icon: SiTypescript, color: 'text-blue-600' },
   { name: 'SQL', icon: DiDatabase, color: 'text-blue-700' },
   { name: 'Golang', icon: SiGo, color: 'text-cyan-500' },
-  
+
   // Frontend Frameworks
   { name: 'React.js', icon: SiReact, color: 'text-cyan-400' },
   { name: 'React Native', icon: SiReactrouter, color: 'text-blue-400' },
@@ -44,7 +44,7 @@ const techCategories: TechCategory[] = [
   { name: 'Angular', icon: SiAngular, color: 'text-red-600' },
   { name: 'Spring Boot', icon: SiSpringboot, color: 'text-green-600' },
   { name: 'Flask', icon: SiFlask, color: 'text-gray-800' },
-  
+
   // Backend & Cloud
   { name: 'Firebase', icon: SiFirebase, color: 'text-orange-500' },
   { name: 'Supabase', icon: SiSupabase, color: 'text-green-500' },
@@ -52,68 +52,87 @@ const techCategories: TechCategory[] = [
   { name: 'AWS', icon: SiAmazonwebservices, color: 'text-orange-500' }
 ]
 
-export default function TechStack() {
-  const [currentIndex, setCurrentIndex] = useState(0)
+type Props = {
+  className?: string
+}
+
+export default function TechStack({ className }: Props) {
+  const categories = useMemo(() => techCategories, [])
+  const [activeIndex, setActiveIndex] = useState(0)
+  const [isVisible, setIsVisible] = useState(true)
+  const [reduceMotion, setReduceMotion] = useState(false)
+  const timeoutRef = useRef<number | null>(null)
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % techCategories.length)
-    }, 2000) // Change every 2 seconds
+    if (typeof window === 'undefined') return
 
-    return () => clearInterval(interval)
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const update = () => setReduceMotion(mediaQuery.matches)
+    update()
+
+    if (typeof mediaQuery.addEventListener === 'function') {
+      mediaQuery.addEventListener('change', update)
+      return () => mediaQuery.removeEventListener('change', update)
+    }
+
+    mediaQuery.addListener(update)
+    return () => mediaQuery.removeListener(update)
   }, [])
 
-  const currentTech = techCategories[currentIndex]
+  useEffect(() => {
+    if (reduceMotion) {
+      setIsVisible(true)
+      return
+    }
+    if (categories.length <= 1) return
+
+    const intervalId = window.setInterval(() => {
+      setIsVisible(false)
+
+      if (timeoutRef.current) window.clearTimeout(timeoutRef.current)
+      timeoutRef.current = window.setTimeout(() => {
+        setActiveIndex((prev) => (prev + 1) % categories.length)
+        setIsVisible(true)
+      }, 160)
+    }, 2200)
+
+    return () => {
+      window.clearInterval(intervalId)
+      if (timeoutRef.current) window.clearTimeout(timeoutRef.current)
+    }
+  }, [categories.length, reduceMotion])
+
+  const activeTech = categories[activeIndex] ?? categories[0]
+  const Icon = activeTech?.icon
 
   return (
     <div
-      className="bg-card border border-border rounded-xl p-3 sm:p-4 md:p-6 shadow-lg hover:shadow-xl transition-all duration-300"
+      className={cn(
+        "bg-card border border-border rounded-xl p-3 sm:p-4 md:p-5 lg:p-5 shadow-lg hover:shadow-xl transition-all duration-300",
+        className
+      )}
     >
-      <div className="text-center">
-        <h3 className="text-sm sm:text-base md:text-lg font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">Tech Stack</h3>
-        
-        <div className="flex flex-col items-center justify-center min-h-[80px] sm:min-h-[100px] md:min-h-[120px]">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentIndex}
-              initial={{ opacity: 0, y: 20, scale: 0.8 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -20, scale: 0.8 }}
-              transition={{ 
-                duration: 0.5,
-                ease: "easeInOut"
-              }}
-              className="flex flex-col items-center"
-            >
-              {/* Icon */}
-              <motion.div
-                initial={{ rotate: -180, scale: 0 }}
-                animate={{ rotate: 0, scale: 1 }}
-                transition={{ 
-                  duration: 0.6,
-                  ease: "easeOut",
-                  delay: 0.1
-                }}
-                className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-2 sm:mb-3 ${currentTech.color}`}
-              >
-                <currentTech.icon />
-              </motion.div>
-              
-              {/* Technology Name */}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ 
-                  duration: 0.4,
-                  delay: 0.2
-                }}
-                className="text-xs sm:text-sm text-muted-foreground"
-              >
-                {currentTech.name}
-              </motion.div>
-            </motion.div>
-          </AnimatePresence>
-        </div>
+      <div className="h-full flex flex-col justify-center text-center">
+        <h3 className="text-sm sm:text-base md:text-lg lg:text-xl font-semibold text-foreground mb-2 sm:mb-3">Tech Stack</h3>
+
+        {activeTech && Icon ? (
+          <div
+            className={cn(
+              "flex flex-col items-center justify-center",
+              "transition-opacity duration-500 motion-reduce:transition-none",
+              isVisible ? "opacity-100" : "opacity-0"
+            )}
+          >
+            <div className={cn("text-5xl sm:text-6xl md:text-7xl", activeTech.color)}>
+              <Icon />
+            </div>
+            <div className="mt-2 text-sm sm:text-base text-muted-foreground">
+              {activeTech.name}
+            </div>
+          </div>
+        ) : (
+          <div className="text-xs sm:text-sm text-muted-foreground">—</div>
+        )}
       </div>
     </div>
   )

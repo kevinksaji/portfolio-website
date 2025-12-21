@@ -1,94 +1,86 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
+import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "./ThemeToggle"
+import { useCallback } from "react"
+import { cn } from "@/lib/utils"
+
+const navLinks = [
+  { href: "/about", label: "About" },
+  { href: "/experience", label: "Experiences" },
+  { href: "/contact", label: "Contact" },
+  { href: "/blog", label: "Blog" },
+]
 
 export default function Navbar() {
   const pathname = usePathname()
-  const router = useRouter()
 
-  const onBack = () => {
-    // Handle different routes intelligently
-    if (pathname.startsWith("/contact/")) {
-      router.push("/contact")
-    } else if (pathname.startsWith("/about")) {
-      router.push("/")
-    } else if (pathname.startsWith("/experience")) {
-      router.push("/")
-    } else if (pathname.startsWith("/blog/")) {
-      router.push("/blog")
-    } else if (pathname.startsWith("/blog")) {
-      router.push("/")
-    } else {
-      router.push("/")
+  const handleBlogHover = useCallback(async () => {
+    try {
+      const { getBlogPosts } = await import("@/lib/notion")
+      await getBlogPosts()
+    } catch {
+      // non-critical prefetch
     }
-  }
-
-  const isHome = pathname === "/"
-  
-  // Get page title based on current route
-  const getPageTitle = () => {
-    if (pathname.startsWith("/about")) return "About"
-    if (pathname.startsWith("/experience")) return "Experiences"
-    if (pathname.startsWith("/blog")) return "Blog"
-    if (pathname.startsWith("/contact")) return "Contact"
-    if (pathname.startsWith("/chat")) return "Chat"
-    return ""
-  }
-
-  const pageTitle = getPageTitle()
+  }, [])
 
   return (
-    <header
-      className="
-        fixed top-0 left-0 z-[100] flex h-14 w-full
-        items-center justify-between bg-background/95 backdrop-blur-md
-        text-foreground border-b border-border/20
-        px-6 shadow-sm
-      "
-    >
-      {/* initials (always visible) */}
-      <Link href="/" className="text-lg font-bold tracking-wide">
-        KS
-      </Link>
-
-      {/* center - page title (only visible when not on home) */}
-      {!isHome && pageTitle && (
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-          <h1 className="text-lg font-semibold text-foreground">
-            {pageTitle}
-          </h1>
-        </div>
-      )}
-
-      {/* right side - theme toggle and navigation */}
-      <div className="flex items-center space-x-4">
-        {/* theme toggle */}
-        <ThemeToggle />
-        
-        {/* right-hand button changes depending on route */}
-        {isHome ? (
-          <Link
-            href="/kevin-saji-resume.pdf"
-            download
-          >
-            <Button size="sm" variant="outline" className="
-              border-border text-foreground
-              hover:bg-accent hover:text-accent-foreground
-            ">
-              Download Résumé
-            </Button>
+    <header className="fixed top-0 left-0 z-[100] h-14 w-full bg-background text-foreground border-b border-border">
+      <div className="mx-auto grid h-full w-full max-w-7xl grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-4 sm:gap-4 sm:px-6 lg:px-8">
+        {/* left */}
+        <Button asChild variant="ghost" size="sm" className="shrink-0 px-2">
+          <Link href="/" aria-label="Go to homepage" className="text-base font-bold tracking-wide">
+            KS
           </Link>
-        ) : (
-          <Button size="sm" variant="outline" onClick={onBack} className="
-            border-border text-foreground
-            hover:bg-accent hover:text-accent-foreground
-          ">
-            Back
+        </Button>
+
+        {/* center */}
+        <nav className="min-w-0" aria-label="Primary">
+          <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide sm:gap-2 md:justify-center">
+            {navLinks.map((link) => {
+              const isActive =
+                link.href === "/blog"
+                  ? pathname.startsWith("/blog")
+                  : pathname === link.href || pathname.startsWith(`${link.href}/`)
+
+              return (
+                <Button
+                  key={link.href}
+                  asChild
+                  variant="ghost"
+                  size="sm"
+                  className={cn(
+                    "h-9 rounded-none border-b-2 border-transparent px-2 text-xs sm:text-sm",
+                    "text-muted-foreground",
+                    isActive && "border-foreground text-foreground"
+                  )}
+                >
+                  <Link
+                    href={link.href}
+                    aria-current={isActive ? "page" : undefined}
+                    onMouseEnter={link.href === "/blog" ? handleBlogHover : undefined}
+                    className="whitespace-nowrap"
+                  >
+                    {link.label}
+                  </Link>
+                </Button>
+              )
+            })}
+          </div>
+        </nav>
+
+        {/* right */}
+        <div className="shrink-0 flex items-center gap-3 whitespace-nowrap sm:gap-4">
+          <ThemeToggle />
+
+          <Button asChild size="sm" variant="outline">
+            <Link href="/kevin-saji-resume.pdf" download>
+              <span className="hidden sm:inline">Download </span>Résumé
+            </Link>
           </Button>
-        )}
+        </div>
       </div>
     </header>
   )

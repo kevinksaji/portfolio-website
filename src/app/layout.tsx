@@ -5,7 +5,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { GitHubProvider } from "@/lib/GitHubContext";
 import Navbar from "@/components/NavBar";
 
-const inter = Inter({ 
+const inter = Inter({
   subsets: ["latin"],
   display: 'swap',
   preload: true,
@@ -65,11 +65,11 @@ export default function RootLayout({
         {/* DNS prefetch for external resources */}
         <link rel="dns-prefetch" href="//api.github.com" />
         <link rel="dns-prefetch" href="//leetcode.com" />
-        
+
         {/* Preconnect to external domains */}
         <link rel="preconnect" href="https://api.github.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://leetcode.com" crossOrigin="anonymous" />
-        
+
         {/* Performance meta tags */}
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
@@ -81,7 +81,7 @@ export default function RootLayout({
         >
           <GitHubProvider>
             <Navbar />
-            {children}
+            <main className="min-h-screen box-border pt-14">{children}</main>
           </GitHubProvider>
         </ThemeProvider>
       </body>
