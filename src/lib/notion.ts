@@ -1,4 +1,4 @@
-// Fetch blog posts and page content from Notion (official API)
+// Fetch blog posts and page content from Notion using official api
 
 import { Client } from '@notionhq/client';
 import type {
@@ -236,50 +236,32 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
 }
 
 /**
- * Fetches a single blog post by its slug
- * 
- * This function uses the reliable approach of fetching all posts and finding by slug.
- * While not the most efficient for large datasets, it ensures reliability and works
- * with the existing caching system.
- * 
- * @param slug - The URL slug of the blog post to find
- * @returns Promise<BlogPost | null> The blog post if found, null otherwise
- */
-export async function getBlogPostBySlugDirect(slug: string): Promise<BlogPost | null> {
-  try {
-    console.log('🔍 Fetching blog post by slug:', slug);
-
-    // Use the reliable approach: fetch all posts and find by slug
-    // This is actually the RIGHT approach for a blog with reasonable post count
-    const posts = await getBlogPosts();
-    const post = posts.find(p => p.slug === slug);
-
-    if (post) {
-      console.log(`✅ Found blog post: ${post.title}`);
-      return post;
-    } else {
-      console.log('❌ No blog post found with slug:', slug);
-      return null;
-    }
-
-  } catch (error) {
-    console.error('Error fetching blog post by slug:', error);
-    return null;
-  }
-}
-
-/**
- * Main function to get a blog post by slug
- * 
- * This is the public API function that delegates to getBlogPostBySlugDirect.
- * It maintains backward compatibility while allowing for future optimizations.
- * 
+ * Fetches a single blog post by its slug.
+ *
+ * Uses the reliable approach: fetch all posts and find by slug.
+ * This is usually fine for a portfolio blog with a reasonable post count.
+ *
  * @param slug - The URL slug of the blog post to find
  * @returns Promise<BlogPost | null> The blog post if found, null otherwise
  */
 export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
-  // Use the direct method instead of fetching all posts
-  return getBlogPostBySlugDirect(slug);
+  try {
+    console.log('Fetching blog post by slug:', slug);
+
+    const posts = await getBlogPosts();
+    const post = posts.find((p) => p.slug === slug);
+
+    if (post) {
+      console.log(`Found blog post: ${post.title}`);
+      return post;
+    }
+
+    console.log('No blog post found with slug:', slug);
+    return null;
+  } catch (error) {
+    console.error('Error fetching blog post by slug:', error);
+    return null;
+  }
 }
 
 /**
