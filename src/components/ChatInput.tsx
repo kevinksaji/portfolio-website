@@ -15,7 +15,7 @@ type Props = {
  * Delegates actual sending logic to parent via async callback.
  */
 export default function ChatInput({ onSendAction, disabled = false, placeholder = "Type a message..." }: Props) {
-    const [text, setText] = useState("");
+    const [text, setText] = useState(""); // whatever is typed by the user is stored in state (controlled input)
 
     /**
      * Send message to parent component.
