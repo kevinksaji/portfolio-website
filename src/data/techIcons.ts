@@ -4,7 +4,8 @@ import {
   SiHeroku, SiTelegram, SiMysql, SiPostgresql, SiNotion, SiSpring, 
   SiMamp, SiReact, SiTypescript, SiNextdotjs, SiTailwindcss,
   SiNodedotjs, SiMongodb, SiDocker, SiKubernetes, SiJenkins, SiGit,
-  SiFigma, SiAdobexd, SiPostman, SiJira, SiConfluence
+  SiFigma, SiAdobexd, SiPostman, SiJira, SiConfluence,
+  SiSelenium
 } from 'react-icons/si';
 import { DiJava } from 'react-icons/di';
 
@@ -48,4 +49,5 @@ export const techTools: Record<string, TechTool> = {
   postman: { name: "Postman", icon: SiPostman },
   jira: { name: "Jira", icon: SiJira },
   confluence: { name: "Confluence", icon: SiConfluence },
+  selenium: { name: "Selenium", icon: SiSelenium },
 };

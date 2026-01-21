@@ -1,6 +1,7 @@
 import { getBlogPosts } from '@/lib/notion';
 import Link from 'next/link';
-import { FaCode, FaFutbol, FaBook, FaLightbulb, FaHeart } from 'react-icons/fa';
+import { FaCode, FaFutbol, FaHeart } from 'react-icons/fa';
+import { categorizePostCategory } from '@/lib/blogCategories';
 
 export default async function BlogPage() {
   let posts: Awaited<ReturnType<typeof getBlogPosts>> = [];
@@ -15,43 +16,39 @@ export default async function BlogPage() {
     posts = []; // Ensure posts is always an array
   }
 
-  // Get unique categories and count posts in each
-  const categories = posts.reduce((acc, post) => {
-    if (post.category) {
-      acc[post.category] = (acc[post.category] || 0) + 1;
-    }
-    return acc;
-  }, {} as Record<string, number>);
+  const categoryCounts = posts.reduce(
+    (acc, post) => {
+      const bucket = categorizePostCategory(post.category);
+      if (!bucket) return acc;
+      acc[bucket] += 1;
+      return acc;
+    },
+    { sports: 0, hobbies: 0, academics: 0 }
+  );
 
-  // Dynamically generate category tiles based on actual blog post categories
-  const categoryTiles = Object.entries(categories).map(([categoryName, count]) => {
-    // Map category names to icons and colors
-    const getCategoryStyle = (name: string) => {
-      const lowerName = name.toLowerCase();
-      if (lowerName.includes('computer') || lowerName.includes('science') || lowerName.includes('academics')) {
-        return { icon: FaCode, color: 'bg-blue-500/10 text-blue-600 border-blue-200' };
-      } else if (lowerName.includes('sport') || lowerName.includes('futbol') || lowerName.includes('game')) {
-        return { icon: FaFutbol, color: 'bg-green-500/10 text-green-600 border-green-200' };
-      } else if (lowerName.includes('hobby') || lowerName.includes('interest') || lowerName.includes('personal')) {
-        return { icon: FaHeart, color: 'bg-purple-500/10 text-purple-600 border-purple-200' };
-      } else if (lowerName.includes('book') || lowerName.includes('read') || lowerName.includes('learn')) {
-        return { icon: FaBook, color: 'bg-orange-500/10 text-orange-600 border-orange-200' };
-      } else if (lowerName.includes('idea') || lowerName.includes('thought') || lowerName.includes('insight')) {
-        return { icon: FaLightbulb, color: 'bg-yellow-500/10 text-yellow-600 border-yellow-200' };
-      }
-      // Default fallback
-      return { icon: FaBook, color: 'bg-gray-500/10 text-gray-600 border-gray-200' };
-    };
-
-    const { icon, color } = getCategoryStyle(categoryName);
-
-    return {
-      name: categoryName,
-      count,
-      color,
-      icon
-    };
-  });
+  const categoryTiles = [
+    {
+      key: 'sports' as const,
+      name: 'Sports',
+      count: categoryCounts.sports,
+      color: 'bg-green-500/10 text-green-600 border-green-200',
+      icon: FaFutbol,
+    },
+    {
+      key: 'hobbies' as const,
+      name: 'Hobbies',
+      count: categoryCounts.hobbies,
+      color: 'bg-purple-500/10 text-purple-600 border-purple-200',
+      icon: FaHeart,
+    },
+    {
+      key: 'academics' as const,
+      name: 'Academics',
+      count: categoryCounts.academics,
+      color: 'bg-blue-500/10 text-blue-600 border-blue-200',
+      icon: FaCode,
+    },
+  ];
 
   return (
     <div className="min-h-screen w-full bg-background flex items-center justify-center">
@@ -85,7 +82,7 @@ export default async function BlogPage() {
                 <strong>Debug Info:</strong><br />
                 Environment: {process.env.NODE_ENV}<br />
                 Posts fetched: {posts.length}<br />
-                Categories: {Object.keys(categories).length}<br />
+                Categories: 3<br />
                 Database ID: {process.env.NOTION_DATABASE_ID ? 'Set' : 'Not Set'}<br />
                 API Key: {process.env.NOTION_API_KEY ? 'Set' : 'Not Set'}
               </p>
@@ -120,7 +117,7 @@ export default async function BlogPage() {
             {categoryTiles.map((category) => {
               const IconComponent = category.icon;
               return (
-                <Link key={category.name} href={`/blog/category/${category.name.toLowerCase().replace(/\s+/g, '-')}`}>
+                <Link key={category.key} href={`/blog/category/${category.key}`}>
                   <div className="group flex flex-col items-center space-y-3 p-8 rounded-xl bg-card border border-border hover:border-ring hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 cursor-pointer">
                     <div className={`w-16 h-16 rounded-full ${category.color.split(' ')[0]} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
                       <IconComponent className={`w-8 h-8 ${category.color.split(' ')[1]}`} />

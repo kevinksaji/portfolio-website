@@ -2,6 +2,7 @@ import { getBlogPosts } from '@/lib/notion';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import { categorizePostCategory, isTopCategoryKey } from '@/lib/blogCategories';
 
 interface CategoryPageProps {
   params: Promise<{ category: string }>;
@@ -11,16 +12,15 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   const { category } = await params;
   const posts = await getBlogPosts();
 
-  // Decode the category from URL and filter posts
-  const decodedCategory = decodeURIComponent(category).replace(/-/g, ' ');
-  // Properly capitalize the category name
-  const formattedCategory = decodedCategory.split(' ').map(word =>
-    word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-  ).join(' ');
+  const categoryKey = category.toLowerCase();
+  if (!isTopCategoryKey(categoryKey)) {
+    notFound();
+  }
 
-  const filteredPosts = posts.filter(post =>
-    post.category.toLowerCase() === decodedCategory.toLowerCase()
-  );
+  const formattedCategory =
+    categoryKey === 'sports' ? 'Sports' : categoryKey === 'hobbies' ? 'Hobbies' : 'Academics';
+
+  const filteredPosts = posts.filter((post) => categorizePostCategory(post.category) === categoryKey);
 
   if (filteredPosts.length === 0) {
     notFound();
