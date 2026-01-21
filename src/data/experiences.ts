@@ -2,29 +2,42 @@ import { techTools } from "./techIcons";
 
 const experiences = [
   {
+    role: "Cloud Engineer Intern",
+    company: "Central Provident Fund Board",
+    location: "Singapore",
+    startDate: "December 2025",
+    endDate: "Preesent",
+    description: [
+      "Full stack development using Java Spring Boot and Angular for the Citizen Disbursement Web Portal",
+      "Designed and developed CI/CD pipeline improvements by incorporating functional regression testing using Playwright"
+    ],
+    tools: [techTools.github, techTools.java, techTools.aws, techTools.springboot, techTools.angular, techTools.selenium],
+  },
+  {
     role: "Software Developer Intern",
     company: "Accenture",
-    location: "Raffles Place, Singapore",
+    location: "Singapore",
     startDate: "May 2025",
-    endDate: "Present",
+    endDate: "November 2025",
     description: [
-      "Developed Spring Batch jobs for batch processing under the Citizen Disbursement IT (CDIT) project",
-      "Configured AWS batch workflows and supported deployments across DEV, SIT, UAT, and production",
-      "Conducted dependency management research and impact analysis for framework version upgrades"
+      "Designed, developed, and optimized Java Spring Batch jobs for large-scale data processing, and gathered business requirements in collaboration with cross-functional teams for a government client",
+      "Configured batch workflows with AWS Step Functions, resolved production level defects and supported deployments across DEV, SIT, UAT, and PROD environments for different microservices in the backend system",
+      "Improved backend system performance by optimising SQL queries and database indexing, achieving 40% reduction in runtimes",
+      "Built Python-based AWS Lambda functions to automate API execution from S3-stored inputs, accelerating data processing workflows and eliminating manual intervention"
     ],
     tools: [techTools.github, techTools.java, techTools.aws, techTools.springboot, techTools.angular],
   },
   {
     role: "Web Developer",
     company: "Truly Community",
-    location: "Remote",
+    location: "Singapore",
     startDate: "June 2024",
     endDate: "August 2024",
     description: [
       "Designed and developed a Telegram Mini App for anonymous direct messaging utilising Python, Vue.js and Supabase",
       "Developed the app for the SMU Confess platform for anonymous interactions between over 2000+ students",
     ],
-    tools: [techTools.vue, techTools.python, techTools.supabase, techTools.flask, techTools.vercel, techTools.heroku, techTools.telegram, techTools.notion],
+    tools: [techTools.vue, techTools.python, techTools.supabase, techTools.flask, techTools.heroku, techTools.telegram],
   },
   {
     role: "Teaching Assistant",
