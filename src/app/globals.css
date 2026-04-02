@@ -139,11 +139,11 @@
   select:-webkit-autofill:focus {
     -webkit-text-fill-color: var(--foreground) !important;
     caret-color: var(--foreground);
-    -webkit-background-clip: padding-box;
-    background-clip: padding-box;
+    -webkit-background-clip: text;
+    background-clip: text;
     -webkit-box-shadow: 0 0 0 1000px var(--card) inset !important;
     box-shadow: 0 0 0 1000px var(--card) inset !important;
-    background-color: var(--card) !important;
+    background-color: transparent !important;
     border-color: transparent !important;
     border-radius: inherit;
     transition: color 9999s ease-out 0s, background-color 9999s ease-out 0s;
