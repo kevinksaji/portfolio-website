@@ -5,7 +5,7 @@ const experiences = [
     role: "Cloud Engineer Intern",
     company: "Central Provident Fund Board",
     location: "Singapore",
-    startDate: "November 2025",
+    startDate: "December 2025",
     endDate: "Present",
     description: [
       "Designed, developed, and optimized Java Spring Batch jobs for large-scale data processing, and gathered business requirements in collaboration with cross-functional teams for a government client",
@@ -13,7 +13,7 @@ const experiences = [
       "Improved backend system performance by optimising SQL queries and database indexing, achieving 40% reduction in runtimes",
       "Built Python-based AWS Lambda functions to automate API execution from S3-stored inputs, accelerating data processing workflows and eliminating manual intervention"
     ],
-    tools: [techTools.github, techTools.java, techTools.aws, techTools.springboot, techTools.angular],
+    tools: [techTools.github, techTools.java, techTools.aws, techTools.springboot, techTools.angular, techTools.selenium],
   },
   {
     role: "Software Developer Intern",
@@ -26,7 +26,7 @@ const experiences = [
       "Designed and developed CI/CD pipeline improvements by incorporating functional regression testing using Playwright",
       "Integrated Oobee into the CI/CD pipeline to enforce WCAG 2.1/2.2 A–AA accessibility standards for web applications, delivering a more inclusive browsing experience for persons with disabilities"
     ],
-    tools: [techTools.github, techTools.java, techTools.aws, techTools.springboot, techTools.angular, techTools.selenium],
+    tools: [techTools.github, techTools.java, techTools.aws, techTools.springboot, techTools.angular],
   },
   {
     role: "Web Developer",
