@@ -137,9 +137,9 @@ async function fetchCommitTotalViaGraphQL(token: string): Promise<number> {
 }
 
 export async function GET() {
-    try {
-        const token = process.env.GITHUB_TOKEN;
+    const token = process.env.GITHUB_TOKEN;
 
+    try {
         const publicRepos = await fetchPublicRepoCount(token);
 
         if (!token) {
@@ -151,14 +151,26 @@ export async function GET() {
             return NextResponse.json(body, { status: 200 });
         }
 
-        const totalCommits = await fetchCommitTotalViaGraphQL(token);
+        try {
+            const totalCommits = await fetchCommitTotalViaGraphQL(token);
 
-        const body: GitHubStatsResponse = {
-            publicRepos,
-            totalCommits,
-        };
+            const body: GitHubStatsResponse = {
+                publicRepos,
+                totalCommits,
+            };
 
-        return NextResponse.json(body, { status: 200 });
+            return NextResponse.json(body, { status: 200 });
+        } catch (error) {
+            const message = error instanceof Error ? error.message : 'Unknown error';
+
+            const body: GitHubStatsResponse = {
+                publicRepos,
+                totalCommits: null,
+                warning: `GitHub commits temporarily unavailable (${message})`,
+            };
+
+            return NextResponse.json(body, { status: 200 });
+        }
     } catch (error) {
         const message = error instanceof Error ? error.message : 'Unknown error';
         return NextResponse.json({ error: message }, { status: 500 });
