@@ -76,9 +76,9 @@ export default function Navbar() {
           <ThemeToggle />
 
           <Button asChild size="sm" variant="outline">
-            <Link href="/kevin-saji-resume.pdf" download>
+            <a href="/kevin-saji-resume.pdf" download>
               <span className="hidden sm:inline">Download </span>Résumé
-            </Link>
+            </a>
           </Button>
         </div>
       </div>
