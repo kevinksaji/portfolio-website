@@ -129,12 +129,20 @@
     that clashes with your theme.
   */
   input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
   textarea:-webkit-autofill,
-  select:-webkit-autofill {
-    -webkit-text-fill-color: var(--foreground);
+  textarea:-webkit-autofill:hover,
+  textarea:-webkit-autofill:focus,
+  select:-webkit-autofill,
+  select:-webkit-autofill:hover,
+  select:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--foreground) !important;
     caret-color: var(--foreground);
-    box-shadow: 0 0 0px 1000px var(--card) inset;
-    background-color: var(--card);
+    -webkit-box-shadow: 0 0 0 1000px var(--card) inset !important;
+    box-shadow: 0 0 0 1000px var(--card) inset !important;
+    background-color: var(--card) !important;
+    border-radius: inherit;
     transition: background-color 9999s ease-in-out 0s;
   }
 }
