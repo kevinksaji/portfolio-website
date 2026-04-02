@@ -29,7 +29,7 @@ export default function Contact() {
             Let&apos;s Connect.
           </h1>
           <p className="text-xl text-muted-foreground max-w-md">
-            I&apos;m actively looking for internships for the January - May 2026 period, as well as fresh graduate roles starting from May 2026.
+            I&apos;m looking for fresh graduate opportunities starting from May 2026.
           </p>
         </div>
 
