@@ -27,31 +27,18 @@ export default function Navbar() {
   }, [])
 
   return (
-    <header className="fixed top-0 left-0 z-[100] w-full bg-background text-foreground border-b border-border">
-      <div className="mx-auto flex w-full max-w-8xl flex-col px-3 py-2 sm:grid sm:h-14 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:items-center sm:gap-0 sm:px-0 sm:py-0">
-        <div className="flex items-center justify-between sm:contents">
-          {/* left */}
-          <Button asChild variant="ghost" size="sm" className="shrink-0 px-2 relative z-10 sm:col-start-1 sm:row-start-1 sm:px-10">
-            <Link href="/" aria-label="Go to homepage" className="text-base font-bold tracking-wide">
-              KS
-            </Link>
-          </Button>
-
-          {/* right */}
-          <div className="shrink-0 flex items-center gap-2 whitespace-nowrap relative z-10 sm:col-start-3 sm:row-start-1 sm:justify-self-end sm:gap-4 sm:px-10">
-            <ThemeToggle />
-
-            <Button asChild size="sm" variant="outline">
-              <a href="/kevin-saji-resume.pdf" download>
-                <span className="hidden sm:inline">Download </span>Résumé
-              </a>
-            </Button>
-          </div>
-        </div>
+    <header className="fixed top-0 left-0 z-[100] h-14 w-full bg-background text-foreground border-b border-border">
+      <div className="mx-auto grid h-full w-full max-w-8xl grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 px-3 sm:gap-0 sm:px-0">
+        {/* left */}
+        <Button asChild variant="ghost" size="sm" className="col-start-1 row-start-1 shrink-0 px-2 relative z-10 sm:px-10">
+          <Link href="/" aria-label="Go to homepage" className="text-base font-bold tracking-wide">
+            KS
+          </Link>
+        </Button>
 
         {/* center */}
-        <nav className="mt-2 min-w-0 sm:col-start-1 sm:col-end-4 sm:row-start-1 sm:mt-0 sm:justify-self-center" aria-label="Primary">
-          <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide sm:justify-center sm:gap-10">
+        <nav className="col-start-2 row-start-1 min-w-0" aria-label="Primary">
+          <div className="flex items-center justify-center gap-1 overflow-x-auto scrollbar-hide sm:gap-10">
             {navLinks.map((link) => {
               const isActive =
                 link.href === "/blog"
@@ -83,6 +70,17 @@ export default function Navbar() {
             })}
           </div>
         </nav>
+
+        {/* right */}
+        <div className="col-start-3 row-start-1 justify-self-end shrink-0 flex items-center gap-2 whitespace-nowrap relative z-10 sm:gap-4 sm:px-10">
+          <ThemeToggle />
+
+          <Button asChild size="sm" variant="outline">
+            <a href="/kevin-saji-resume.pdf" download>
+              <span className="hidden sm:inline">Download </span>Résumé
+            </a>
+          </Button>
+        </div>
       </div>
     </header>
   )
