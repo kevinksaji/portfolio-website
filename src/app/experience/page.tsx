@@ -5,82 +5,74 @@ import experiences from "@/data/experiences"
 import WorkExperience from "@/components/WorkExperience"
 
 export default function ExperiencePage() {
-  const [currentExperience, setCurrentExperience] = useState(0);
-  const [touchStart, setTouchStart] = useState(0);
-  const [touchEnd, setTouchEnd] = useState(0);
-  const [isScrolling, setIsScrolling] = useState(false);
+  const [currentExperience, setCurrentExperience] = useState(0)
+  const [touchStart, setTouchStart] = useState(0)
+  const [touchEnd, setTouchEnd] = useState(0)
+  const [isScrolling, setIsScrolling] = useState(false)
 
-  // Touch handlers for swipe detection
   const onTouchStart = (e: React.TouchEvent) => {
-    setTouchStart(e.targetTouches[0].clientY);
-  };
+    setTouchStart(e.targetTouches[0].clientX)
+  }
 
   const onTouchMove = (e: React.TouchEvent) => {
-    setTouchEnd(e.targetTouches[0].clientY);
-  };
+    setTouchEnd(e.targetTouches[0].clientX)
+  }
 
   const onTouchEnd = () => {
-    if (!touchStart || !touchEnd || isScrolling) return;
+    if (!touchStart || !touchEnd || isScrolling) return
 
-    const distance = touchStart - touchEnd;
-    const isSwipeUp = distance > 50; // Swipe up threshold
-    const isSwipeDown = distance < -50; // Swipe down threshold
+    const distance = touchStart - touchEnd
+    const isSwipeLeft = distance > 50
+    const isSwipeRight = distance < -50
 
-    if (isSwipeDown && currentExperience > 0) {
-      // Swipe down - go to previous experience
-      setCurrentExperience(currentExperience - 1);
-      setIsScrolling(true);
-      setTimeout(() => setIsScrolling(false), 500); // 500ms cooldown
-    } else if (isSwipeUp && currentExperience < experiences.length - 1) {
-      // Swipe up - go to next experience
-      setCurrentExperience(currentExperience + 1);
-      setIsScrolling(true);
-      setTimeout(() => setIsScrolling(false), 500); // 500ms cooldown
+    if (isSwipeLeft && currentExperience < experiences.length - 1) {
+      setCurrentExperience(currentExperience + 1)
+      setIsScrolling(true)
+      setTimeout(() => setIsScrolling(false), 350)
+    } else if (isSwipeRight && currentExperience > 0) {
+      setCurrentExperience(currentExperience - 1)
+      setIsScrolling(true)
+      setTimeout(() => setIsScrolling(false), 350)
     }
 
-    // Reset touch values
-    setTouchStart(0);
-    setTouchEnd(0);
-  };
+    setTouchStart(0)
+    setTouchEnd(0)
+  }
 
-  // Mouse wheel navigation for desktop - no preventDefault
   const onWheel = (e: React.WheelEvent) => {
-    if (isScrolling) return; // Prevent rapid scrolling
+    if (isScrolling) return
 
-    if (e.deltaY > 0 && currentExperience < experiences.length - 1) {
-      // Scroll down - go to next experience
-      setCurrentExperience(currentExperience + 1);
-      setIsScrolling(true);
-      setTimeout(() => setIsScrolling(false), 500); // 500ms cooldown
-    } else if (e.deltaY < 0 && currentExperience > 0) {
-      // Scroll up - go to previous experience
-      setCurrentExperience(currentExperience - 1);
-      setIsScrolling(true);
-      setTimeout(() => setIsScrolling(false), 500); // 500ms cooldown
+    const dominantDelta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY
+
+    if (dominantDelta > 0 && currentExperience < experiences.length - 1) {
+      setCurrentExperience(currentExperience + 1)
+      setIsScrolling(true)
+      setTimeout(() => setIsScrolling(false), 350)
+    } else if (dominantDelta < 0 && currentExperience > 0) {
+      setCurrentExperience(currentExperience - 1)
+      setIsScrolling(true)
+      setTimeout(() => setIsScrolling(false), 350)
     }
-  };
+  }
 
-
-
-  // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (isScrolling) return; // Prevent rapid key presses
+      if (isScrolling) return
 
-      if (e.key === 'ArrowUp' && currentExperience < experiences.length - 1) {
-        setCurrentExperience(currentExperience + 1);
-        setIsScrolling(true);
-        setTimeout(() => setIsScrolling(false), 500); // 500ms cooldown
-      } else if (e.key === 'ArrowDown' && currentExperience > 0) {
-        setCurrentExperience(currentExperience - 1);
-        setIsScrolling(true);
-        setTimeout(() => setIsScrolling(false), 500); // 500ms cooldown
+      if (e.key === "ArrowRight" && currentExperience < experiences.length - 1) {
+        setCurrentExperience(currentExperience + 1)
+        setIsScrolling(true)
+        setTimeout(() => setIsScrolling(false), 350)
+      } else if (e.key === "ArrowLeft" && currentExperience > 0) {
+        setCurrentExperience(currentExperience - 1)
+        setIsScrolling(true)
+        setTimeout(() => setIsScrolling(false), 350)
       }
-    };
+    }
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentExperience, isScrolling]);
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [currentExperience, isScrolling])
 
   return (
     <div
@@ -90,22 +82,19 @@ export default function ExperiencePage() {
       onTouchEnd={onTouchEnd}
       onWheel={onWheel}
     >
-      {/* Experience indicator */}
-      <div className="fixed top-1/2 right-6 z-50 flex flex-col space-y-2">
+      <div className="fixed right-4 top-1/2 z-50 hidden -translate-y-1/2 gap-2 md:flex md:flex-col">
         {experiences.map((_, index) => (
           <div
             key={index}
-            className={`w-3 h-3 rounded-full transition-all duration-300 ${index === currentExperience
-              ? 'bg-foreground scale-125'
-              : 'bg-muted-foreground/30'
-              }`}
+            className={`h-3 w-3 rounded-full transition-all duration-300 ${index === currentExperience ? "bg-foreground scale-125" : "bg-muted-foreground/30"}`}
           />
         ))}
       </div>
 
-      {/* Current experience */}
-      <div className="h-full flex items-center justify-center">
-        <WorkExperience {...experiences[currentExperience]} />
+      <div className="flex h-full items-center justify-center px-3 py-3 sm:px-6 sm:py-6">
+        <div className="w-full max-w-5xl">
+          <WorkExperience {...experiences[currentExperience]} />
+        </div>
       </div>
     </div>
   )
