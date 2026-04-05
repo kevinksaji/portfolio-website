@@ -25,24 +25,16 @@ export default function WorkExperience({
   const safeTools = useMemo(() => tools ?? [], [tools]);
 
   return (
-    <section
-      className="flex items-center justify-center px-6 py-10 min-h-screen"
-    >
-      <div className="bg-card border border-border rounded-xl p-8 shadow-lg hover:shadow-xl max-w-4xl w-full">
-        <div className="grid md:grid-cols-2 gap-8 items-center">
+    <section className="flex items-center justify-center">
+      <div className="bg-card border border-border rounded-xl p-5 sm:p-8 shadow-lg hover:shadow-xl max-w-4xl w-full max-h-[calc(100dvh-7.5rem)] overflow-y-auto">
+        <div className="grid gap-6 md:grid-cols-2 md:gap-8 items-start">
           {/* Left side - Company logo and info */}
-          <div
-            className="text-center space-y-8"
-          >
-            <h2
-              className="text-3xl font-bold text-foreground"
-            >
+          <div className="text-center space-y-5 sm:space-y-8">
+            <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
               {role}
             </h2>
 
-            <h3
-              className="text-xl font-semibold text-foreground"
-            >
+            <h3 className="text-lg sm:text-xl font-semibold text-foreground">
               {company}
             </h3>
 
@@ -54,15 +46,11 @@ export default function WorkExperience({
           </div>
 
           {/* Right side - Description and tech stack */}
-          <div
-            className="space-y-6"
-          >
+          <div className="space-y-5 sm:space-y-6">
             {/* Description */}
             <div>
               <h4 className="text-lg font-semibold text-foreground mb-3">Key Responsibilities</h4>
-              <ul
-                className="list-disc list-inside text-muted-foreground text-sm space-y-2"
-              >
+              <ul className="list-disc list-inside text-muted-foreground text-sm space-y-2">
                 {description.map((item, i) => (
                   <li
                     key={i}
@@ -76,11 +64,11 @@ export default function WorkExperience({
             {/* Tech Stack Section */}
             {safeTools.length > 0 && (
               <div className="border-t border-border pt-6">
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-3 gap-3 sm:gap-4">
                   {safeTools.slice(0, 9).map((tool) => (
                     <div key={tool.name} className="flex flex-col items-center text-center">
-                      <div className="text-3xl text-foreground">
-                        {React.createElement(tool.icon, { className: "w-10 h-10 fill-current" })}
+                      <div className="text-2xl sm:text-3xl text-foreground">
+                        {React.createElement(tool.icon, { className: "w-8 h-8 sm:w-10 sm:h-10 fill-current" })}
                       </div>
                       <div className="mt-1 text-xs text-muted-foreground font-medium">{tool.name}</div>
                     </div>
