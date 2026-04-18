@@ -4,6 +4,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { categorizePostCategory, isTopCategoryKey } from '@/lib/blogCategories';
 
+export const dynamic = 'force-dynamic';
+
 interface CategoryPageProps {
   params: Promise<{ category: string }>;
 }
