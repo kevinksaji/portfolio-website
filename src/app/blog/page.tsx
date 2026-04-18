@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { FaCode, FaFutbol, FaHeart } from 'react-icons/fa';
 import { categorizePostCategory } from '@/lib/blogCategories';
 
+export const dynamic = 'force-dynamic';
+
 export default async function BlogPage() {
   let posts: Awaited<ReturnType<typeof getBlogPosts>> = [];
   let error: string | null = null;
