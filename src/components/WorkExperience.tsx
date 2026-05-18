@@ -1,7 +1,5 @@
-"use client";
-import { useMemo } from "react";
 import { TechTool } from "@/data/techIcons";
-import React from "react"; // Added missing import for React
+import React from "react";
 
 type WorkExperienceProps = {
   role: string;
@@ -22,55 +20,54 @@ export default function WorkExperience({
   description,
   tools,
 }: WorkExperienceProps) {
-  const safeTools = useMemo(() => tools ?? [], [tools]);
+  const safeTools = tools ?? [];
 
   return (
-    <section className="flex items-center justify-center">
-      <div className="bg-card border border-border rounded-xl p-5 sm:p-8 shadow-lg hover:shadow-xl max-w-4xl w-full max-h-[calc(100dvh-7.5rem)] overflow-y-auto">
-        <div className="grid gap-6 md:grid-cols-2 md:gap-8 items-start">
-          {/* Left side - Company logo and info */}
-          <div className="text-center space-y-5 sm:space-y-8">
-            <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
+    <section className="flex w-full justify-center">
+      <div className="w-full max-w-4xl rounded-xl border border-border bg-card p-5 shadow-lg transition-shadow hover:shadow-xl sm:p-8">
+        <div className="grid items-start gap-6 md:grid-cols-2 md:gap-8">
+          <div className="space-y-5 text-center sm:space-y-8">
+            <h2 className="text-2xl font-bold text-foreground sm:text-3xl">
               {role}
             </h2>
 
-            <h3 className="text-lg sm:text-xl font-semibold text-foreground">
+            <h3 className="text-lg font-semibold text-foreground sm:text-xl">
               {company}
             </h3>
 
-            <p
-              className="text-sm text-muted-foreground"
-            >
+            <p className="text-sm text-muted-foreground">
               {location} • {startDate} – {endDate}
             </p>
           </div>
 
-          {/* Right side - Description and tech stack */}
           <div className="space-y-5 sm:space-y-6">
-            {/* Description */}
             <div>
-              <h4 className="text-lg font-semibold text-foreground mb-3">Key Responsibilities</h4>
-              <ul className="list-disc list-inside text-muted-foreground text-sm space-y-2">
+              <h4 className="mb-3 text-lg font-semibold text-foreground">
+                Key Responsibilities
+              </h4>
+              <ul className="list-inside list-disc space-y-2 text-sm text-muted-foreground">
                 {description.map((item, i) => (
-                  <li
-                    key={i}
-                  >
-                    {item}
-                  </li>
+                  <li key={i}>{item}</li>
                 ))}
               </ul>
             </div>
 
-            {/* Tech Stack Section */}
             {safeTools.length > 0 && (
               <div className="border-t border-border pt-6">
                 <div className="grid grid-cols-3 gap-3 sm:gap-4">
                   {safeTools.slice(0, 9).map((tool) => (
-                    <div key={tool.name} className="flex flex-col items-center text-center">
-                      <div className="text-2xl sm:text-3xl text-foreground">
-                        {React.createElement(tool.icon, { className: "w-8 h-8 sm:w-10 sm:h-10 fill-current" })}
+                    <div
+                      key={tool.name}
+                      className="flex flex-col items-center text-center"
+                    >
+                      <div className="text-2xl text-foreground sm:text-3xl">
+                        {React.createElement(tool.icon, {
+                          className: "h-8 w-8 fill-current sm:h-10 sm:w-10",
+                        })}
                       </div>
-                      <div className="mt-1 text-xs text-muted-foreground font-medium">{tool.name}</div>
+                      <div className="mt-1 text-xs font-medium text-muted-foreground">
+                        {tool.name}
+                      </div>
                     </div>
                   ))}
                 </div>
