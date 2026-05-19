@@ -25,7 +25,7 @@ export default function WorkExperience({
   const logoForCompany = (companyName: string) => {
     const name = (companyName || "").toLowerCase();
     if (name.includes("cpf") || name.includes("provident")) {
-      return "/cpf-logo.svg";
+      return "/cpf-logo.png";
     }
     if (name.includes("accenture")) {
       return "/accenture-logo.svg";
