@@ -45,28 +45,26 @@ export default function WorkExperience({
   return (
     <section className="flex w-full justify-center">
       <div className="w-full max-w-5xl rounded-2xl border border-border bg-card/95 p-5 shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl sm:p-8">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8">
-          <div className="flex flex-col gap-4 lg:w-[19rem] lg:shrink-0">
-            <div className="flex items-center gap-4">
-              <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl border border-border bg-white p-3 shadow-sm">
-                <img
-                  src={logo}
-                  alt={`${company} logo`}
-                  className="h-full w-full object-contain"
-                />
-              </div>
-
-              <div className="min-w-0">
-                <p className="text-sm font-medium uppercase tracking-[0.18em] text-muted-foreground">
-                  {company}
-                </p>
-                <h2 className="mt-1 text-xl font-bold leading-tight text-foreground sm:text-2xl">
-                  {role}
-                </h2>
-              </div>
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:gap-8">
+          <div className="flex flex-col items-center justify-center gap-4 text-center lg:w-[19rem] lg:shrink-0">
+            <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-2xl border border-border bg-background p-3 shadow-sm">
+              <img
+                src={logo}
+                alt={`${company} logo`}
+                className="h-full w-full object-contain"
+              />
             </div>
 
-            <div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
+            <div className="min-w-0 space-y-1">
+              <p className="text-sm font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                {company}
+              </p>
+              <h2 className="text-xl font-bold leading-tight text-foreground sm:text-2xl">
+                {role}
+              </h2>
+            </div>
+
+            <div className="flex flex-wrap justify-center gap-2 text-sm text-muted-foreground">
               <span className="rounded-full border border-border bg-background px-3 py-1">
                 {location}
               </span>
