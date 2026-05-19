@@ -24,37 +24,49 @@ export default function WorkExperience({
 
   const logoForCompany = (companyName: string) => {
     const name = (companyName || "").toLowerCase();
-    if (name.includes("cpf") || name.includes("provident")) return "/cpf-logo.png";
-    if (name.includes("accenture")) return "/github.png"; // placeholder
-    if (name.includes("truly")) return "/next.svg"; // placeholder
-    // default placeholder
-    return "/vercel.svg";
+    if (name.includes("cpf") || name.includes("provident")) {
+      return "/cpf-logo.svg";
+    }
+    if (name.includes("accenture")) {
+      return "/accenture-logo.svg";
+    }
+
+    return "/company-placeholder.svg";
   };
 
   const logo = logoForCompany(company);
 
   return (
     <section className="flex w-full justify-center">
-      <div className="w-full max-w-4xl rounded-xl border border-border bg-card p-5 shadow-lg transition-shadow hover:shadow-xl sm:p-8">
-        <div className="flex flex-col gap-6 md:flex-row md:items-start md:gap-8">
-          <div className="flex items-center md:w-56 md:flex-col md:items-center">
-            <img
-              src={logo}
-              alt={`${company} logo`}
-              className="h-16 w-16 rounded-full object-cover md:mb-4"
-            />
-            <div className="ml-4 text-left md:ml-0">
-              <h2 className="text-2xl font-bold text-foreground sm:text-3xl">
-                {role}
-              </h2>
+      <div className="w-full max-w-5xl rounded-2xl border border-border bg-card/95 p-5 shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl sm:p-8">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8">
+          <div className="flex flex-col gap-4 lg:w-[19rem] lg:shrink-0">
+            <div className="flex items-center gap-4">
+              <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl border border-border bg-white p-3 shadow-sm">
+                <img
+                  src={logo}
+                  alt={`${company} logo`}
+                  className="h-full w-full object-contain"
+                />
+              </div>
 
-              <h3 className="text-lg font-semibold text-foreground sm:text-xl">
-                {company}
-              </h3>
+              <div className="min-w-0">
+                <p className="text-sm font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                  {company}
+                </p>
+                <h2 className="mt-1 text-xl font-bold leading-tight text-foreground sm:text-2xl">
+                  {role}
+                </h2>
+              </div>
+            </div>
 
-              <p className="text-sm text-muted-foreground">
-                {location} • {startDate} – {endDate}
-              </p>
+            <div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
+              <span className="rounded-full border border-border bg-background px-3 py-1">
+                {location}
+              </span>
+              <span className="rounded-full border border-border bg-background px-3 py-1">
+                {startDate} – {endDate}
+              </span>
             </div>
           </div>
 
