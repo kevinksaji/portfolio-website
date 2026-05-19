@@ -29,7 +29,7 @@ export default function WorkExperience({
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:gap-8">
           <div className="flex flex-col items-center justify-center gap-4 text-center lg:w-[19rem] lg:shrink-0">
             <div className="min-w-0 space-y-1">
-              <h2 className="text-xl font-bold leading-tight text-foreground sm:text-2xl">
+              <h2 className="text-lg font-bold leading-tight text-foreground sm:text-xl">
                 {role}
               </h2>
               <p className="text-base font-semibold leading-snug text-muted-foreground sm:text-lg">
