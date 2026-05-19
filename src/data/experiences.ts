@@ -12,7 +12,7 @@ const experiences = [
       "Designed and developed CI/CD pipeline improvements by incorporating functional regression testing using Playwright",
       "Integrated Oobee into the CI/CD pipeline to enforce WCAG 2.1/2.2 A–AA accessibility standards for web applications, delivering a more inclusive browsing experience for persons with disabilities"
     ],
-    tools: [techTools.github, techTools.java, techTools.aws, techTools.springboot, techTools.angular, techTools.selenium],
+    tools: [techTools.github, techTools.java, techTools.aws, techTools.springboot, techTools.angular],
   },
   {
     role: "Software Developer Intern",
