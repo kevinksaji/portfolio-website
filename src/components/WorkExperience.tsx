@@ -29,12 +29,12 @@ export default function WorkExperience({
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:gap-8">
           <div className="flex flex-col items-center justify-center gap-4 text-center lg:w-[19rem] lg:shrink-0">
             <div className="min-w-0 space-y-1">
-              <p className="text-sm font-medium uppercase tracking-[0.18em] text-muted-foreground">
-                {company}
-              </p>
               <h2 className="text-xl font-bold leading-tight text-foreground sm:text-2xl">
                 {role}
               </h2>
+              <p className="text-base font-semibold leading-snug text-muted-foreground sm:text-lg">
+                {company}
+              </p>
             </div>
 
             <div className="flex flex-wrap justify-center gap-2 text-sm text-muted-foreground">
