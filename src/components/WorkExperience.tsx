@@ -30,6 +30,12 @@ export default function WorkExperience({
     if (name.includes("accenture")) {
       return "/accenture-logo.svg";
     }
+    if (name.includes("truly")) {
+      return "/truly-logo.png";
+    }
+    if (name.includes("singapore management university") || name.includes("smu")) {
+      return "/smu-logo.webp";
+    }
 
     return "/company-placeholder.svg";
   };
