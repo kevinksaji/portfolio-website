@@ -21,40 +21,13 @@ export default function WorkExperience({
   tools,
 }: WorkExperienceProps) {
   const safeTools = tools ?? [];
-
-  const logoForCompany = (companyName: string) => {
-    const name = (companyName || "").toLowerCase();
-    if (name.includes("cpf") || name.includes("provident")) {
-      return "/cpf-logo.png";
-    }
-    if (name.includes("accenture")) {
-      return "/accenture-logo.svg";
-    }
-    if (name.includes("truly")) {
-      return "/truly-logo.png";
-    }
-    if (name.includes("singapore management university") || name.includes("smu")) {
-      return "/smu-logo.webp";
-    }
-
-    return "/company-placeholder.svg";
-  };
-
-  const logo = logoForCompany(company);
+  void location;
 
   return (
     <section className="flex w-full justify-center">
       <div className="w-full max-w-5xl rounded-2xl border border-border bg-card/95 p-5 shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl sm:p-8">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:gap-8">
           <div className="flex flex-col items-center justify-center gap-4 text-center lg:w-[19rem] lg:shrink-0">
-            <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-2xl border border-border bg-background p-3 shadow-sm">
-              <img
-                src={logo}
-                alt={`${company} logo`}
-                className="h-full w-full object-contain"
-              />
-            </div>
-
             <div className="min-w-0 space-y-1">
               <p className="text-sm font-medium uppercase tracking-[0.18em] text-muted-foreground">
                 {company}
@@ -65,9 +38,6 @@ export default function WorkExperience({
             </div>
 
             <div className="flex flex-wrap justify-center gap-2 text-sm text-muted-foreground">
-              <span className="rounded-full border border-border bg-background px-3 py-1">
-                {location}
-              </span>
               <span className="rounded-full border border-border bg-background px-3 py-1">
                 {startDate} – {endDate}
               </span>

@@ -6,7 +6,7 @@ const experiences = [
     company: "Central Provident Fund Board",
     location: "Singapore",
     startDate: "December 2025",
-    endDate: "Present",
+    endDate: "May 2026",
     description: [
       "Full stack development using Java Spring Boot and Angular for the Citizen Disbursement Web Portal",
       "Designed and developed CI/CD pipeline improvements by incorporating functional regression testing using Playwright",
