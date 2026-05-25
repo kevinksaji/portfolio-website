@@ -13,12 +13,12 @@ import {
   SiFlask,
   SiFirebase,
   SiSupabase,
-  SiAmazonwebservices,
   SiAngular,
   SiTypescript,
   SiJavascript
 } from 'react-icons/si'
 import { DiJava, DiDatabase } from 'react-icons/di'
+import { FaAws } from 'react-icons/fa6'
 import { cn } from '@/lib/utils'
 
 interface TechCategory {
@@ -49,7 +49,7 @@ const techCategories: TechCategory[] = [
   { name: 'Firebase', icon: SiFirebase, color: 'text-orange-500' },
   { name: 'Supabase', icon: SiSupabase, color: 'text-green-500' },
   { name: 'MySQL', icon: SiMysql, color: 'text-blue-600' },
-  { name: 'AWS', icon: SiAmazonwebservices, color: 'text-orange-500' }
+  { name: 'AWS', icon: FaAws, color: 'text-orange-500' }
 ]
 
 type Props = {
@@ -80,10 +80,7 @@ export default function TechStack({ className }: Props) {
   }, [])
 
   useEffect(() => {
-    if (reduceMotion) {
-      setIsVisible(true)
-      return
-    }
+    if (reduceMotion) return
     if (categories.length <= 1) return
 
     const intervalId = window.setInterval(() => {
@@ -120,7 +117,7 @@ export default function TechStack({ className }: Props) {
             className={cn(
               "flex flex-col items-center justify-center",
               "transition-opacity duration-500 motion-reduce:transition-none",
-              isVisible ? "opacity-100" : "opacity-0"
+              reduceMotion || isVisible ? "opacity-100" : "opacity-0"
             )}
           >
             <div className={cn("text-5xl sm:text-6xl md:text-7xl", activeTech.color)}>
