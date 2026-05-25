@@ -1,13 +1,15 @@
 import { 
   SiSupabase, SiPython, SiC, SiVuedotjs, SiJavascript, SiAngular, 
-  SiAmazonwebservices, SiSpringboot, SiGithub, SiFlask, SiVercel, 
+  SiSpringboot, SiGithub, SiFlask, SiVercel, 
   SiHeroku, SiTelegram, SiMysql, SiPostgresql, SiNotion, SiSpring, 
   SiMamp, SiReact, SiTypescript, SiNextdotjs, SiTailwindcss,
   SiNodedotjs, SiMongodb, SiDocker, SiKubernetes, SiJenkins, SiGit,
-  SiFigma, SiAdobexd, SiPostman, SiJira, SiConfluence,
+  SiFigma, SiPostman, SiJira, SiConfluence,
   SiSelenium
 } from 'react-icons/si';
 import { DiJava } from 'react-icons/di';
+import { FaAws } from 'react-icons/fa6';
+import { BiLogoAdobe } from 'react-icons/bi';
 
 export type TechTool = {
   name: string;
@@ -16,7 +18,7 @@ export type TechTool = {
 
 export const techTools: Record<string, TechTool> = {
   supabase: { name: 'Supabase', icon: SiSupabase },
-  aws: { name: 'AWS', icon: SiAmazonwebservices },
+  aws: { name: 'AWS', icon: FaAws },
   vue: { name: 'Vue.js', icon: SiVuedotjs },
   python: { name: 'Python', icon: SiPython },
   c: { name: 'C', icon: SiC },
@@ -45,7 +47,7 @@ export const techTools: Record<string, TechTool> = {
   jenkins: { name: "Jenkins", icon: SiJenkins },
   git: { name: "Git", icon: SiGit },
   figma: { name: "Figma", icon: SiFigma },
-  adobexd: { name: "Adobe XD", icon: SiAdobexd },
+  adobexd: { name: "Adobe XD", icon: BiLogoAdobe },
   postman: { name: "Postman", icon: SiPostman },
   jira: { name: "Jira", icon: SiJira },
   confluence: { name: "Confluence", icon: SiConfluence },

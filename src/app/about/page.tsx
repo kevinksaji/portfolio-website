@@ -1,5 +1,6 @@
 import Image from "next/image";
 
+// This TypeScript type describes the props that the AboutSection component accepts.
 type SectionProps = {
   imgSrc: string;
   imgAlt: string;
@@ -8,15 +9,16 @@ type SectionProps = {
   reverse?: boolean;
 };
 
-function AboutSection({
-  imgSrc,
-  imgAlt,
-  title,
-  description,
-  reverse = false,
-}: SectionProps) {
+function AboutSection(props: SectionProps) {
+  const imgSrc = props.imgSrc;
+  const imgAlt = props.imgAlt;
+  const title = props.title;
+  const description = props.description;
+  const reverse = props.reverse ?? false;
+
   return (
     <section className="flex min-h-[calc(100dvh-3.5rem)] flex-col items-center justify-center px-6 py-12 sm:flex-row lg:justify-center">
+      {/* reverse switches the order of the image and text to alternate the layout between sections. */}
       {reverse ? (
         <>
           <div className="max-w-xl space-y-4 text-center sm:mr-12 sm:text-left">
@@ -50,21 +52,22 @@ function AboutSection({
   );
 }
 
+// This array is the page content source. Each object becomes one rendered AboutSection.
 const sections = [
   {
     imgSrc: "/kevin-big.jpeg",
     imgAlt: "Portrait of Kevin",
     title: "Hello, I'm Kevin 👋",
     description:
-      "I am a Computer Science student at SMU specialising in AI and product development.",
+      "I am a recently graduated Computer Science major from SMU specialising in AI and product development ",
     reverse: false,
   },
   {
     imgSrc: "/kevin-floorball.jpg",
-    imgAlt: "Kevin playing hockey",
+    imgAlt: "Kevin playing floorball",
     title: "Off the screen 🏑",
     description:
-      "Outside of coding I love staying active – you'll often find me playing floorball or trying new sports with friends.",
+      "Outside of coding I love staying active – you'll often find me playing various sports like floorball or hockey.",
     reverse: true,
   },
 ];
@@ -72,6 +75,7 @@ const sections = [
 export default function About() {
   return (
     <div className="w-full bg-background">
+      {/* map iterates over the data array and returns one AboutSection component per item. */}
       {sections.map((section) => (
         <AboutSection key={section.title} {...section} />
       ))}

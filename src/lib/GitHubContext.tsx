@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState, type ReactNode, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useState, useRef, type ReactNode, useCallback } from 'react';
 
 type GitHubStats = {
   totalCommits: number | null;
@@ -28,7 +28,7 @@ export function GitHubProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [rateLimitInfo, setRateLimitInfo] = useState<string | null>(null);
-  const [isInitialized, setIsInitialized] = useState(false);
+  const hasInitializedRef = useRef(false);
 
   const fetchGitHubStats = useCallback(async (showLoading = true) => {
     try {
@@ -55,11 +55,11 @@ export function GitHubProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (!isInitialized) {
-      fetchGitHubStats(true);
-      setIsInitialized(true);
-    }
-  }, [isInitialized, fetchGitHubStats]);
+    if (hasInitializedRef.current) return;
+
+    hasInitializedRef.current = true;
+    void fetchGitHubStats(true);
+  }, [fetchGitHubStats]);
 
   const refreshData = () => {
     fetchGitHubStats(true);
